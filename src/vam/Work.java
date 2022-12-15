@@ -67,6 +67,8 @@ public class Work {
 
 	private void realHide(String path) {
 		VarFile varFile = readVarFile(path);
+		
+		
 	}
 
 	
