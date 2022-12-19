@@ -18,6 +18,7 @@ import org.apache.tools.zip.ZipFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import vam.dto.MetaJson;
+import vam.dto.PoseJson;
 import vam.dto.SceneJson;
 import vam.dto.VarFile;
 import vam.dto.enumration.VarFieldType;
@@ -38,7 +39,6 @@ public class ZipUtils {
 		try {
 			unZip(zipfile, varFile);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -54,8 +54,9 @@ public class ZipUtils {
 	 * @throws Exception
 	 */
 	private void unZip(File ZIPFile, VarFile varFile) throws Exception {
+		ZipFile zipFile = null;
 		try {
-			ZipFile zipFile = new ZipFile(ZIPFile);
+			zipFile = new ZipFile(ZIPFile);
 			Enumeration e = zipFile.getEntries();
 			ZipEntry zipEntry = null;
 			while (e.hasMoreElements()) {
@@ -68,19 +69,22 @@ public class ZipUtils {
 					// f.mkdir();
 					// System.out.println("創建立目錄：" + outputDirectory + File.separator + name);
 				} else {
-					VarFieldType varFieldType = checkTypeEnum(zipEntry);
+					VarFieldType varFieldType = checkTypeEnum(varFile.makeTitle(), zipEntry);
 					convertField(varFile, varFieldType, zipFile, zipEntry);
 				}
 			}
+			if (Objects.nonNull(zipFile))
+				zipFile.close();
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 			ex.printStackTrace();
 		}
 	}
 
-	static List<String> skipResourceExtension = Arrays.asList("vmb", "vmi", "vab", "vaj", "vam", "jpg", "png");
+	static List<String> skipResourceExtension = Arrays.asList("vmb", "vmi", "vab", "vaj", "vap", "dsf", "duf", "vam",
+			"cs", "cslist", "assetbundle", "Assetbundle", "jpg", "png", "tif", "tga", "psd", "dll", "mp3", "wav");
 
-	private VarFieldType checkTypeEnum(ZipEntry zipEntry) {
+	private VarFieldType checkTypeEnum(String title, ZipEntry zipEntry) {
 		if ("meta.json".equals(zipEntry.getName())) {
 			return VarFieldType.META;
 		} else if (StringUtils.startsWith(zipEntry.getName(), "Custom")) {
@@ -93,34 +97,57 @@ public class ZipUtils {
 			String[] nameArray = StringUtils.split(zipEntry.getName(), "/");
 			if (skipResourceExtension.contains(getExtension(zipEntry.getName()))) {
 				// System.out.println(zipEntry.getName());
+			} else if ("Person".equals(nameArray[1])) {
+				if ("pose".equals(nameArray[2])) {
+					return VarFieldType.SAVES_PERSON_POSE_DOT_JSON;
+				} else {
+					System.out.println(title + " : " + zipEntry.getName());
+				}
 			} else if ("scene".equals(nameArray[1])) {
 				return VarFieldType.SAVES_SCENE_DOT_JSON;
 			} else {
-				System.out.println(zipEntry.getName());
+				System.out.println(title + " : " + zipEntry.getName());
 			}
 		} else
-			System.out.println(zipEntry.getName());
+			System.out.println(title + " : " + zipEntry.getName());
 		return null;
 	}
 
 	private void convertField(VarFile varFile, VarFieldType varFieldType, ZipFile zipFile, ZipEntry zipEntry) {
-		try {
-			if (VarFieldType.META == varFieldType) {
+		if (VarFieldType.META == varFieldType) {
+			try {
 				String jsonText = unZipFile(zipFile, zipEntry);
 				if (Objects.nonNull(jsonText)) {
 					MetaJson metaJson = objectMapper.readValue(jsonText, MetaJson.class);
 					varFile.setMetaJson(metaJson);
 				}
-			}else if (VarFieldType.SAVES_SCENE_DOT_JSON == varFieldType) {
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+				ex.printStackTrace();
+			}
+		} else if (VarFieldType.SAVES_SCENE_DOT_JSON == varFieldType) {
+			try {
 				String jsonText = unZipFile(zipFile, zipEntry);
 				if (Objects.nonNull(jsonText)) {
 					SceneJson sceneJson = objectMapper.readValue(jsonText, SceneJson.class);
+					sceneJson.setScenePath(zipEntry.getName());
 					varFile.setSceneJson(sceneJson);
 				}
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+				ex.printStackTrace();
 			}
-		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
-			ex.printStackTrace();
+		} else if (VarFieldType.SAVES_PERSON_POSE_DOT_JSON == varFieldType) {
+			try {
+				String jsonText = unZipFile(zipFile, zipEntry);
+				if (Objects.nonNull(jsonText)) {
+					PoseJson poseJson = objectMapper.readValue(jsonText, PoseJson.class);
+					varFile.getPoseJsons().add(poseJson);
+				}
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+				ex.printStackTrace();
+			}
 		}
 	}
 

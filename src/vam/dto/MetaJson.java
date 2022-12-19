@@ -23,12 +23,22 @@ public class MetaJson {
 	String programVersion;
 	List<String> contentList;
 
+	@JsonProperty("EAEndYear")
+	String EAEndYear;
+	@JsonProperty("EAEndMonth")
+	String EAEndMonth;
+	@JsonProperty("EAEndDay")
+	String EAEndDay;
+	
+	String secondaryLicenseType;
+
 	@JsonProperty("dependencies")
 	ObjectNode dependencies;
 
 	CustomOption customOptions;
 
 	Boolean hadReferenceIssues;
+	Boolean includeVersionsInReferences;
 
 	List<ReferenceIssue> referenceIssues;
 

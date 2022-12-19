@@ -1,6 +1,8 @@
 package vam;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,6 +14,7 @@ public class Work {
 
 	private String VAM_ROOT_PATH = "C:/VAM/";
 	private String VAM_GIRL_PATH = VAM_ROOT_PATH + "girl/";
+	private String VAM_FILE_PREFS = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9/AddonPackagesFilePrefs/";
 
 	private String VAR_EXTENSION = ".var";
 
@@ -26,18 +29,27 @@ public class Work {
 		}
 	}
 
+	private String readPath(String fullPath) {
+		int index = StringUtils.lastIndexOf(fullPath, File.separator);
+		if (index >= 0) {
+			String path = StringUtils.substring(fullPath, 0, index + 1);
+			return path;
+		}
+		return null;
+	}
+
 	private VarFile readVarFile(String fullPath) {
-		int index = StringUtils.lastIndexOf(fullPath, "/");
+		int index = StringUtils.lastIndexOf(fullPath, File.separator);
 		if (index >= 0) {
 			String varFileName = StringUtils.substring(fullPath, index + 1);
-			String path = StringUtils.substring(fullPath, 0, index+1);
+			String path = StringUtils.substring(fullPath, 0, index + 1);
 			return readVarFile(path, varFileName);
 		}
 		return null;
 	}
-	
+
 	private VarFile readVarFile(String path, String varFileName) {
-		File f = new File( path + varFileName );
+		File f = new File(path + varFileName);
 		if (f.exists()) {
 			VarFile varFile = new VarFile(varFileName);
 			zipUtils.unzipToVarFile(f, varFile);
@@ -61,16 +73,30 @@ public class Work {
 				hide(file1);
 			}
 		} else {
-			realHide(file.getAbsolutePath());
+			if(file.getAbsolutePath().endsWith(VAR_EXTENSION))
+				realHide(file.getAbsolutePath());
 		}
 	}
 
 	private void realHide(String path) {
 		VarFile varFile = readVarFile(path);
-		
-		
+		String PATH_HIDE_PATH = VAM_FILE_PREFS + varFile.makeHidePath();
+		File hidePath = new File(PATH_HIDE_PATH);
+		if (!hidePath.exists()) {
+			hidePath.mkdirs();
+		}
+		try {
+			if (Objects.nonNull(varFile.getSceneJson())) {
+				String PATH_HIDE_FILE = PATH_HIDE_PATH + varFile.getSceneJson().makeHideEmptyFile();
+				File hideFile = new File(PATH_HIDE_FILE);
+				if (!hidePath.exists()) {
+					hideFile.createNewFile();
+					System.out.println("!hide:" + hideFile);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-
-	
 
 }

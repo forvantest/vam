@@ -8,7 +8,7 @@ public class Application {
 		// TODO Auto-generated method stub
 		System.out.println("hello world");
 		Work work = new Work();
-		work.mainHide("girl/DnaAddr-support/");
+		work.mainHide("girl/realclone-support/");
 		//VarFile varFile=work.readVarFile( "Dnaddr/", "Dnaddr.Angela_HD_v1.2");
 	}
 
