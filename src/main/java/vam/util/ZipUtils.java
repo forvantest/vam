@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import vam.dto.MetaJson;
 import vam.dto.PoseJson;
 import vam.dto.SceneJson;
-import vam.dto.VarFile;
+import vam.dto.VarFileDTO;
 import vam.dto.enumration.VarFieldType;
 
 public class ZipUtils {
@@ -34,7 +34,7 @@ public class ZipUtils {
 	 * @param extractDir 解壓縮資料夾
 	 * @return
 	 */
-	public boolean unzipToVarFile(File zipfile, VarFile varFile) {
+	public boolean unzipToVarFile(File zipfile, VarFileDTO varFile) {
 
 		try {
 			unZip(zipfile, varFile);
@@ -53,7 +53,7 @@ public class ZipUtils {
 	 * @param outputDirectory
 	 * @throws Exception
 	 */
-	private void unZip(File ZIPFile, VarFile varFile) throws Exception {
+	private void unZip(File ZIPFile, VarFileDTO varFile) throws Exception {
 		ZipFile zipFile = null;
 		try {
 			zipFile = new ZipFile(ZIPFile);
@@ -113,7 +113,7 @@ public class ZipUtils {
 		return null;
 	}
 
-	private void convertField(VarFile varFile, VarFieldType varFieldType, ZipFile zipFile, ZipEntry zipEntry) {
+	private void convertField(VarFileDTO varFile, VarFieldType varFieldType, ZipFile zipFile, ZipEntry zipEntry) {
 		if (VarFieldType.META == varFieldType) {
 			try {
 				String jsonText = unZipFile(zipFile, zipEntry);

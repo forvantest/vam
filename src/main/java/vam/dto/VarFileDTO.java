@@ -10,8 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import lombok.Data;
 
 @Data
-public class VarFile {
-	public VarFile(String varFileName) {
+public class VarFileDTO {
+	public VarFileDTO(String varFileName) {
 		String[] varNameArray = StringUtils.split(varFileName, ".");
 		if (varNameArray.length >= 1)
 			authorName = varNameArray[0];

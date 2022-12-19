@@ -1,13 +1,19 @@
 package vam;
 
-import vam.dto.VarFile;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-public class Application {
+import vam.dto.VarFileDTO;
+
+@SpringBootApplication
+public class SqliteApplication {
 
 	public static void main(String[] args) {
+		SpringApplication.run(SqliteApplication.class, args);
 		// TODO Auto-generated method stub
 		System.out.println("hello world");
 		Work work = new Work();
+		work.loadAllVarFile();
 		work.mainHide("girl/realclone-support/");
 		//VarFile varFile=work.readVarFile( "Dnaddr/", "Dnaddr.Angela_HD_v1.2");
 	}
