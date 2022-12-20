@@ -9,6 +9,7 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import vam.dto.VarFileDTO;
 import vam.entity.VarFile;
@@ -114,8 +115,9 @@ public class Work {
 		List<VarFileDTO> listVarFileDTO = fetchAllVarFiles(dir);
 		for (VarFileDTO varFileDTO : listVarFileDTO) {
 			VarFile varFileNew = new VarFile(varFileDTO);
-			VarFile varFileOld=varFileRepository.findBy(varFileDTO);
-			varFileRepository.saveAndFlush(varFileNew);
+			List<VarFile> varFileOldList = varFileRepository.findBy(varFileDTO);
+			if (CollectionUtils.isEmpty(varFileOldList))
+				varFileRepository.saveAndFlush(varFileNew);
 		}
 		Long ll = varFileRepository.count();
 //		VarFile varFile = varFileRepository.getById(11l);
