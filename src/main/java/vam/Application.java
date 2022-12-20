@@ -16,7 +16,7 @@ public class Application extends SpringBootServletInitializer {
 	public static void main(final String[] args) {
 		ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
 
-		context.getBean(Work.class).loadVarFileIntoDB("girl/DnaAddr-support/"); // <-- here
+		context.getBean(Work.class).loadVarFileIntoDB("girl/realclone-support/"); // <-- here
 
 		// context.getBean(Work.class).mainHide("girl/realclone-support/");
 

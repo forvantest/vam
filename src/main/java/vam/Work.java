@@ -114,6 +114,7 @@ public class Work {
 		List<VarFileDTO> listVarFileDTO = fetchAllVarFiles(dir);
 		for (VarFileDTO varFileDTO : listVarFileDTO) {
 			VarFile varFileNew = new VarFile(varFileDTO);
+			VarFile varFileOld=varFileRepository.findBy(varFileDTO);
 			varFileRepository.saveAndFlush(varFileNew);
 		}
 		Long ll = varFileRepository.count();
