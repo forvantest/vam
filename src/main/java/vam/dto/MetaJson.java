@@ -1,6 +1,8 @@
 package vam.dto;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -41,5 +43,12 @@ public class MetaJson {
 	Boolean includeVersionsInReferences;
 
 	List<ReferenceIssue> referenceIssues;
+	
+	public Map getDependenciesMap(){
+		dependencies.forEach(j->{
+			System.out.println(j);
+		});
+		return new LinkedHashMap<>();
+	}
 
 }

@@ -34,11 +34,14 @@ public class VarFile implements Serializable {
 	private String projectName;
 
 	private String version;
+	
+	private Integer dependenciesSize;
 
 	public VarFile(VarFileDTO varFileDTO) {
 		super();
 		this.authorName = varFileDTO.getAuthorName();
 		this.projectName = varFileDTO.getProjectName();
 		this.version = varFileDTO.getVersion();
+		this.dependenciesSize = varFileDTO.getMetaJson().getDependenciesMap().size();
 	}
 }

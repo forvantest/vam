@@ -116,8 +116,9 @@ public class Work {
 		for (VarFileDTO varFileDTO : listVarFileDTO) {
 			VarFile varFileNew = new VarFile(varFileDTO);
 			List<VarFile> varFileOldList = varFileRepository.findBy(varFileDTO);
-			if (CollectionUtils.isEmpty(varFileOldList))
+			if (CollectionUtils.isEmpty(varFileOldList)) {
 				varFileRepository.saveAndFlush(varFileNew);
+			}
 		}
 		Long ll = varFileRepository.count();
 //		VarFile varFile = varFileRepository.getById(11l);
