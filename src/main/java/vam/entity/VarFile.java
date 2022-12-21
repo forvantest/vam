@@ -1,12 +1,15 @@
 package vam.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.springframework.util.CollectionUtils;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,19 +32,37 @@ public class VarFile implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long key;
 
-	private String authorName;
+	private String creatorName;
 
-	private String projectName;
+	private String packageName;
 
 	private String version;
-	
+
 	private Integer dependenciesSize;
+
+	private String fullPath;
+	private String varFileName;
 
 	public VarFile(VarFileDTO varFileDTO) {
 		super();
-		this.authorName = varFileDTO.getAuthorName();
-		this.projectName = varFileDTO.getProjectName();
+		this.creatorName = varFileDTO.getCreatorName();
+		this.packageName = varFileDTO.getPackageName();
 		this.version = varFileDTO.getVersion();
+		this.fullPath = varFileDTO.getFullPath();
+		this.varFileName = varFileDTO.getVarFileName();
 		this.dependenciesSize = varFileDTO.getMetaJson().getDependenciesMap().size();
+	}
+
+	public VarFile getSameVersion(List<VarFile> varFileOldList) {
+		if (CollectionUtils.isEmpty(varFileOldList)) {
+			return null;
+		}
+
+		for (VarFile varFileOld : varFileOldList) {
+			String oleVersion = varFileOld.getVersion();
+			if (getVersion().equals(oleVersion))
+				return varFileOld;
+		}
+		return null;
 	}
 }

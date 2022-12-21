@@ -34,10 +34,10 @@ public class ZipUtils {
 	 * @param extractDir 解壓縮資料夾
 	 * @return
 	 */
-	public boolean unzipToVarFile(File zipfile, VarFileDTO varFile) {
+	public boolean unzipToVarFile(File zipfile, VarFileDTO varFileDTO) {
 
 		try {
-			unZip(zipfile, varFile);
+			unZip(zipfile, varFileDTO);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -53,7 +53,7 @@ public class ZipUtils {
 	 * @param outputDirectory
 	 * @throws Exception
 	 */
-	private void unZip(File ZIPFile, VarFileDTO varFile) throws Exception {
+	private void unZip(File ZIPFile, VarFileDTO varFileDTO) throws Exception {
 		ZipFile zipFile = null;
 		try {
 			zipFile = new ZipFile(ZIPFile);
@@ -69,8 +69,8 @@ public class ZipUtils {
 					// f.mkdir();
 					// System.out.println("創建立目錄：" + outputDirectory + File.separator + name);
 				} else {
-					VarFieldType varFieldType = checkTypeEnum(varFile.makeTitle(), zipEntry);
-					convertField(varFile, varFieldType, zipFile, zipEntry);
+					VarFieldType varFieldType = checkTypeEnum(varFileDTO.makeTitle(), zipEntry);
+					convertField(varFileDTO, varFieldType, zipFile, zipEntry);
 				}
 			}
 			if (Objects.nonNull(zipFile))
@@ -113,13 +113,13 @@ public class ZipUtils {
 		return null;
 	}
 
-	private void convertField(VarFileDTO varFile, VarFieldType varFieldType, ZipFile zipFile, ZipEntry zipEntry) {
+	private void convertField(VarFileDTO varFileDTO, VarFieldType varFieldType, ZipFile zipFile, ZipEntry zipEntry) {
 		if (VarFieldType.META == varFieldType) {
 			try {
 				String jsonText = unZipFile(zipFile, zipEntry);
 				if (Objects.nonNull(jsonText)) {
 					MetaJson metaJson = objectMapper.readValue(jsonText, MetaJson.class);
-					varFile.setMetaJson(metaJson);
+					varFileDTO.setMetaJson(metaJson);
 				}
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
@@ -131,7 +131,7 @@ public class ZipUtils {
 				if (Objects.nonNull(jsonText)) {
 					SceneJson sceneJson = objectMapper.readValue(jsonText, SceneJson.class);
 					sceneJson.setScenePath(zipEntry.getName());
-					varFile.setSceneJson(sceneJson);
+					varFileDTO.setSceneJson(sceneJson);
 				}
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
@@ -142,7 +142,7 @@ public class ZipUtils {
 				String jsonText = unZipFile(zipFile, zipEntry);
 				if (Objects.nonNull(jsonText)) {
 					PoseJson poseJson = objectMapper.readValue(jsonText, PoseJson.class);
-					varFile.getPoseJsons().add(poseJson);
+					varFileDTO.getPoseJsons().add(poseJson);
 				}
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());

@@ -9,7 +9,6 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import vam.dto.VarFileDTO;
 import vam.entity.VarFile;
@@ -60,12 +59,12 @@ public class Work {
 		return null;
 	}
 
-	private VarFileDTO readVarFile(String path, String varFileName) {
-		File f = new File(path + varFileName);
+	private VarFileDTO readVarFile(String fullPath, String varFileName) {
+		File f = new File(fullPath + varFileName);
 		if (f.exists()) {
-			VarFileDTO varFile = new VarFileDTO(varFileName);
-			zipUtils.unzipToVarFile(f, varFile);
-			return varFile;
+			VarFileDTO varFileDTO = new VarFileDTO(fullPath, varFileName);
+			zipUtils.unzipToVarFile(f, varFileDTO);
+			return varFileDTO;
 		}
 		return null;
 	}
@@ -115,14 +114,15 @@ public class Work {
 		List<VarFileDTO> listVarFileDTO = fetchAllVarFiles(dir);
 		for (VarFileDTO varFileDTO : listVarFileDTO) {
 			VarFile varFileNew = new VarFile(varFileDTO);
-			List<VarFile> varFileOldList = varFileRepository.findBy(varFileDTO);
-			if (CollectionUtils.isEmpty(varFileOldList)) {
+			List<VarFile> varFileOldList = varFileRepository.findBy(varFileNew);
+			VarFile varFileOld = varFileNew.getSameVersion(varFileOldList);
+			if (Objects.isNull(varFileOld)) {
 				varFileRepository.saveAndFlush(varFileNew);
 			}
 		}
-		Long ll = varFileRepository.count();
-//		VarFile varFile = varFileRepository.getById(11l);
-		List<VarFile> list2 = varFileRepository.findAll();
+		Long count = varFileRepository.count();
+		System.out.println("total:" + count);
+		// List<VarFile> list2 = varFileRepository.findAll();
 		// varFileRepository.flush();
 	}
 

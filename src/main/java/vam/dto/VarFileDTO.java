@@ -11,22 +11,27 @@ import lombok.Data;
 
 @Data
 public class VarFileDTO {
-	public VarFileDTO(String varFileName) {
+	public VarFileDTO(String fullPath, String varFileName) {
 		String[] varNameArray = StringUtils.split(varFileName, ".");
 		if (varNameArray.length >= 1)
-			authorName = varNameArray[0];
+			creatorName = varNameArray[0];
 		if (varNameArray.length >= 2)
-			projectName = varNameArray[1];
+			packageName = varNameArray[1];
 		if (varNameArray.length >= 3)
 			version = varNameArray[2];
+		this.fullPath = fullPath;
+		this.varFileName = varFileName;
 	}
 
 	// file name rule
-	private String authorName;
+	private String creatorName;
 
-	private String projectName;
+	private String packageName;
 
 	private String version;
+
+	private String fullPath;
+	private String varFileName;
 
 	// Saves
 	// scene
@@ -40,9 +45,9 @@ public class VarFileDTO {
 
 	public String makeTitle() {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(authorName);
+		stringBuilder.append(creatorName);
 		stringBuilder.append(".");
-		stringBuilder.append(projectName);
+		stringBuilder.append(packageName);
 		stringBuilder.append(".");
 		stringBuilder.append(version);
 		return stringBuilder.toString();

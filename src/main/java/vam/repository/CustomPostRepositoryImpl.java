@@ -16,15 +16,24 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
 
 	@Override
 	public List<VarFile> findBy(VarFileDTO varFileDTO) {
-
 		Query query = entityManager.createNativeQuery(
-				"SELECT * from varfile p where author_name=:authorName and project_name=:projectName and version=:version",
+				"SELECT * from varfile p where creator_name=:creatorName and package_name=:packageName and version=:version",
 				VarFile.class);
-		query.setParameter("authorName", varFileDTO.getAuthorName());
-		query.setParameter("projectName", varFileDTO.getProjectName());
+		query.setParameter("creatorName", varFileDTO.getCreatorName());
+		query.setParameter("packageName", varFileDTO.getPackageName());
 		query.setParameter("version", varFileDTO.getVersion());
 		List<VarFile> posts = query.getResultList();
 		return posts;
+	}
 
+	@Override
+	public List<VarFile> findBy(VarFile varFile) {
+		Query query = entityManager.createNativeQuery(
+				"SELECT * from varfile p where creator_name=:creatorName and package_name=:packageName ",
+				VarFile.class);
+		query.setParameter("creatorName", varFile.getCreatorName());
+		query.setParameter("packageName", varFile.getPackageName());
+		List<VarFile> posts = query.getResultList();
+		return posts;
 	}
 }
