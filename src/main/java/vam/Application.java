@@ -18,7 +18,7 @@ public class Application extends SpringBootServletInitializer {
 
 		context.getBean(Work.class).loadVarFileIntoDB("girl/realclone-support/"); // <-- here
 
-		// context.getBean(Work.class).mainHide("girl/realclone-support/");
+//		context.getBean(Work.class).allUnHide("girl/realclone-support/");
 
 	}
 }

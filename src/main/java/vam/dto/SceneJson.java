@@ -16,7 +16,7 @@ public class SceneJson {
 	Boolean useSceneLoadPosition;
 
 	String playerNavCollider;
-	
+
 	List<Atom> atoms;
 
 	private String scenePath;
@@ -25,7 +25,7 @@ public class SceneJson {
 		return readFile(scenePath) + ".hide";
 	}
 
-	public Object makeHidePath() {
+	protected Object makeHidePath() {
 		return readPath(scenePath);
 	}
 
