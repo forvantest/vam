@@ -1,6 +1,7 @@
 package vam;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,10 +15,9 @@ import vam.util.OsUtils;
 public class Work extends WorkVarFile {
 
 //	private String VAM_ROOT_PATH = "C:/VAM/";
-//	private String VAM_GIRL_PATH = VAM_ROOT_PATH + "girl/";
 //	private String VAM_FILE_PREFS = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9/AddonPackagesFilePrefs/";
 
-	private String VAR_EXTENSION = ".var";
+	// private String VAR_EXTENSION = ".var";
 
 	public Work() {
 		super();
@@ -55,6 +55,20 @@ public class Work extends WorkVarFile {
 		System.out.println("total:" + count);
 		// List<VarFile> list2 = varFileRepository.findAll();
 		// varFileRepository.flush();
+	}
+
+	public void createLinkFile() {
+		List<String> girlDirectrories = new ArrayList<>();
+		girlDirectrories.add("girl/realclone/");
+		createLinkFile(girlDirectrories);
+
+		List<String> girlSupportDirectrories = new ArrayList<>();
+		girlSupportDirectrories.add("girl/realclone-support/");
+		createLinkFile(girlSupportDirectrories);
+
+		for (String girlSupportDirectrory : girlSupportDirectrories) {
+			allHide(girlSupportDirectrory);
+		}
 	}
 
 }

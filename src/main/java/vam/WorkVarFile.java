@@ -12,12 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import vam.dto.VarFileDTO;
 import vam.repository.VarFileRepository;
+import vam.util.FileUtil;
 import vam.util.ZipUtils;
 
 public abstract class WorkVarFile {
 
-	protected String VAM_ROOT_PATH = "C:/VAM/";
-	protected String VAM_FILE_PREFS = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9/AddonPackagesFilePrefs/";
+	protected String VAM_ROOT_PATH = "C:\\VAM\\";
+	protected String VAM_FILE_PREFS = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\AddonPackagesFilePrefs\\";
+	protected String VAM_GIRL_PATH = VAM_ROOT_PATH + "girl\\";
+	private String VAM_ADDON_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\AddonPackages\\";
 
 	private String VAR_EXTENSION = ".var";
 
@@ -25,15 +28,6 @@ public abstract class WorkVarFile {
 
 	@Autowired
 	VarFileRepository varFileRepository;
-
-//	private String readPath(String fullPath) {
-//		int index = StringUtils.lastIndexOf(fullPath, File.separator);
-//		if (index >= 0) {
-//			String path = StringUtils.substring(fullPath, 0, index + 1);
-//			return path;
-//		}
-//		return null;
-//	}
 
 	private VarFileDTO readVarFile(String fullPath) {
 		int index = StringUtils.lastIndexOf(fullPath, File.separator);
@@ -101,6 +95,28 @@ public abstract class WorkVarFile {
 		}
 	}
 
+	protected void createLinkFile(File file) {
+		if (file.isDirectory()) {
+			for (File file1 : file.listFiles()) {
+				createLinkFile(file1);
+			}
+		} else {
+			if (file.getAbsolutePath().endsWith(VAR_EXTENSION))
+				FileUtil.createLinkFile(file, makeLinkFileName(file));
+		}
+	}
+
+	protected String makeLinkFileName(File file) {
+		String linkFileName = StringUtils.replace(file.getAbsolutePath(), VAM_GIRL_PATH, VAM_ADDON_PATH + "girl/");
+		return linkFileName;
+	}
+
+	protected void createLinkFile(List<String> targetDirectrories) {
+		for (String targetDirectrory : targetDirectrories) {
+			File file = new File(VAM_ROOT_PATH + targetDirectrory);
+			createLinkFile(file);
+		}
+	}
 //	public void connect() {
 //		Connection conn = null;
 //		try {

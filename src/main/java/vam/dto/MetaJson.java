@@ -3,6 +3,7 @@ package vam.dto;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -54,6 +55,9 @@ public class MetaJson {
 
 	public Map<String, MetaJson> getDependenciesMap() {
 		Map<String, MetaJson> metaJsonMap = new LinkedHashMap<>();
+		if(Objects.isNull(dependencies))
+			return metaJsonMap;
+		
 		dependencies.fields().forEachRemaining(e -> {
 			String varKey = e.getKey();
 			String licenseType = e.getValue().get("licenseType").asText();

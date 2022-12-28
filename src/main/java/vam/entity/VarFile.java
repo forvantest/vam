@@ -2,6 +2,7 @@ package vam.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -50,7 +51,8 @@ public class VarFile implements Serializable {
 		this.version = varFileDTO.getVersion();
 		this.fullPath = varFileDTO.getFullPath();
 		this.varFileName = varFileDTO.getVarFileName();
-		this.dependenciesSize = varFileDTO.getMetaJson().getDependenciesMap().size();
+		if (Objects.nonNull(varFileDTO.getMetaJson()))
+			this.dependenciesSize = varFileDTO.getMetaJson().getDependenciesMap().size();
 	}
 
 	public VarFile getSameVersion(List<VarFile> varFileOldList) {
