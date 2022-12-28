@@ -8,6 +8,7 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 
 import lombok.Data;
+import vam.entity.VarFile;
 
 @Data
 public class VarFileDTO {
@@ -21,6 +22,15 @@ public class VarFileDTO {
 			version = varNameArray[2];
 		this.fullPath = fullPath;
 		this.varFileName = varFileName;
+	}
+
+	public VarFileDTO(VarFile varFile) {
+		super();
+		this.creatorName = varFile.getCreatorName();
+		this.packageName = varFile.getPackageName();
+		this.version = varFile.getVersion();
+		this.fullPath = varFile.getFullPath();
+		this.varFileName = varFile.getVarFileName();
 	}
 
 	// file name rule

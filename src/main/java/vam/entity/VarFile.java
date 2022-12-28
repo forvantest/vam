@@ -10,11 +10,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import vam.dto.MetaJson;
 import vam.dto.VarFileDTO;
 
 @Data
@@ -22,7 +24,7 @@ import vam.dto.VarFileDTO;
 @Accessors(chain = true)
 @Entity
 @Table(name = "varfile")
-public class VarFile implements Serializable {
+public class VarFile implements Serializable, Comparable {
 
 	/**
 	 * 
@@ -41,6 +43,8 @@ public class VarFile implements Serializable {
 
 	private Integer dependenciesSize;
 
+	private Integer referenced;
+
 	private String fullPath;
 	private String varFileName;
 
@@ -55,6 +59,15 @@ public class VarFile implements Serializable {
 			this.dependenciesSize = varFileDTO.getMetaJson().getDependenciesMap().size();
 	}
 
+	public VarFile(String k, MetaJson v) {
+		String[] ss = StringUtils.split(k, ".");
+		this.creatorName = ss[0];
+		this.packageName = ss[1];
+		this.version = ss[2];
+		this.fullPath = "";
+		this.varFileName = "";
+	}
+
 	public VarFile getSameVersion(List<VarFile> varFileOldList) {
 		if (CollectionUtils.isEmpty(varFileOldList)) {
 			return null;
@@ -67,4 +80,11 @@ public class VarFile implements Serializable {
 		}
 		return null;
 	}
+
+	@Override
+	public int compareTo(Object object) {
+		VarFile varFile2 = (VarFile) object;
+		return this.version.compareTo(varFile2.getVersion());
+	}
+
 }

@@ -3,10 +3,13 @@ package vam;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import vam.dto.MetaJson;
 import vam.dto.VarFileDTO;
 import vam.entity.VarFile;
 import vam.util.OsUtils;
@@ -58,9 +61,9 @@ public class Work extends WorkVarFile {
 	}
 
 	public void createLinkFile() {
-		List<String> girlDirectrories = new ArrayList<>();
-		girlDirectrories.add("girl/realclone/");
-		createLinkFile(girlDirectrories);
+		List<String> girlDirectories = new ArrayList<>();
+		girlDirectories.add("girl/realclone/");
+		createLinkFile(girlDirectories);
 
 		List<String> girlSupportDirectrories = new ArrayList<>();
 		girlSupportDirectrories.add("girl/realclone-support/");
@@ -69,6 +72,37 @@ public class Work extends WorkVarFile {
 		for (String girlSupportDirectrory : girlSupportDirectrories) {
 			allHide(girlSupportDirectrory);
 		}
+	}
+
+	public void deploy(String targetDirectory) {
+//		List<String> girlDirectories = new ArrayList<>();
+//		girlDirectories.add(targetDirectory);
+		File dir = new File(VAM_ROOT_PATH + targetDirectory);
+		List<VarFileDTO> listVarFileDTO = fetchAllVarFiles(dir);
+		for (VarFileDTO varFileDTO : listVarFileDTO) {
+			Map<String, MetaJson> map = varFileDTO.getMetaJson().getDependenciesMap();
+			map.forEach((k, v) -> {
+				VarFile varFileNew = new VarFile(k, v);
+				List<VarFile> varFileOldList = varFileRepository.findBy(varFileNew);
+				if (!CollectionUtils.isEmpty(varFileOldList))
+					reference(varFileOldList.get(0));
+				// System.out.println("varFileOldList:" + varFileOldList);
+			});
+		}
+		createLinkFile(dir);
+
+	}
+
+	private void reference(VarFile varFile) {
+		if (Objects.nonNull(varFile.getReferenced()))
+			varFile.setReferenced(varFile.getReferenced() + 1);
+		else
+			varFile.setReferenced(1);
+		varFileRepository.save(varFile);
+		File realVarFile = new File(varFile.getFullPath() + varFile.getVarFileName());
+		createLinkFile(realVarFile);
+		VarFileDTO varFileDTO = readVarFile(realVarFile.getAbsolutePath());
+		realHide(varFileDTO);
 	}
 
 }

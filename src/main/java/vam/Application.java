@@ -16,10 +16,12 @@ public class Application extends SpringBootServletInitializer {
 	public static void main(final String[] args) {
 		ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
 
-		context.getBean(Work.class).loadVarFileIntoDB("AddonPackages_hub/"); // <-- here
+		// context.getBean(Work.class).loadVarFileIntoDB("AddonPackages_hub/"); // <--
+		// here
 
-		//context.getBean(Work.class).createLinkFile();
-		
+		// context.getBean(Work.class).createLinkFile();
+		context.getBean(Work.class).deploy("girl/realclone/");
+
 //		context.getBean(Work.class).allUnHide("girl/realclone-support/");
 
 	}

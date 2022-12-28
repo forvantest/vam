@@ -29,7 +29,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
 	@Override
 	public List<VarFile> findBy(VarFile varFile) {
 		Query query = entityManager.createNativeQuery(
-				"SELECT * from varfile p where creator_name=:creatorName and package_name=:packageName ",
+				"SELECT * from varfile p where creator_name=:creatorName and package_name=:packageName order by version desc",
 				VarFile.class);
 		query.setParameter("creatorName", varFile.getCreatorName());
 		query.setParameter("packageName", varFile.getPackageName());

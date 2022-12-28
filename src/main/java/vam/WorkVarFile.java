@@ -29,7 +29,7 @@ public abstract class WorkVarFile {
 	@Autowired
 	VarFileRepository varFileRepository;
 
-	private VarFileDTO readVarFile(String fullPath) {
+	protected VarFileDTO readVarFile(String fullPath) {
 		int index = StringUtils.lastIndexOf(fullPath, File.separator);
 		if (index >= 0) {
 			String varFileName = StringUtils.substring(fullPath, index + 1);
@@ -62,15 +62,15 @@ public abstract class WorkVarFile {
 		return list;
 	}
 
-	protected void realHide(VarFileDTO varFile) {
+	protected void realHide(VarFileDTO varFileDTO) {
 		try {
-			if (Objects.nonNull(varFile.getSceneJson())) {
-				String PATH_HIDE_PATH = VAM_FILE_PREFS + varFile.makeHidePath();
+			if (Objects.nonNull(varFileDTO.getSceneJson())) {
+				String PATH_HIDE_PATH = VAM_FILE_PREFS + varFileDTO.makeHidePath();
 				File hidePath = new File(PATH_HIDE_PATH);
 				if (!hidePath.exists()) {
 					hidePath.mkdirs();
 				}
-				String PATH_HIDE_FILE = PATH_HIDE_PATH + varFile.getSceneJson().makeHideEmptyFile();
+				String PATH_HIDE_FILE = PATH_HIDE_PATH + varFileDTO.getSceneJson().makeHideEmptyFile();
 				File hideFile = new File(PATH_HIDE_FILE);
 				if (!hideFile.exists()) {
 					hideFile.createNewFile();
