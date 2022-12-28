@@ -21,8 +21,8 @@ public class SceneJson {
 
 	private String scenePath;
 
-	public Object makeHideEmptyFile() {
-		return readFile(scenePath) + ".hide";
+	Object makeEmptyFile(String extension) {
+		return readFile(scenePath) + extension;
 	}
 
 	protected Object makeHidePath() {

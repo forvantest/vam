@@ -1,7 +1,6 @@
 package vam;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,13 +33,13 @@ public class Work extends WorkVarFile {
 	public void allHide(String hideDirectrory) {
 		File dir = new File(VAM_ROOT_PATH + hideDirectrory);
 		List<VarFileDTO> list = fetchAllVarFiles(dir);
-		list.forEach(v -> realHide(v));
+		list.forEach(v -> v.realHide(VAM_FILE_PREFS));
 	}
 
 	public void allUnHide(String hideDirectrory) {
 		File dir = new File(VAM_ROOT_PATH + hideDirectrory);
 		List<VarFileDTO> list = fetchAllVarFiles(dir);
-		list.forEach(v -> unHide(v));
+		list.forEach(v -> v.unHide(VAM_FILE_PREFS));
 	}
 
 	public void loadVarFileIntoDB(String targetDirectrory) {
@@ -60,19 +59,19 @@ public class Work extends WorkVarFile {
 		// varFileRepository.flush();
 	}
 
-	public void createLinkFile() {
-		List<String> girlDirectories = new ArrayList<>();
-		girlDirectories.add("girl/realclone/");
-		createLinkFile(girlDirectories);
-
-		List<String> girlSupportDirectrories = new ArrayList<>();
-		girlSupportDirectrories.add("girl/realclone-support/");
-		createLinkFile(girlSupportDirectrories);
-
-		for (String girlSupportDirectrory : girlSupportDirectrories) {
-			allHide(girlSupportDirectrory);
-		}
-	}
+//	public void createLinkFile() {
+//		List<String> girlDirectories = new ArrayList<>();
+//		girlDirectories.add("girl/realclone/");
+//		createLinkFile(girlDirectories);
+//
+//		List<String> girlSupportDirectrories = new ArrayList<>();
+//		girlSupportDirectrories.add("girl/realclone-support/");
+//		createLinkFile(girlSupportDirectrories);
+//
+//		for (String girlSupportDirectrory : girlSupportDirectrories) {
+//			allHide(girlSupportDirectrory);
+//		}
+//	}
 
 	public void deploy(String targetDirectory) {
 //		List<String> girlDirectories = new ArrayList<>();
@@ -80,6 +79,14 @@ public class Work extends WorkVarFile {
 		File dir = new File(VAM_ROOT_PATH + targetDirectory);
 		List<VarFileDTO> listVarFileDTO = fetchAllVarFiles(dir);
 		for (VarFileDTO varFileDTO : listVarFileDTO) {
+			varFileDTO.favorite(VAM_FILE_PREFS);
+			List<VarFile> varFileFavList = varFileRepository.findBy(varFileDTO);
+			if (!CollectionUtils.isEmpty(varFileFavList)) {
+				VarFile varFile = varFileFavList.get(0);
+				varFile.increaseFavorite();
+				varFileRepository.save(varFile);
+			}
+
 			Map<String, MetaJson> map = varFileDTO.getMetaJson().getDependenciesMap();
 			map.forEach((k, v) -> {
 				VarFile varFileNew = new VarFile(k, v);
@@ -90,19 +97,6 @@ public class Work extends WorkVarFile {
 			});
 		}
 		createLinkFile(dir);
-
-	}
-
-	private void reference(VarFile varFile) {
-		if (Objects.nonNull(varFile.getReferenced()))
-			varFile.setReferenced(varFile.getReferenced() + 1);
-		else
-			varFile.setReferenced(1);
-		varFileRepository.save(varFile);
-		File realVarFile = new File(varFile.getFullPath() + varFile.getVarFileName());
-		createLinkFile(realVarFile);
-		VarFileDTO varFileDTO = readVarFile(realVarFile.getAbsolutePath());
-		realHide(varFileDTO);
 	}
 
 }

@@ -1,16 +1,14 @@
 package vam;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import vam.dto.VarFileDTO;
+import vam.entity.VarFile;
 import vam.repository.VarFileRepository;
 import vam.util.FileUtil;
 import vam.util.ZipUtils;
@@ -62,39 +60,6 @@ public abstract class WorkVarFile {
 		return list;
 	}
 
-	protected void realHide(VarFileDTO varFileDTO) {
-		try {
-			if (Objects.nonNull(varFileDTO.getSceneJson())) {
-				String PATH_HIDE_PATH = VAM_FILE_PREFS + varFileDTO.makeHidePath();
-				File hidePath = new File(PATH_HIDE_PATH);
-				if (!hidePath.exists()) {
-					hidePath.mkdirs();
-				}
-				String PATH_HIDE_FILE = PATH_HIDE_PATH + varFileDTO.getSceneJson().makeHideEmptyFile();
-				File hideFile = new File(PATH_HIDE_FILE);
-				if (!hideFile.exists()) {
-					hideFile.createNewFile();
-					System.out.println("+++hide:" + hideFile);
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	protected void unHide(VarFileDTO varFile) {
-		String PATH_HIDE_PATH = VAM_FILE_PREFS + varFile.makeTitle();
-		File hidePath = new File(PATH_HIDE_PATH);
-		if (hidePath.exists()) {
-			try {
-				FileUtils.forceDelete(hidePath);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			System.out.println("---unhide:" + hidePath);
-		}
-	}
-
 	protected void createLinkFile(File file) {
 		if (file.isDirectory()) {
 			for (File file1 : file.listFiles()) {
@@ -140,4 +105,12 @@ public abstract class WorkVarFile {
 //		}
 //	}
 
+	protected void reference(VarFile varFile) {
+		varFile.increaseReferenced();
+		varFileRepository.save(varFile);
+		File realVarFile = new File(varFile.getFullPath() + varFile.getVarFileName());
+		createLinkFile(realVarFile);
+		VarFileDTO varFileDTO = readVarFile(realVarFile.getAbsolutePath());
+		varFileDTO.realHide(VAM_FILE_PREFS);
+	}
 }

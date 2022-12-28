@@ -45,6 +45,8 @@ public class VarFile implements Serializable, Comparable {
 
 	private Integer referenced;
 
+	private Integer favorite;
+
 	private String fullPath;
 	private String varFileName;
 
@@ -79,6 +81,20 @@ public class VarFile implements Serializable, Comparable {
 				return varFileOld;
 		}
 		return null;
+	}
+
+	public void increaseFavorite() {
+		if (Objects.nonNull(favorite))
+			favorite++;
+		else
+			favorite = 1;
+	}
+
+	public void increaseReferenced() {
+		if (Objects.nonNull(referenced))
+			referenced++;
+		else
+			referenced = 1;
 	}
 
 	@Override
