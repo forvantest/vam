@@ -3,7 +3,6 @@ package vam;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -44,15 +43,7 @@ public class Work extends WorkVarFile {
 
 	public void loadVarFileIntoDB(String targetDirectrory) {
 		File dir = new File(VAM_ROOT_PATH + targetDirectrory);
-		List<VarFileDTO> listVarFileDTO = fetchAllVarFiles(dir);
-		for (VarFileDTO varFileDTO : listVarFileDTO) {
-			VarFile varFileNew = new VarFile(varFileDTO);
-			List<VarFile> varFileOldList = varFileRepository.findBy(varFileNew);
-			VarFile varFileOld = varFileNew.getSameVersion(varFileOldList);
-			if (Objects.isNull(varFileOld)) {
-				varFileRepository.saveAndFlush(varFileNew);
-			}
-		}
+		allVarFilesToDB(dir);
 		Long count = varFileRepository.count();
 		System.out.println("total:" + count);
 		// List<VarFile> list2 = varFileRepository.findAll();

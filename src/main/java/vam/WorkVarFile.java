@@ -3,6 +3,7 @@ package vam;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import vam.util.ZipUtils;
 
 public abstract class WorkVarFile {
 
-	protected String VAM_ROOT_PATH = "C:\\VAM\\";
+	protected String VAM_ROOT_PATH = "C:\\VAM\\virt-a-mate 1.20.77.9\\";
 	protected String VAM_FILE_PREFS = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\AddonPackagesFilePrefs\\";
 	protected String VAM_GIRL_PATH = VAM_ROOT_PATH + "girl\\";
 	private String VAM_ADDON_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\AddonPackages\\";
@@ -58,6 +59,35 @@ public abstract class WorkVarFile {
 				list.add(readVarFile(file.getAbsolutePath()));
 		}
 		return list;
+	}
+
+	static int skipProcess = 0;
+
+	protected void allVarFilesToDB(File file) {
+		if (file.isDirectory()) {
+			for (File file1 : file.listFiles()) {
+				allVarFilesToDB(file1);
+			}
+		} else {
+			if (file.getAbsolutePath().endsWith(VAR_EXTENSION)) {
+				if (skipProcess < 0) {
+					System.out.println("skip: " + skipProcess);
+					return;
+				} else if (skipProcess % 10 == 0) {
+					System.out.print(skipProcess);
+				} else {
+					System.out.print(".");
+				}
+				skipProcess++;
+
+				VarFile varFileNew = new VarFile(readVarFile(file.getAbsolutePath()));
+				List<VarFile> varFileOldList = varFileRepository.findBy(varFileNew);
+				VarFile varFileOld = varFileNew.getSameVersion(varFileOldList);
+				if (Objects.isNull(varFileOld)) {
+					varFileRepository.saveAndFlush(varFileNew);
+				}
+			}
+		}
 	}
 
 	protected void createLinkFile(File file) {

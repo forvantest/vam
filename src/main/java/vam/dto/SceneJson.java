@@ -4,22 +4,26 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 import vam.dto.scene.Atom;
 import vam.dto.scene.Position;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SceneJson {
-	Double worldScale;
-	Double playerHeightAdjust;
-	Position monitorCameraRotation;
-	Boolean useSceneLoadPosition;
+	private Double worldScale;
+	private Double playerHeightAdjust;
+	private Position monitorCameraRotation;
+	private Boolean useSceneLoadPosition;
 
-	String playerNavCollider;
+	private String playerNavCollider;
 
-	List<Atom> atoms;
+	private List<Atom> atoms;
 
 	private String scenePath;
+	private String version;
 
 	Object makeEmptyFile(String extension) {
 		return readFile(scenePath) + extension;

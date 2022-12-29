@@ -82,41 +82,43 @@ public class ZipUtils {
 	}
 
 	static List<String> skipResourceExtension = Arrays.asList("vmb", "vmi", "vab", "vaj", "vap", "dsf", "duf", "vam",
-			"cs", "cslist", "assetbundle", "Assetbundle", "jpg", "png", "tif", "tga", "psd", "dll", "mp3", "wav");
+			"cs", "cslist", "txt", "scene", "assetbundle", "Assetbundle", "gif","jpg", "png", "tif", "tga", "psd", "dll", "mp3", "wav");
 
 	private VarFieldType checkTypeEnum(String title, ZipEntry zipEntry) {
 		if ("meta.json".equals(zipEntry.getName())) {
 			return VarFieldType.META;
 		} else if (StringUtils.startsWith(zipEntry.getName(), "Custom")) {
-			if (skipResourceExtension.contains(getExtension(zipEntry.getName()))) {
-				// System.out.println(zipEntry.getName());
+			if (skipResourceExtension.contains(getExtension(zipEntry.getName()).toLowerCase())) {
 			} else {
-				System.out.println(zipEntry.getName());
+				System.out.println("warn1: "+zipEntry.getName());
 			}
 		} else if (StringUtils.startsWith(zipEntry.getName(), "Saves")) {
 			String[] nameArray = StringUtils.split(zipEntry.getName(), "/");
 			if (skipResourceExtension.contains(getExtension(zipEntry.getName()))) {
-				// System.out.println(zipEntry.getName());
 			} else if ("Person".equals(nameArray[1])) {
 				if ("pose".equals(nameArray[2])) {
 					return VarFieldType.SAVES_PERSON_POSE_DOT_JSON;
 				} else {
-					System.out.println(title + " : " + zipEntry.getName());
+					System.out.println("warn2: "+title + " : " + zipEntry.getName());
 				}
 			} else if ("scene".equals(nameArray[1])) {
 				return VarFieldType.SAVES_SCENE_DOT_JSON;
 			} else {
-				System.out.println(title + " : " + zipEntry.getName());
+				System.out.println("warn3: "+title + " : " + zipEntry.getName());
 			}
 		} else
-			System.out.println(title + " : " + zipEntry.getName());
+			if (skipResourceExtension.contains(getExtension(zipEntry.getName()))) {
+			} else {
+				System.out.println("warn4: "+zipEntry.getName());
+			}
 		return null;
 	}
 
 	private void convertField(VarFileDTO varFileDTO, VarFieldType varFieldType, ZipFile zipFile, ZipEntry zipEntry) {
 		if (VarFieldType.META == varFieldType) {
+			String jsonText =null;
 			try {
-				String jsonText = unZipFile(zipFile, zipEntry);
+				jsonText = unZipFile(zipFile, zipEntry);
 				if (Objects.nonNull(jsonText)) {
 					MetaJson metaJson = objectMapper.readValue(jsonText, MetaJson.class);
 					varFileDTO.setMetaJson(metaJson);
@@ -126,8 +128,9 @@ public class ZipUtils {
 				ex.printStackTrace();
 			}
 		} else if (VarFieldType.SAVES_SCENE_DOT_JSON == varFieldType) {
+			String jsonText =null;
 			try {
-				String jsonText = unZipFile(zipFile, zipEntry);
+				jsonText = unZipFile(zipFile, zipEntry);
 				if (Objects.nonNull(jsonText)) {
 					SceneJson sceneJson = objectMapper.readValue(jsonText, SceneJson.class);
 					sceneJson.setScenePath(zipEntry.getName());
@@ -138,8 +141,9 @@ public class ZipUtils {
 				ex.printStackTrace();
 			}
 		} else if (VarFieldType.SAVES_PERSON_POSE_DOT_JSON == varFieldType) {
+			String jsonText =null;
 			try {
-				String jsonText = unZipFile(zipFile, zipEntry);
+				 jsonText = unZipFile(zipFile, zipEntry);
 				if (Objects.nonNull(jsonText)) {
 					PoseJson poseJson = objectMapper.readValue(jsonText, PoseJson.class);
 					varFileDTO.getPoseJsons().add(poseJson);
