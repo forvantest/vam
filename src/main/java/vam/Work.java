@@ -2,14 +2,11 @@ package vam;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import vam.dto.MetaJson;
 import vam.dto.VarFileDTO;
-import vam.entity.VarFile;
 import vam.util.OsUtils;
 
 @Service("work")
@@ -19,6 +16,12 @@ public class Work extends WorkVarFile {
 //	private String VAM_FILE_PREFS = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9/AddonPackagesFilePrefs/";
 
 	// private String VAR_EXTENSION = ".var";
+
+//	@Autowired
+//	public WorkDeployVarFile workDeployVarFile;
+
+	@Autowired
+	public WorkUnDeployVarFile workUnDeployVarFile;
 
 	public Work() {
 		super();
@@ -31,13 +34,13 @@ public class Work extends WorkVarFile {
 
 	public void allHide(String hideDirectrory) {
 		File dir = new File(VAM_ROOT_PATH + hideDirectrory);
-		List<VarFileDTO> list = fetchAllVarFiles(dir);
+		List<VarFileDTO> list = fetchAllVarFiles(dir, VAR_EXTENSION);
 		list.forEach(v -> v.realHide(VAM_FILE_PREFS));
 	}
 
 	public void allUnHide(String hideDirectrory) {
 		File dir = new File(VAM_ROOT_PATH + hideDirectrory);
-		List<VarFileDTO> list = fetchAllVarFiles(dir);
+		List<VarFileDTO> list = fetchAllVarFiles(dir, VAR_EXTENSION);
 		list.forEach(v -> v.unHide(VAM_FILE_PREFS));
 	}
 
@@ -46,8 +49,6 @@ public class Work extends WorkVarFile {
 		allVarFilesToDB(dir);
 		Long count = varFileRepository.count();
 		System.out.println("total:" + count);
-		// List<VarFile> list2 = varFileRepository.findAll();
-		// varFileRepository.flush();
 	}
 
 //	public void createLinkFile() {
@@ -65,29 +66,10 @@ public class Work extends WorkVarFile {
 //	}
 
 	public void deploy(String targetDirectory) {
-//		List<String> girlDirectories = new ArrayList<>();
-//		girlDirectories.add(targetDirectory);
-		File dir = new File(VAM_ROOT_PATH + targetDirectory);
-		List<VarFileDTO> listVarFileDTO = fetchAllVarFiles(dir);
-		for (VarFileDTO varFileDTO : listVarFileDTO) {
-			varFileDTO.favorite(VAM_FILE_PREFS);
-			List<VarFile> varFileFavList = varFileRepository.findBy(varFileDTO);
-			if (!CollectionUtils.isEmpty(varFileFavList)) {
-				VarFile varFile = varFileFavList.get(0);
-				varFile.increaseFavorite();
-				varFileRepository.save(varFile);
-			}
-
-			Map<String, MetaJson> map = varFileDTO.getMetaJson().getDependenciesMap();
-			map.forEach((k, v) -> {
-				VarFile varFileNew = new VarFile(k, v);
-				List<VarFile> varFileOldList = varFileRepository.findBy(varFileNew);
-				if (!CollectionUtils.isEmpty(varFileOldList))
-					reference(varFileOldList.get(0));
-				// System.out.println("varFileOldList:" + varFileOldList);
-			});
-		}
-		createLinkFile(dir);
+		process(targetDirectory);
 	}
 
+	public void unDeploy(String targetDirectory) {
+		workUnDeployVarFile.process(targetDirectory);
+	}
 }

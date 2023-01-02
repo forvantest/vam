@@ -17,36 +17,39 @@ import vam.dto.meta.ReferenceIssue;
 @Data
 @NoArgsConstructor
 public class MetaJson {
-	String licenseType;
-	String creatorName;
-	String packageName;
-	String standardReferenceVersionOption;
-	String scriptReferenceVersionOption;
-	String description;
-	String credits;
-	String instructions;
-	String promotionalLink;
-	String programVersion;
-	List<String> contentList;
+	private String licenseType;
+	private String creatorName;
+	private String packageName;
+	private String standardReferenceVersionOption;
+	private String scriptReferenceVersionOption;
+	private String description;
+	private String credits;
+	private String instructions;
+	private String promotionalLink;
+	private String programVersion;
+	private List<String> contentList;
 
 	@JsonProperty("EAEndYear")
-	String EAEndYear;
+	private String EAEndYear;
 	@JsonProperty("EAEndMonth")
-	String EAEndMonth;
+	private String EAEndMonth;
 	@JsonProperty("EAEndDay")
-	String EAEndDay;
+	private String EAEndDay;
 
-	String secondaryLicenseType;
+	private String secondaryLicenseType;
 
 	@JsonProperty("dependencies")
-	ObjectNode dependencies;
+	private ObjectNode dependencies;
 
-	CustomOption customOptions;
+	private CustomOption customOptions;
 
-	Boolean hadReferenceIssues;
-	Boolean includeVersionsInReferences;
+	private Boolean hadReferenceIssues;
+	private Boolean includeVersionsInReferences;
 
-	List<ReferenceIssue> referenceIssues;
+	private List<ReferenceIssue> referenceIssues;
+	
+	private String version;
+	private String patreonLink;
 
 	public MetaJson(String varKey, String licenseType, JsonNode jf) {
 		this.licenseType = licenseType;
@@ -62,7 +65,8 @@ public class MetaJson {
 			String varKey = e.getKey();
 			String licenseType = e.getValue().get("licenseType").asText();
 			JsonNode jf = e.getValue().get("dependencies");
-			metaJsonMap.put(varKey, new MetaJson(varKey, licenseType, jf));
+			if(Objects.nonNull(jf))
+				metaJsonMap.put(varKey, new MetaJson(varKey, licenseType, jf));
 		});
 		return metaJsonMap;
 	}

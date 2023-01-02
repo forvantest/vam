@@ -15,6 +15,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipFile;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.io.JsonEOFException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import vam.dto.MetaJson;
@@ -76,79 +79,146 @@ public class ZipUtils {
 			if (Objects.nonNull(zipFile))
 				zipFile.close();
 		} catch (Exception ex) {
+			System.out.println("\n"+ZIPFile);
 			System.out.println(ex.getMessage());
 			ex.printStackTrace();
 		}
 	}
 
-	static List<String> skipResourceExtension = Arrays.asList("vmb", "vmi", "vab", "vaj", "vap", "dsf", "duf", "vam",
-			"cs", "cslist", "txt", "scene", "assetbundle", "Assetbundle", "gif","jpg", "png", "tif", "tga", "psd", "dll", "mp3", "wav");
+	static List<String> skipResourceExtension = Arrays.asList("sln", "vmb", "vab", "vaj", "vap", "vac", "dsf", "duf", "vam",
+			"cs", "cslist", "txt", "scene", "assetbundle", "manifest", "Assetbundle", "gif", "jpeg", "jpg", "png",
+			"tif", "tga", "psd", "dll", "mp3", "wav", "ogg", "jsondb", "voicebundle", "mtl", "obj", "fav","colliders","hide","vapb");
+
+	static List<String> skipSaveExtension = Arrays.asList("embodyprofile","vmi","hide");
 
 	private VarFieldType checkTypeEnum(String title, ZipEntry zipEntry) {
 		if ("meta.json".equals(zipEntry.getName())) {
 			return VarFieldType.META;
 		} else if (StringUtils.startsWith(zipEntry.getName(), "Custom")) {
-			if (skipResourceExtension.contains(getExtension(zipEntry.getName()).toLowerCase())) {
-			} else {
-				System.out.println("warn1: "+zipEntry.getName());
+			String atomPath = zipEntry.getName().toLowerCase();
+			String atomExtension = getExtension(atomPath);
+			if (skipResourceExtension.contains(atomExtension)) {
+			} else if ("vmi".equals(atomExtension)) {
+				if (StringUtils.startsWith(atomPath, "custom/atom/person/morphs/female/"))
+					return VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_FEMALE;
+				if (StringUtils.startsWith(atomPath, "custom/atom/person/morphs/female_genitalia/"))
+					return VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_FEMALE_GENITALIA;
+				if (StringUtils.startsWith(atomPath, "custom/atom/person/morphs/male/"))
+					return VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_MALE;
+				if (StringUtils.startsWith(atomPath, "custom/atom/person/morphs/male_genitalia/"))
+					return VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_MALE_GENITALIA;
+			} else if ( StringUtils.startsWith(atomPath, "custom/scripts/")) {
+//				System.out.print("Scripts.var...");
+//			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/scripts/")) {
+//				System.out.print("Scripts.json...");
+			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/subscene/")) {
+				System.out.print("SubScene.json...");
+			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/assets/")) {
+				System.out.print("Assets.json...");
+			}else {
+				System.out.println("warn1: " + zipEntry.getName());
 			}
 		} else if (StringUtils.startsWith(zipEntry.getName(), "Saves")) {
-			String[] nameArray = StringUtils.split(zipEntry.getName(), "/");
-			if (skipResourceExtension.contains(getExtension(zipEntry.getName()))) {
-			} else if ("Person".equals(nameArray[1])) {
+			String atomPath = zipEntry.getName().toLowerCase();
+			String atomExtension = getExtension(atomPath);
+			String[] nameArray = StringUtils.split(atomPath, "/");
+			if (skipResourceExtension.contains(atomExtension)) {
+			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "saves/person/")) {
+				System.out.print("Saves.Person.json...");
+			} else if ("person".equals(nameArray[1])) {
 				if ("pose".equals(nameArray[2])) {
 					return VarFieldType.SAVES_PERSON_POSE_DOT_JSON;
 				} else {
-					System.out.println("warn2: "+title + " : " + zipEntry.getName());
+					System.out.println("warn2: " + title + " : " + zipEntry.getName());
 				}
 			} else if ("scene".equals(nameArray[1])) {
-				return VarFieldType.SAVES_SCENE_DOT_JSON;
+
+				if (nameArray[nameArray.length - 1].endsWith(".json")) {
+					return VarFieldType.SAVES_SCENE_DOT_JSON;
+				} else if (skipSaveExtension.contains(atomExtension)) {
+
+				} else {
+					System.out.println("warn12: wrong meta.json: " + nameArray[nameArray.length - 1]);
+				}
 			} else {
-				System.out.println("warn3: "+title + " : " + zipEntry.getName());
+				System.out.println("warn3: " + title + " : " + zipEntry.getName());
 			}
-		} else
-			if (skipResourceExtension.contains(getExtension(zipEntry.getName()))) {
-			} else {
-				System.out.println("warn4: "+zipEntry.getName());
-			}
+		} else if (skipResourceExtension.contains(getExtension(zipEntry.getName()))) {
+		} else {
+			System.out.println("warn4: " + zipEntry.getName());
+		}
 		return null;
 	}
 
 	private void convertField(VarFileDTO varFileDTO, VarFieldType varFieldType, ZipFile zipFile, ZipEntry zipEntry) {
 		if (VarFieldType.META == varFieldType) {
-			String jsonText =null;
+			String jsonText = null;
+			String fixedString = null;
 			try {
 				jsonText = unZipFile(zipFile, zipEntry);
-				if (Objects.nonNull(jsonText)) {
-					MetaJson metaJson = objectMapper.readValue(jsonText, MetaJson.class);
+				fixedString = StringUtils.replace(jsonText, "\uFEFF", "");
+				if (Objects.nonNull(fixedString) || StringUtils.isEmpty(fixedString)) {
+					MetaJson metaJson = objectMapper.readValue(fixedString, MetaJson.class);
 					varFileDTO.setMetaJson(metaJson);
 				}
-			} catch (Exception ex) {
+			}  catch (JsonMappingException ex) {
+				varFileDTO.setException(ex);
+			} catch (JsonEOFException ex) {
+				varFileDTO.setException(ex);
+			} catch (JsonParseException ex) {
+				varFileDTO.setException(ex);
+			}catch (Exception ex) {
+				System.out.println("\n"+varFileDTO.getFullPath() + varFileDTO.getVarFileName());
+				System.out.println(jsonText);
 				System.out.println(ex.getMessage());
 				ex.printStackTrace();
+				System.out.println("...");
 			}
+		} else if (VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_FEMALE == varFieldType) {
+			varFileDTO.increaseFemale();
+		} else if (VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_FEMALE_GENITALIA == varFieldType) {
+			varFileDTO.increaseFemaleGenitalia();
+		} else if (VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_MALE == varFieldType) {
+			varFileDTO.increaseMale();
+		} else if (VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_MALE_GENITALIA == varFieldType) {
+			varFileDTO.increaseMaleGenitalia();
 		} else if (VarFieldType.SAVES_SCENE_DOT_JSON == varFieldType) {
-			String jsonText =null;
+			String jsonText = null;
+			String fixedString = null;
 			try {
 				jsonText = unZipFile(zipFile, zipEntry);
-				if (Objects.nonNull(jsonText)) {
-					SceneJson sceneJson = objectMapper.readValue(jsonText, SceneJson.class);
+				fixedString = StringUtils.replace(jsonText, "\uFEFF", "");
+				if (Objects.isNull(fixedString) || StringUtils.isEmpty(fixedString)) {
+					System.out.println("warn11: empty json:" + varFileDTO);
+				} else {
+					SceneJson sceneJson = objectMapper.readValue(fixedString, SceneJson.class);
 					sceneJson.setScenePath(zipEntry.getName());
-					varFileDTO.setSceneJson(sceneJson);
+					varFileDTO.getSceneJsonList().add(sceneJson);
 				}
+			} catch (JsonParseException ex) {
+				varFileDTO.setException(ex);
+//				System.out.println("\n"+varFileDTO.getFullPath() + varFileDTO.getVarFileName());
+//				System.out.println(jsonText);
+//				ex.printStackTrace();
+//				System.out.println(ex.getMessage());
 			} catch (Exception ex) {
-				System.out.println(ex.getMessage());
+				varFileDTO.setException(ex);
+				System.out.println("\n"+varFileDTO.getFullPath() + varFileDTO.getVarFileName());
+				System.out.println(jsonText);
 				ex.printStackTrace();
+				System.out.println(ex.getMessage());
 			}
 		} else if (VarFieldType.SAVES_PERSON_POSE_DOT_JSON == varFieldType) {
-			String jsonText =null;
+			String jsonText = null;
 			try {
-				 jsonText = unZipFile(zipFile, zipEntry);
+				jsonText = unZipFile(zipFile, zipEntry);
 				if (Objects.nonNull(jsonText)) {
 					PoseJson poseJson = objectMapper.readValue(jsonText, PoseJson.class);
 					varFileDTO.getPoseJsons().add(poseJson);
 				}
-			} catch (Exception ex) {
+			} catch (JsonParseException ex) {
+				varFileDTO.setException(ex);
+			}  catch (Exception ex) {
 				System.out.println(ex.getMessage());
 				ex.printStackTrace();
 			}

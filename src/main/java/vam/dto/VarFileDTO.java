@@ -35,6 +35,11 @@ public class VarFileDTO {
 		this.varFileName = varFile.getVarFileName();
 	}
 
+	private Integer femaleCount;
+	private Integer femaleGenitaliaCount;
+	private Integer maleCount;
+	private Integer maleGenitaliaCount;
+
 	// file name rule
 	private String creatorName;
 
@@ -47,13 +52,14 @@ public class VarFileDTO {
 
 	// Saves
 	// scene
-	private SceneJson sceneJson;
+	private List<SceneJson> sceneJsonList = new ArrayList();
 //	Person\pose\
 	private List<PoseJson> poseJsons = new ArrayList();
 
 	// Custom
 
 	private MetaJson metaJson;
+	private Exception exception;
 
 	public String makeTitle() {
 		StringBuilder stringBuilder = new StringBuilder();
@@ -65,7 +71,7 @@ public class VarFileDTO {
 		return stringBuilder.toString();
 	}
 
-	public String makeHidePath() {
+	private String makeHidePath(SceneJson sceneJson) {
 		if (Objects.isNull(sceneJson))
 			return "";
 
@@ -85,23 +91,24 @@ public class VarFileDTO {
 	}
 
 	private void tagVarFile(String VAM_FILE_PREFS, String extension) {
-		try {
-			if (Objects.nonNull(this.getSceneJson())) {
-				String PATH_HIDE_PATH = VAM_FILE_PREFS + this.makeHidePath();
+
+		this.getSceneJsonList().forEach(s -> {
+			try {
+				String PATH_HIDE_PATH = VAM_FILE_PREFS + this.makeHidePath(s);
 				File hidePath = new File(PATH_HIDE_PATH);
 				if (!hidePath.exists()) {
 					hidePath.mkdirs();
 				}
-				String PATH_HIDE_FILE = PATH_HIDE_PATH + this.getSceneJson().makeEmptyFile(extension);
+				String PATH_HIDE_FILE = PATH_HIDE_PATH + s.makeEmptyFile(extension);
 				File hideFile = new File(PATH_HIDE_FILE);
 				if (!hideFile.exists()) {
 					hideFile.createNewFile();
 					System.out.println("+++" + extension + ": " + hideFile);
 				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		});
 	}
 
 	public void unHide(String VAM_FILE_PREFS) {
@@ -113,8 +120,45 @@ public class VarFileDTO {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println("---unhide:" + hidePath);
+			System.out.println("---unhide: " + hidePath);
 		}
 	}
 
+	public void increaseFemale() {
+		if (Objects.isNull(femaleCount))
+			femaleCount = 0;
+		femaleCount++;
+	}
+
+	public void increaseFemaleGenitalia() {
+		if (Objects.isNull(femaleGenitaliaCount))
+			femaleGenitaliaCount = 0;
+		femaleGenitaliaCount++;
+	}
+
+	public void increaseMale() {
+		if (Objects.isNull(maleCount))
+			maleCount = 0;
+		maleCount++;
+	}
+
+	public void increaseMaleGenitalia() {
+		if (Objects.isNull(maleGenitaliaCount))
+			maleGenitaliaCount = 0;
+		maleGenitaliaCount++;
+	}
+
+	public void setException(Exception ex) {
+		this.exception = ex;
+	}
+
+	public String makeKey() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(creatorName);
+		sb.append(".");
+		sb.append(packageName);
+		sb.append(".");
+		sb.append(version);
+		return sb.toString();
+	}
 }

@@ -1,8 +1,10 @@
 package vam.entity;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +14,10 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,7 +49,14 @@ public class VarFile implements Serializable, Comparable {
 
 	private Integer dependenciesSize;
 
-	private Integer referenced;
+	private String referencesJson;
+
+//	private Integer referenced;
+
+	private Integer femaleCount;
+	private Integer femaleGenitaliaCount;
+	private Integer maleCount;
+	private Integer maleGenitaliaCount;
 
 	private Integer favorite;
 
@@ -59,6 +72,11 @@ public class VarFile implements Serializable, Comparable {
 		this.varFileName = varFileDTO.getVarFileName();
 		if (Objects.nonNull(varFileDTO.getMetaJson()))
 			this.dependenciesSize = varFileDTO.getMetaJson().getDependenciesMap().size();
+
+		this.femaleCount = varFileDTO.getFemaleCount();
+		this.femaleGenitaliaCount = varFileDTO.getFemaleGenitaliaCount();
+		this.maleCount = varFileDTO.getMaleCount();
+		this.maleGenitaliaCount = varFileDTO.getMaleGenitaliaCount();
 	}
 
 	public VarFile(String k, MetaJson v) {
@@ -90,12 +108,12 @@ public class VarFile implements Serializable, Comparable {
 			favorite = 1;
 	}
 
-	public void increaseReferenced() {
-		if (Objects.nonNull(referenced))
-			referenced++;
-		else
-			referenced = 1;
-	}
+//	public void increaseReferenced() {
+//		if (Objects.nonNull(referenced))
+//			referenced++;
+//		else
+//			referenced = 1;
+//	}
 
 	@Override
 	public int compareTo(Object object) {
@@ -103,4 +121,21 @@ public class VarFile implements Serializable, Comparable {
 		return this.version.compareTo(varFile2.getVersion());
 	}
 
+	public void increaseReference(VarFileDTO varFileDTO) {
+		if (Objects.isNull(referencesJson))
+			referencesJson = "[]";
+		ObjectMapper objectMapper = new ObjectMapper();
+		Set<String> reference;
+		try {
+			reference = objectMapper.readValue(referencesJson, HashSet.class);
+			String key = varFileDTO.makeKey();
+			reference.add(key);
+			referencesJson = objectMapper.writeValueAsString(reference);
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

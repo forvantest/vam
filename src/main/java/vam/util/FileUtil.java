@@ -3,6 +3,7 @@ package vam.util;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -35,10 +36,12 @@ public class FileUtil {
 		try {
 			File linkFile1 = new File(linkFile);
 			if (linkFile1.exists()) {
-				System.out.println("linkFile already exist: " + linkFile1);
+				// System.out.println("warn6: linkFile already exist: " + linkFile1);
 				return false;
-			}
-			else {
+			} else if (!targetFile.exists()) {
+				System.out.println("warn7: targetFile doesn't exist: " + targetFile);
+				return false;
+			} else {
 				Path source = targetFile.toPath();
 				String linkfolder = readPath(linkFile1.getAbsolutePath());
 				checkFolderExist(linkfolder);
@@ -71,4 +74,35 @@ public class FileUtil {
 		}
 		return null;
 	}
+
+	public static void deleteLinkFile(String VAM_ADDON_PATH, String linkFileName) {
+		File linkFile = new File(linkFileName);
+		if (linkFile.exists()) {
+			linkFile.delete();
+			System.out.println("---linkFile deleted: " + linkFile);
+		}
+		String subPath = linkFileName;
+		for (int i = 0; i < 5; i++) {
+			subPath = clearLinkFolder(VAM_ADDON_PATH, subPath);
+			if (Objects.isNull(subPath))
+				break;
+		}
+	}
+
+	private static String clearLinkFolder(String VAM_ADDON_PATH, String fullPath) {
+		int index = StringUtils.lastIndexOf(fullPath, "\\");
+		if (index > 0) {
+			String linkFolderPath = StringUtils.substring(fullPath, 0, index);
+			if (!StringUtils.contains(VAM_ADDON_PATH, linkFolderPath) ) {
+				File linkFolder = new File(linkFolderPath);
+				if (linkFolder.exists() && linkFolder.list().length == 0) {
+					System.out.println("---linkFolder deleted: " + linkFolder);
+					linkFolder.delete();
+					return linkFolderPath;
+				}
+			}
+		}
+		return null;
+	}
+
 }
