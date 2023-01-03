@@ -27,8 +27,8 @@ public class Work extends WorkVarFile {
 		super();
 
 		if (OsUtils.isUnix()) {
-			VAM_ROOT_PATH = "/home/forva/VAM/";
-			VAM_FILE_PREFS = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9/AddonPackagesFilePrefs/";
+			VAM_ROOT_PATH = "/home/forva/VAM/virt-a-mate 1.20.77.9/";
+			VAM_FILE_PREFS = VAM_ROOT_PATH + "AddonPackagesFilePrefs/";
 		}
 	}
 

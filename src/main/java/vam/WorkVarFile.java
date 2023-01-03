@@ -287,25 +287,28 @@ public abstract class WorkVarFile {
 	protected void processVarFile(VarFileDTO varFileDTO) {
 		String fullPathName = varFileDTO.getFullPath() + varFileDTO.getVarFileName();
 		File realVarFile = new File(fullPathName);
-		if (!realVarFile.exists()) {
+		if (realVarFile.exists()) {
+			work3(realVarFile);
+		} else {
 			System.out.println("warn8: varFile doesn't exist: " + fullPathName);
-			return;
 		}
-		work3(realVarFile);
 
 		if (Objects.nonNull(varFileDTO.getMetaJson())) {
 			varFileDTO.getMetaJson().getDependenciesMap().forEach((k, v) -> processDependenciesMap(varFileDTO, k, v));
 		}
 	}
 
-	protected void processDependenciesMap(VarFileDTO varFileDTO, String k, MetaJson v) {
+	protected void processDependenciesMap(VarFileDTO varFileDTOParent, String k, MetaJson metaJson) {
 		VarFileDTO varFileQuery = new VarFileDTO(null, k);
 		VarFile varFileRef = findSuitableVarFile(varFileQuery);
-		if (Objects.isNull(varFileRef))
-			return;
-		VarFileDTO varFileDTORef = work2(varFileDTO, varFileRef);
-		if(Objects.nonNull(varFileDTORef))
-			processVarFile(varFileDTORef);
+		if (Objects.nonNull(varFileRef)) {
+			VarFileDTO varFileDTORef = work2(varFileDTOParent, varFileRef);
+			if (Objects.nonNull(varFileDTORef))
+				processVarFile(varFileDTORef);
+		} else {
+			varFileQuery.setMetaJson(metaJson);
+			processVarFile(varFileQuery);
+		}
 	}
 
 	protected void processDependTxt(VarFileDTO varFileDTO) {
@@ -376,8 +379,8 @@ public abstract class WorkVarFile {
 		}
 	}
 
-	VarFileDTO work2(VarFileDTO varFileDTO, VarFile varFileRef) {
-		varFileRef.increaseReference(varFileDTO);
+	VarFileDTO work2(VarFileDTO varFileDTOParent, VarFile varFileRef) {
+		varFileRef.increaseReference(varFileDTOParent);
 		varFileRepository.save(varFileRef);
 		File realVarFile = new File(varFileRef.getFullPath() + varFileRef.getVarFileName());
 		if (!realVarFile.exists()) {
