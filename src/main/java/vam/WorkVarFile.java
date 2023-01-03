@@ -290,7 +290,8 @@ public abstract class WorkVarFile {
 		if (realVarFile.exists()) {
 			work3(realVarFile);
 		} else {
-			System.out.println("warn8: varFile doesn't exist: " + fullPathName);
+			System.out.println(
+					"warn8: varFile doesn't exist: " + varFileDTO.getFullPath() + "  " + varFileDTO.getVarFileName());
 		}
 
 		if (Objects.nonNull(varFileDTO.getMetaJson())) {
