@@ -53,6 +53,8 @@ public class VarFile implements Serializable, Comparable {
 
 //	private Integer referenced;
 
+	private Integer scenes;
+
 	private Integer femaleCount;
 	private Integer femaleGenitaliaCount;
 	private Integer maleCount;
@@ -77,6 +79,7 @@ public class VarFile implements Serializable, Comparable {
 		this.femaleGenitaliaCount = varFileDTO.getFemaleGenitaliaCount();
 		this.maleCount = varFileDTO.getMaleCount();
 		this.maleGenitaliaCount = varFileDTO.getMaleGenitaliaCount();
+		this.scenes = varFileDTO.getSceneJsonList().size();
 	}
 
 	public VarFile(String k, MetaJson v) {
@@ -137,5 +140,5 @@ public class VarFile implements Serializable, Comparable {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

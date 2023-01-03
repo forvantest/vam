@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import vam.dto.VarFileDTO;
-import vam.util.OsUtils;
 
 @Service("work")
 public class Work extends WorkVarFile {
@@ -22,15 +21,6 @@ public class Work extends WorkVarFile {
 
 	@Autowired
 	public WorkUnDeployVarFile workUnDeployVarFile;
-
-	public Work() {
-		super();
-
-		if (OsUtils.isUnix()) {
-			VAM_ROOT_PATH = "/home/forva/VAM/virt-a-mate 1.20.77.9/";
-			VAM_FILE_PREFS = VAM_ROOT_PATH + "AddonPackagesFilePrefs/";
-		}
-	}
 
 	public void allHide(String hideDirectrory) {
 		File dir = new File(VAM_ROOT_PATH + hideDirectrory);

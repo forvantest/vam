@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipFile;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.io.JsonEOFException;
@@ -26,6 +27,7 @@ import vam.dto.SceneJson;
 import vam.dto.VarFileDTO;
 import vam.dto.enumration.VarFieldType;
 
+@Component
 public class ZipUtils {
 
 	private ObjectMapper objectMapper = new ObjectMapper();
@@ -79,17 +81,18 @@ public class ZipUtils {
 			if (Objects.nonNull(zipFile))
 				zipFile.close();
 		} catch (Exception ex) {
-			System.out.println("\n"+ZIPFile);
+			System.out.println("\n" + ZIPFile);
 			System.out.println(ex.getMessage());
 			ex.printStackTrace();
 		}
 	}
 
-	static List<String> skipResourceExtension = Arrays.asList("sln", "vmb", "vab", "vaj", "vap", "vac", "dsf", "duf", "vam",
-			"cs", "cslist", "txt", "scene", "assetbundle", "manifest", "Assetbundle", "gif", "jpeg", "jpg", "png",
-			"tif", "tga", "psd", "dll", "mp3", "wav", "ogg", "jsondb", "voicebundle", "mtl", "obj", "fav","colliders","hide","vapb");
+	static List<String> skipResourceExtension = Arrays.asList("sln", "vmb", "vab", "vaj", "vap", "vac", "dsf", "duf",
+			"vam", "cs", "cslist", "txt", "scene", "assetbundle", "manifest", "Assetbundle", "gif", "jpeg", "jpg",
+			"png", "tif", "tga", "psd", "dll", "mp3", "wav", "ogg", "jsondb", "voicebundle", "mtl", "obj", "fav",
+			"colliders", "hide", "vapb");
 
-	static List<String> skipSaveExtension = Arrays.asList("embodyprofile","vmi","hide");
+	static List<String> skipSaveExtension = Arrays.asList("embodyprofile", "vmi", "hide");
 
 	private VarFieldType checkTypeEnum(String title, ZipEntry zipEntry) {
 		if ("meta.json".equals(zipEntry.getName())) {
@@ -107,7 +110,7 @@ public class ZipUtils {
 					return VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_MALE;
 				if (StringUtils.startsWith(atomPath, "custom/atom/person/morphs/male_genitalia/"))
 					return VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_MALE_GENITALIA;
-			} else if ( StringUtils.startsWith(atomPath, "custom/scripts/")) {
+			} else if (StringUtils.startsWith(atomPath, "custom/scripts/")) {
 //				System.out.print("Scripts.var...");
 //			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/scripts/")) {
 //				System.out.print("Scripts.json...");
@@ -115,7 +118,7 @@ public class ZipUtils {
 				System.out.print("SubScene.json...");
 			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/assets/")) {
 				System.out.print("Assets.json...");
-			}else {
+			} else {
 				System.out.println("warn1: " + zipEntry.getName());
 			}
 		} else if (StringUtils.startsWith(zipEntry.getName(), "Saves")) {
@@ -161,14 +164,14 @@ public class ZipUtils {
 					MetaJson metaJson = objectMapper.readValue(fixedString, MetaJson.class);
 					varFileDTO.setMetaJson(metaJson);
 				}
-			}  catch (JsonMappingException ex) {
+			} catch (JsonMappingException ex) {
 				varFileDTO.setException(ex);
 			} catch (JsonEOFException ex) {
 				varFileDTO.setException(ex);
 			} catch (JsonParseException ex) {
 				varFileDTO.setException(ex);
-			}catch (Exception ex) {
-				System.out.println("\n"+varFileDTO.getFullPath() + varFileDTO.getVarFileName());
+			} catch (Exception ex) {
+				System.out.println("\n" + varFileDTO.getFullPath() + varFileDTO.getVarFileName());
 				System.out.println(jsonText);
 				System.out.println(ex.getMessage());
 				ex.printStackTrace();
@@ -203,7 +206,7 @@ public class ZipUtils {
 //				System.out.println(ex.getMessage());
 			} catch (Exception ex) {
 				varFileDTO.setException(ex);
-				System.out.println("\n"+varFileDTO.getFullPath() + varFileDTO.getVarFileName());
+				System.out.println("\n" + varFileDTO.getFullPath() + varFileDTO.getVarFileName());
 				System.out.println(jsonText);
 				ex.printStackTrace();
 				System.out.println(ex.getMessage());
@@ -218,7 +221,7 @@ public class ZipUtils {
 				}
 			} catch (JsonParseException ex) {
 				varFileDTO.setException(ex);
-			}  catch (Exception ex) {
+			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
 				ex.printStackTrace();
 			}

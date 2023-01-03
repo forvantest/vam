@@ -21,6 +21,7 @@ import vam.dto.VarFileDTO;
 import vam.entity.VarFile;
 import vam.repository.VarFileRepository;
 import vam.util.FileUtil;
+import vam.util.OsUtils;
 import vam.util.ZipUtils;
 
 public abstract class WorkVarFile {
@@ -34,10 +35,20 @@ public abstract class WorkVarFile {
 	protected String VAR_EXTENSION = ".var";
 	protected String DEPEND_TXT_EXTENSION = ".depend.txt";
 
-	ZipUtils zipUtils = new ZipUtils();
+	@Autowired
+	ZipUtils zipUtils;
 
 	@Autowired
 	public VarFileRepository varFileRepository;
+
+	public WorkVarFile() {
+		super();
+
+		if (OsUtils.isUnix()) {
+			VAM_ROOT_PATH = "/home/forva/VAM/virt-a-mate 1.20.77.9/";
+			VAM_FILE_PREFS = VAM_ROOT_PATH + "AddonPackagesFilePrefs/";
+		}
+	}
 
 //	protected VarFileDTO readVarFile(String fullPath) {
 //		int index = StringUtils.lastIndexOf(fullPath, File.separator);
