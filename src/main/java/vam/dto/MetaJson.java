@@ -47,7 +47,7 @@ public class MetaJson {
 	private Boolean includeVersionsInReferences;
 
 	private List<ReferenceIssue> referenceIssues;
-	
+
 	private String version;
 	private String patreonLink;
 
@@ -58,15 +58,38 @@ public class MetaJson {
 
 	public Map<String, MetaJson> getDependenciesMap() {
 		Map<String, MetaJson> metaJsonMap = new LinkedHashMap<>();
-		if(Objects.isNull(dependencies))
+		if (Objects.isNull(dependencies))
 			return metaJsonMap;
-		
+
 		dependencies.fields().forEachRemaining(e -> {
 			String varKey = e.getKey();
 			String licenseType = e.getValue().get("licenseType").asText();
 			JsonNode jf = e.getValue().get("dependencies");
-			if(Objects.nonNull(jf))
+			if (Objects.nonNull(jf))
 				metaJsonMap.put(varKey, new MetaJson(varKey, licenseType, jf));
+		});
+		return metaJsonMap;
+	}
+
+	public Map<String, String> getDependenciesAll(String parent) {
+		Map<String, String> metaJsonMap = new LinkedHashMap<>();
+		if (Objects.isNull(dependencies))
+			return metaJsonMap;
+
+		dependencies.fields().forEachRemaining(e -> {
+			String varKey = e.getKey();
+			String licenseType = "";
+			if (Objects.nonNull(e.getValue().get("licenseType")))
+				licenseType = e.getValue().get("licenseType").asText();
+
+			JsonNode jf = e.getValue().get("dependencies");
+			if (Objects.nonNull(jf)) {
+				MetaJson metaJson = new MetaJson(varKey, licenseType, jf);
+				metaJsonMap.put(varKey, parent);
+				metaJsonMap.putAll(metaJson.getDependenciesAll(varKey));
+			} else {
+				metaJsonMap.put(varKey, parent);
+			}
 		});
 		return metaJsonMap;
 	}

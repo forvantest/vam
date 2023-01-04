@@ -44,9 +44,19 @@ public class WorkUnDeployVarFile extends WorkVarFile {
 		varFileDTO.unHide(VAM_FILE_PREFS);
 	}
 	
+//	@Override
+//	VarFileDTO work2(VarFileDTO varFileDTO,VarFile varFileRef) {
+//		File realVarFile = new File(varFileRef.getFullPath() + varFileRef.getVarFileName());
+//		deleteLinkFile(realVarFile);
+//		VarFileDTO varFileDTORef = readVarFile(makeVarFileDTO(realVarFile.getAbsolutePath()));
+//		varFileDTORef.unHide(VAM_FILE_PREFS);
+//		return varFileDTORef;
+//	}
+	
 	@Override
-	VarFileDTO work2(VarFileDTO varFileDTO,VarFile varFileRef) {
+	VarFileDTO work2(String parent,VarFile varFileRef) {
 		File realVarFile = new File(varFileRef.getFullPath() + varFileRef.getVarFileName());
+		deleteLinkFile(realVarFile);
 		VarFileDTO varFileDTORef = readVarFile(makeVarFileDTO(realVarFile.getAbsolutePath()));
 		varFileDTORef.unHide(VAM_FILE_PREFS);
 		return varFileDTORef;

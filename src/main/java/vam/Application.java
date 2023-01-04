@@ -32,21 +32,22 @@ public class Application extends SpringBootServletInitializer {
 		// work.loadVarFileIntoDB("AllPackages/");
 
 		// work.createLinkFile();
-//		work.unDeploy("AllPackages/girl/Archer/");
-//		work.unDeploy("AllPackages/girl/Dnaddr/");
-//		 work.unDeploy("AllPackages/girl/VAMDoll/");
-		// work.unDeploy("AllPackages/girl/VAM-YJ/");
-		// work.unDeploy("AllPackages/girl/lv/");
-//		work.unDeploy("AllPackages/girl/realclone/");
-//		work.unDeploy("AllPackages/girl/uugg/");
+		work.unDeploy("AllPackages/girl/Archer/");
+		work.unDeploy("AllPackages/girl/Dnaddr/");
+		work.unDeploy("AllPackages/girl/VAMDoll/");
+		work.unDeploy("AllPackages/girl/VAM-YJ/");
+		work.unDeploy("AllPackages/girl/lv/");
+		work.unDeploy("AllPackages/girl/realclone/");
+		work.unDeploy("AllPackages/girl/uugg/");
 
-		work.deploy("AllPackages/girl/Archer/");
+//		work.deploy("AllPackages/girl/Archer/");
 //		work.deploy("AllPackages/girl/Dnaddr/");
-		// work.deploy("AllPackages/girl/VAMDoll/");
-// work.deploy("AllPackages/girl/VAM-YJ/");
-// work.deploy("AllPackages/girl/lv/");
+//		work.deploy("AllPackages/girl/VAMDoll/");
+//		work.deploy("AllPackages/girl/VAM-YJ/");
+//		work.deploy("AllPackages/girl/lv/");
 //		work.deploy("AllPackages/girl/realclone/");
 //		work.deploy("AllPackages/girl/uugg/");
+
 //		work.allUnHide("girl/realclone-support/");
 	}
 }

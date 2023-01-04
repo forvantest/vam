@@ -115,7 +115,7 @@ public class ZipUtils {
 //			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/scripts/")) {
 //				System.out.print("Scripts.json...");
 			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/subscene/")) {
-				System.out.print("SubScene.json...");
+				//System.out.print("SubScene.json...");
 			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/assets/")) {
 				System.out.print("Assets.json...");
 			} else {
@@ -127,7 +127,7 @@ public class ZipUtils {
 			String[] nameArray = StringUtils.split(atomPath, "/");
 			if (skipResourceExtension.contains(atomExtension)) {
 			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "saves/person/")) {
-				System.out.print("Saves.Person.json...");
+				//System.out.print("Saves.Person.json...");
 			} else if ("person".equals(nameArray[1])) {
 				if ("pose".equals(nameArray[2])) {
 					return VarFieldType.SAVES_PERSON_POSE_DOT_JSON;
@@ -162,6 +162,8 @@ public class ZipUtils {
 				fixedString = StringUtils.replace(jsonText, "\uFEFF", "");
 				if (Objects.nonNull(fixedString) || StringUtils.isEmpty(fixedString)) {
 					MetaJson metaJson = objectMapper.readValue(fixedString, MetaJson.class);
+					if(StringUtils.contains(fixedString, "Alter3go.Studio_Poses_collection_1_3.latest"))
+						System.out.println("debug2: " + varFileDTO.getVarFileName());
 					varFileDTO.setMetaJson(metaJson);
 				}
 			} catch (JsonMappingException ex) {

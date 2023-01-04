@@ -9,14 +9,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import vam.dto.MetaJson;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import vam.dto.VarFileDTO;
 import vam.entity.VarFile;
 import vam.repository.VarFileRepository;
@@ -40,6 +43,9 @@ public abstract class WorkVarFile {
 
 	@Autowired
 	public VarFileRepository varFileRepository;
+
+	@Autowired
+	ObjectMapper objectMapper;
 
 	public WorkVarFile() {
 		super();
@@ -248,6 +254,7 @@ public abstract class WorkVarFile {
 			createLinkFile(file);
 		}
 	}
+
 //	public void connect() {
 //		Connection conn = null;
 //		try {
@@ -270,11 +277,13 @@ public abstract class WorkVarFile {
 //			}
 //		}
 //	}
+	int dependCount = 0;
 
 	protected void process(String targetDirectory) {
 		File dir = new File(VAM_ROOT_PATH + targetDirectory);
 		List<VarFileDTO> listFavVarFileDTO = fetchAllVarFiles(dir, VAR_EXTENSION);
 		for (VarFileDTO varFileDTO : listFavVarFileDTO) {
+			dependCount = 0;
 			processVarFile(varFileDTO);
 			work1(varFileDTO);
 		}
@@ -306,30 +315,87 @@ public abstract class WorkVarFile {
 		}
 
 		if (Objects.nonNull(varFileDTO.getMetaJson())) {
-			varFileDTO.getMetaJson().getDependenciesMap().forEach((k, v) -> processDependenciesMap(varFileDTO, k, v));
+
+			Map<String, String> m = varFileDTO.getMetaJson().getDependenciesAll(varFileDTO.getVarFileName());
+			Map<String, String> mAll=new HashMap<>();
+			mAll.putAll(m);
+			//System.out.println("+++before size: " + mAll.size());
+			m.forEach((k, v) -> processDependenciesMapa(mAll, k, v));
+			//System.out.println("+++after size: " + mAll.size());
+//			Set<String> set = new HashSet();
+//			varFileDTO.getMetaJson().getDependenciesMap()
+//					.forEach((k, v) -> processDependenciesMap(set, varFileDTO, k, v.getDependencies()));
+//			System.out.println("+++depend size: " + set.size());
 		}
 	}
 
-	protected void processDependenciesMap(VarFileDTO varFileDTOParent, String k, MetaJson metaJson) {
+	private void processDependenciesMapa(Map<String, String> mAll, String k, String parent) {
 		VarFileDTO varFileQuery = new VarFileDTO(null, k);
 		VarFile varFileRef = findSuitableVarFile(varFileQuery);
 		if (Objects.nonNull(varFileRef)) {
-			VarFileDTO varFileDTORef = work2(varFileDTOParent, varFileRef);
-			if (Objects.nonNull(varFileDTORef))
-				processVarFile(varFileDTORef);
-		} else {
-			varFileQuery.setMetaJson(metaJson);
-			processVarFile(varFileQuery);
+			work2(parent, varFileRef);
+			VarFileDTO varFileDTOOld = new VarFileDTO(varFileRef);
+			if (Objects.nonNull(varFileDTOOld)) {
+				if (Objects.nonNull(varFileDTOOld.getMetaJson())) {
+					Map<String, String> m2 = varFileDTOOld.getMetaJson()
+							.getDependenciesAll(varFileDTOOld.getVarFileName());
+					Map<String, String> m3 = cuteMap(mAll, m2);
+					mAll.putAll(m3);
+					if(!CollectionUtils.isEmpty(m3)) {
+						System.out.println("+++depend size: " + m3);
+					}
+					m3.forEach((k2, v2) -> processDependenciesMapa(mAll, k2, v2));
+				}
+			} else {
+			}
+			// VarFileDTO varFileDTORef = work2(parent, varFileRef);
 		}
 	}
 
-	protected void processDependTxt(VarFileDTO varFileDTO) {
-//		String fullPathName = varFileDTO.getFullPath() + varFileDTO.getVarFileName();
-//		File realVarFile = new File(fullPathName);
-//		if (!realVarFile.exists()) {
-//			System.out.println("warn8: varFile doesn't exist: " + fullPathName);
-//			return;
+	private Map<String, String> cuteMap(Map<String, String> m1, Map<String, String> m2) {
+		Map<String, String> map3 = new HashMap<>();
+		for (String key : m2.keySet()) {
+			if (!m1.containsKey(key)) {
+				map3.put(key, m2.get(key));
+			}
+		}
+		return map3;
+	}
+
+//	protected void processDependenciesMap(Set<String> set, VarFileDTO varFileDTOParent, String k,
+//			ObjectNode objectNode2) {
+//		dependCount++;
+//		// System.out.println(dependCount + ":" + k);
+//		if (StringUtils.startsWith(varFileDTOParent.getVarFileName(), "Wolverine333.LAUREN_3.2.var") &&
+//				StringUtils.startsWith(k, "Nobody.savannah.latest")	) {
+//			System.out.println(dependCount + ": " + k);
 //		}
+//
+//		VarFileDTO varFileQuery = new VarFileDTO(null, k);
+//		VarFile varFileRef = findSuitableVarFile(varFileQuery);
+//		if (Objects.nonNull(varFileRef)) {
+//			VarFileDTO varFileDTORef = work2(varFileDTOParent, varFileRef);
+//			if (Objects.isNull(varFileDTORef)) {
+//				System.out.println("---db data deprecate3: " + varFileRef);
+//				return;
+//			}
+//			if(Objects.nonNull(varFileDTORef.getMetaJson().getDependencies())) {
+//				varFileDTORef.getMetaJson().getDependencies().setAll(objectNode2);
+//			}else
+//				varFileDTORef.getMetaJson().setDependencies(objectNode2);
+//			
+//			varFileDTORef.getMetaJson().getDependenciesMap()
+//					.forEach((k1, v1) -> processDependenciesMap(set, varFileDTORef, k1, v1.getDependencies()));
+//		} else {
+//			MetaJson metaJson = new MetaJson();
+//			metaJson.setDependencies(objectNode2);
+//			metaJson.getDependenciesMap()
+//					.forEach((k1, v1) -> processDependenciesMap(set, varFileQuery, k1, v1.getDependencies()));
+//		}
+//		set.add(k);
+//	}
+
+	protected void processDependTxt(VarFileDTO varFileDTO) {
 		VarFile varFile = findSuitableVarFile(varFileDTO);
 		if (Objects.isNull(varFile))
 			return;
@@ -344,8 +410,17 @@ public abstract class WorkVarFile {
 		}
 		work4(varFileDTORef);
 		if (Objects.nonNull(varFileDTORef.getMetaJson())) {
-			varFileDTORef.getMetaJson().getDependenciesMap()
-					.forEach((k, v) -> processDependenciesMap(varFileDTORef, k, v));
+
+			Map<String, String> m = varFileDTORef.getMetaJson().getDependenciesAll(varFileDTORef.getVarFileName());
+			Map<String, String> mAll=new HashMap<>();
+			mAll.putAll(m);
+			//System.out.println("+++before size: " + mAll.size());
+			m.forEach((k, v) -> processDependenciesMapa(mAll, k, v));
+			//System.out.println("+++after size: " + mAll.size());
+
+//			Set<String> objectNode = new HashSet();
+//			varFileDTORef.getMetaJson().getDependenciesMap()
+//					.forEach((k, v) -> processDependenciesMap(objectNode, varFileDTORef, k, v.getDependencies()));
 		}
 	}
 
@@ -391,8 +466,8 @@ public abstract class WorkVarFile {
 		}
 	}
 
-	VarFileDTO work2(VarFileDTO varFileDTOParent, VarFile varFileRef) {
-		varFileRef.increaseReference(varFileDTOParent);
+	VarFileDTO work2(String parent, VarFile varFileRef) {
+		varFileRef.increaseReference(parent);
 		varFileRepository.save(varFileRef);
 		File realVarFile = new File(varFileRef.getFullPath() + varFileRef.getVarFileName());
 		if (!realVarFile.exists()) {
@@ -400,10 +475,26 @@ public abstract class WorkVarFile {
 			varFileRepository.delete(varFileRef);
 			return null;
 		}
+		createLinkFile(realVarFile);
 		VarFileDTO varFileDTORef = readVarFile(makeVarFileDTO(realVarFile.getAbsolutePath()));
 		varFileDTORef.realHide(VAM_FILE_PREFS);
 		return varFileDTORef;
 	}
+
+//	VarFileDTO work2(VarFileDTO varFileDTOParent, VarFile varFileRef) {
+//		varFileRef.increaseReference(varFileDTOParent);
+//		varFileRepository.save(varFileRef);
+//		File realVarFile = new File(varFileRef.getFullPath() + varFileRef.getVarFileName());
+//		if (!realVarFile.exists()) {
+//			System.out.println("---db data deprecate2: " + varFileRef);
+//			varFileRepository.delete(varFileRef);
+//			return null;
+//		}
+//		createLinkFile(realVarFile);
+//		VarFileDTO varFileDTORef = readVarFile(makeVarFileDTO(realVarFile.getAbsolutePath()));
+//		varFileDTORef.realHide(VAM_FILE_PREFS);
+//		return varFileDTORef;
+//	}
 
 	void work3(File realVarFile) {
 		createLinkFile(realVarFile);

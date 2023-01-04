@@ -47,6 +47,8 @@ public class VarFile implements Serializable, Comparable {
 
 	private String version;
 
+	private String metaDependencies;
+
 	private Integer dependenciesSize;
 
 	private String referencesJson;
@@ -67,14 +69,22 @@ public class VarFile implements Serializable, Comparable {
 
 	public VarFile(VarFileDTO varFileDTO) {
 		super();
+
 		this.creatorName = varFileDTO.getCreatorName();
 		this.packageName = varFileDTO.getPackageName();
 		this.version = varFileDTO.getVersion();
 		this.fullPath = varFileDTO.getFullPath();
 		this.varFileName = varFileDTO.getVarFileName();
-		if (Objects.nonNull(varFileDTO.getMetaJson()))
+		if (Objects.nonNull(varFileDTO.getMetaJson())) {
+			try {
+				ObjectMapper objectMapper = new ObjectMapper();
+				this.metaDependencies = objectMapper
+						.writeValueAsString(varFileDTO.getMetaJson().getDependenciesAll(""));
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
 			this.dependenciesSize = varFileDTO.getMetaJson().getDependenciesMap().size();
-
+		}
 		this.femaleCount = varFileDTO.getFemaleCount();
 		this.femaleGenitaliaCount = varFileDTO.getFemaleGenitaliaCount();
 		this.maleCount = varFileDTO.getMaleCount();
@@ -132,6 +142,23 @@ public class VarFile implements Serializable, Comparable {
 		try {
 			reference = objectMapper.readValue(referencesJson, HashSet.class);
 			String key = varFileDTO.makeKey();
+			reference.add(key);
+			referencesJson = objectMapper.writeValueAsString(reference);
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void increaseReference(String parent) {
+		if (Objects.isNull(referencesJson))
+			referencesJson = "[]";
+		ObjectMapper objectMapper = new ObjectMapper();
+		Set<String> reference;
+		try {
+			reference = objectMapper.readValue(referencesJson, HashSet.class);
+			String key = parent;
 			reference.add(key);
 			referencesJson = objectMapper.writeValueAsString(reference);
 		} catch (JsonMappingException e) {

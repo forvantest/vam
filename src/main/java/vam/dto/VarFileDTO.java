@@ -9,6 +9,9 @@ import java.util.Objects;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.Data;
 import vam.entity.VarFile;
 
@@ -33,6 +36,18 @@ public class VarFileDTO {
 		this.version = varFile.getVersion();
 		this.fullPath = varFile.getFullPath();
 		this.varFileName = varFile.getVarFileName();
+
+		try {
+			String str = varFile.getMetaDependencies();
+			if(Objects.nonNull(str)) {
+				ObjectMapper objectMapper = new ObjectMapper();
+				this.setMetaJson(new MetaJson());
+				this.getMetaJson().setDependencies(objectMapper.readTree(str).deepCopy());
+			}
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private Integer femaleCount;
