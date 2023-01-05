@@ -21,12 +21,14 @@ import com.fasterxml.jackson.core.io.JsonEOFException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import vam.dto.MetaJson;
 import vam.dto.PoseJson;
 import vam.dto.SceneJson;
 import vam.dto.VarFileDTO;
 import vam.dto.enumration.VarFieldType;
 
+@Slf4j
 @Component
 public class ZipUtils {
 
@@ -111,15 +113,15 @@ public class ZipUtils {
 				if (StringUtils.startsWith(atomPath, "custom/atom/person/morphs/male_genitalia/"))
 					return VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_MALE_GENITALIA;
 			} else if (StringUtils.startsWith(atomPath, "custom/scripts/")) {
-//				System.out.print("Scripts.var...");
+//				log.debug("Scripts.var...");
 //			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/scripts/")) {
-//				System.out.print("Scripts.json...");
+//				log.debug("Scripts.json...");
 			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/subscene/")) {
-				//System.out.print("SubScene.json...");
+				log.debug("SubScene.json...");
 			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/assets/")) {
-				System.out.print("Assets.json...");
+				log.debug("Assets.json...");
 			} else {
-				System.out.println("warn1: " + zipEntry.getName());
+				log.debug("warn1: " + zipEntry.getName());
 			}
 		} else if (StringUtils.startsWith(zipEntry.getName(), "Saves")) {
 			String atomPath = zipEntry.getName().toLowerCase();
@@ -141,7 +143,7 @@ public class ZipUtils {
 				} else if (skipSaveExtension.contains(atomExtension)) {
 
 				} else {
-					System.out.println("warn12: wrong meta.json: " + nameArray[nameArray.length - 1]);
+					log.debug("warn12: wrong meta.json: " + nameArray[nameArray.length - 1]);
 				}
 			} else {
 				System.out.println("warn3: " + title + " : " + zipEntry.getName());

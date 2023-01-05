@@ -20,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import vam.dto.VarFileDTO;
 import vam.entity.VarFile;
 import vam.repository.VarFileRepository;
@@ -27,6 +28,7 @@ import vam.util.FileUtil;
 import vam.util.OsUtils;
 import vam.util.ZipUtils;
 
+@Slf4j
 public abstract class WorkVarFile {
 
 	protected String VAM_ROOT_PATH = "C:\\VAM\\virt-a-mate 1.20.77.9\\";
@@ -297,7 +299,7 @@ public abstract class WorkVarFile {
 			if (CollectionUtils.isEmpty(varFileOldList)) {
 				if (StringUtils.startsWith(varFileDTO.getCreatorName(), "https"))
 					System.out.println("debug");
-				System.out.println("---missing depenence2: " + varFileDTO.getCreatorName() + "."
+				log.debug("---missing depenence2: " + varFileDTO.getCreatorName() + "."
 						+ varFileDTO.getPackageName() + "." + varFileDTO.getVersion());
 
 				return findSuitableVarFile2(varFileDTO);
@@ -311,7 +313,7 @@ public abstract class WorkVarFile {
 	private VarFile findSuitableVarFile2(VarFileDTO varFileDTO) {
 		List<VarFile> varFileOldList = varFileRepository.findBy(new VarFile(varFileDTO));
 		if (CollectionUtils.isEmpty(varFileOldList)) {
-			System.out.println("---missing depenence1: " + varFileDTO.getCreatorName() + "."
+			log.debug("---missing depenence1: " + varFileDTO.getCreatorName() + "."
 					+ varFileDTO.getPackageName() + "." + varFileDTO.getVersion());
 			return null;
 		} else {

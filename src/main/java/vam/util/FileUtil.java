@@ -7,6 +7,9 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class FileUtil {
 
 	/**
@@ -47,7 +50,7 @@ public class FileUtil {
 				checkFolderExist(linkfolder);
 				Path link = linkFile1.toPath();
 				Files.createSymbolicLink(link, source);
-				System.out.println("linkFile create: " + linkFile1);
+				log.debug("linkFile create: " + linkFile1);
 				return true;
 			}
 		} catch (Exception e) {
@@ -79,7 +82,7 @@ public class FileUtil {
 		File linkFile = new File(linkFileName);
 		if (linkFile.exists()) {
 			linkFile.delete();
-			System.out.println("---linkFile deleted: " + linkFile);
+			log.info("---linkFile deleted: " + linkFile);
 		}
 		String subPath = linkFileName;
 		for (int i = 0; i < 5; i++) {
@@ -96,7 +99,7 @@ public class FileUtil {
 			if (!StringUtils.contains(VAM_ADDON_PATH, linkFolderPath) ) {
 				File linkFolder = new File(linkFolderPath);
 				if (linkFolder.exists() && linkFolder.list().length == 0) {
-					System.out.println("---linkFolder deleted: " + linkFolder);
+					log.info("---linkFolder deleted: " + linkFolder);
 					linkFolder.delete();
 					return linkFolderPath;
 				}

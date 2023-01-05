@@ -8,9 +8,11 @@ import java.util.Objects;
 
 import org.springframework.util.CollectionUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import vam.dto.VarFileDTO;
 import vam.entity.VarFile;
 
+@Slf4j
 public abstract class WorkDeployVarFile extends WorkVarFile {
 
 	int dependCount = 0;
@@ -37,8 +39,7 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		if (realVarFile.exists()) {
 			work3(realVarFile);
 		} else {
-			System.out.println(
-					"warn8: varFile doesn't exist: " + varFileDTO.getFullPath() + "  " + varFileDTO.getVarFileName());
+			log.warn("warn8: varFile doesn't exist: " + varFileDTO.getFullPath() + "  " + varFileDTO.getVarFileName());
 		}
 
 		if (Objects.nonNull(varFileDTO.getMetaJson())) {
@@ -65,7 +66,7 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 					Map<String, String> mapDiff = cuteMap(mAll, m2);
 					mAll.putAll(mapDiff);
 					if (!CollectionUtils.isEmpty(mapDiff)) {
-						System.out.println("+++depend size: " + mapDiff);
+						log.debug("+++depends size: " + mapDiff);
 					}
 					mapDiff.forEach((k2, v2) -> processDependencies(mAll, k2, v2));
 				}

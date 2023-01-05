@@ -13,8 +13,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import vam.entity.VarFile;
 
+@Slf4j
 @Data
 public class VarFileDTO {
 	public VarFileDTO(String fullPath, String varFileName) {
@@ -118,7 +120,7 @@ public class VarFileDTO {
 				File hideFile = new File(PATH_HIDE_FILE);
 				if (!hideFile.exists()) {
 					hideFile.createNewFile();
-					System.out.println("+++" + extension + ": " + hideFile);
+					log.info("+++" + extension + ": " + hideFile);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -135,7 +137,7 @@ public class VarFileDTO {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println("---unhide: " + hidePath);
+			log.info("---unhide: " + hidePath);
 		}
 	}
 
