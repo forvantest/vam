@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import vam.dto.VarFileDTO;
 
 @Service("work")
-public class Work extends WorkVarFile {
+public class Work extends WorkDeployVarFile {
 
 //	private String VAM_ROOT_PATH = "C:/VAM/";
 //	private String VAM_FILE_PREFS = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9/AddonPackagesFilePrefs/";

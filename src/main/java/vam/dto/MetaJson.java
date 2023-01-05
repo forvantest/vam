@@ -56,20 +56,20 @@ public class MetaJson {
 		this.dependencies = jf.deepCopy();
 	}
 
-	public Map<String, MetaJson> getDependenciesMap() {
-		Map<String, MetaJson> metaJsonMap = new LinkedHashMap<>();
-		if (Objects.isNull(dependencies))
-			return metaJsonMap;
-
-		dependencies.fields().forEachRemaining(e -> {
-			String varKey = e.getKey();
-			String licenseType = e.getValue().get("licenseType").asText();
-			JsonNode jf = e.getValue().get("dependencies");
-			if (Objects.nonNull(jf))
-				metaJsonMap.put(varKey, new MetaJson(varKey, licenseType, jf));
-		});
-		return metaJsonMap;
-	}
+//	public Map<String, MetaJson> getDependenciesMap() {
+//		Map<String, MetaJson> metaJsonMap = new LinkedHashMap<>();
+//		if (Objects.isNull(dependencies))
+//			return metaJsonMap;
+//
+//		dependencies.fields().forEachRemaining(e -> {
+//			String varKey = e.getKey();
+//			String licenseType = e.getValue().get("licenseType").asText();
+//			JsonNode jf = e.getValue().get("dependencies");
+//			if (Objects.nonNull(jf))
+//				metaJsonMap.put(varKey, new MetaJson(varKey, licenseType, jf));
+//		});
+//		return metaJsonMap;
+//	}
 
 	public Map<String, String> getDependenciesAll(String parent) {
 		Map<String, String> metaJsonMap = new LinkedHashMap<>();

@@ -14,7 +14,7 @@ import vam.entity.VarFile;
 import vam.util.FileUtil;
 
 @Service("WorkUnDeployVarFile")
-public class WorkUnDeployVarFile extends WorkVarFile {
+public class WorkUnDeployVarFile extends WorkDeployVarFile {
 
 //	protected void unReference(VarFile varFile) {
 //		File realVarFile = new File(varFile.getFullPath() + varFile.getVarFileName());
@@ -67,10 +67,10 @@ public class WorkUnDeployVarFile extends WorkVarFile {
 		deleteLinkFile(realVarFile);
 	}
 	
-	@Override
-	void work4(VarFileDTO varFileDTORef) {
-		varFileDTORef.unHide(VAM_FILE_PREFS);
-	}
+//	@Override
+//	void work4(VarFileDTO varFileDTORef) {
+//		varFileDTORef.unHide(VAM_FILE_PREFS);
+//	}
 
 	
 }

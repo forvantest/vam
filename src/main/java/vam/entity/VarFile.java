@@ -83,7 +83,7 @@ public class VarFile implements Serializable, Comparable {
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
-			this.dependenciesSize = varFileDTO.getMetaJson().getDependenciesMap().size();
+			this.dependenciesSize = varFileDTO.getMetaJson().getDependenciesAll("").size();
 		}
 		this.femaleCount = varFileDTO.getFemaleCount();
 		this.femaleGenitaliaCount = varFileDTO.getFemaleGenitaliaCount();
@@ -134,22 +134,22 @@ public class VarFile implements Serializable, Comparable {
 		return this.version.compareTo(varFile2.getVersion());
 	}
 
-	public void increaseReference(VarFileDTO varFileDTO) {
-		if (Objects.isNull(referencesJson))
-			referencesJson = "[]";
-		ObjectMapper objectMapper = new ObjectMapper();
-		Set<String> reference;
-		try {
-			reference = objectMapper.readValue(referencesJson, HashSet.class);
-			String key = varFileDTO.makeKey();
-			reference.add(key);
-			referencesJson = objectMapper.writeValueAsString(reference);
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-	}
+//	public void increaseReference(VarFileDTO varFileDTO) {
+//		if (Objects.isNull(referencesJson))
+//			referencesJson = "[]";
+//		ObjectMapper objectMapper = new ObjectMapper();
+//		Set<String> reference;
+//		try {
+//			reference = objectMapper.readValue(referencesJson, HashSet.class);
+//			String key = varFileDTO.makeKey();
+//			reference.add(key);
+//			referencesJson = objectMapper.writeValueAsString(reference);
+//		} catch (JsonMappingException e) {
+//			e.printStackTrace();
+//		} catch (JsonProcessingException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public void increaseReference(String parent) {
 		if (Objects.isNull(referencesJson))
