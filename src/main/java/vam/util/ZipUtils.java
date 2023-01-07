@@ -113,9 +113,9 @@ public class ZipUtils {
 				if (StringUtils.startsWith(atomPath, "custom/atom/person/morphs/male_genitalia/"))
 					return VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_MALE_GENITALIA;
 			} else if (StringUtils.startsWith(atomPath, "custom/scripts/")) {
-//				log.debug("Scripts.var...");
-//			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/scripts/")) {
-//				log.debug("Scripts.json...");
+				log.debug("Scripts.var...");
+			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/scripts/")) {
+				log.debug("Scripts.json...");
 			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/subscene/")) {
 				log.debug("SubScene.json...");
 			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/assets/")) {
@@ -146,7 +146,7 @@ public class ZipUtils {
 					log.debug("warn12: wrong meta.json: " + nameArray[nameArray.length - 1]);
 				}
 			} else {
-				System.out.println("warn3: " + title + " : " + zipEntry.getName());
+				log.debug("warn3: " + title + " : " + zipEntry.getName());
 			}
 		} else if (skipResourceExtension.contains(getExtension(zipEntry.getName()))) {
 		} else {
@@ -164,8 +164,8 @@ public class ZipUtils {
 				fixedString = StringUtils.replace(jsonText, "\uFEFF", "");
 				if (Objects.nonNull(fixedString) || StringUtils.isEmpty(fixedString)) {
 					MetaJson metaJson = objectMapper.readValue(fixedString, MetaJson.class);
-					if(StringUtils.contains(fixedString, "Alter3go.Studio_Poses_collection_1_3.latest"))
-						System.out.println("debug2: " + varFileDTO.getVarFileName());
+				//	if(StringUtils.contains(fixedString, "Alter3go.Studio_Poses_collection_1_3.latest"))
+					//	System.out.println("debug2: " + varFileDTO.getVarFileName());
 					varFileDTO.setMetaJson(metaJson);
 				}
 			} catch (JsonMappingException ex) {
@@ -204,10 +204,6 @@ public class ZipUtils {
 				}
 			} catch (JsonParseException ex) {
 				varFileDTO.setException(ex);
-//				System.out.println("\n"+varFileDTO.getFullPath() + varFileDTO.getVarFileName());
-//				System.out.println(jsonText);
-//				ex.printStackTrace();
-//				System.out.println(ex.getMessage());
 			} catch (Exception ex) {
 				varFileDTO.setException(ex);
 				System.out.println("\n" + varFileDTO.getFullPath() + varFileDTO.getVarFileName());

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.springframework.util.CollectionUtils;
 
@@ -19,21 +20,33 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 
 	protected void process(String targetDirectory) {
 		File dir = new File(VAM_ROOT_PATH + targetDirectory);
-		List<VarFileDTO> listFavVarFileDTO = fetchAllVarFiles(dir, VAR_EXTENSION);
-		for (VarFileDTO varFileDTO : listFavVarFileDTO) {
-			dependCount = 0;
-			processVarFile(varFileDTO);
-			work1(varFileDTO);
-		}
 
-		List<VarFileDTO> listDependTxtDTO = fetchAllVarFiles(dir, DEPEND_TXT_EXTENSION);
-		for (VarFileDTO dependTxtDTO : listDependTxtDTO) {
-			processDependTxt(dependTxtDTO);
-			work1(dependTxtDTO);
+		Map<String, String> mAll = new HashMap<>();
+		Set<String> varFileRefSet = fetchAllVarFiles(dir, VAR_EXTENSION);
+		processVarFileRefSet(mAll, varFileRefSet, true);
+
+		Set<String> varFileRefSet2 = fetchAllVarFiles(dir, DEPEND_TXT_EXTENSION);
+		processVarFileRefSet(mAll, varFileRefSet2, true);
+	}
+
+	private void processVarFileRefSet(Map<String, String> mAll, Set<String> varFileRefSet, boolean toDo) {
+		process = 0;
+		for (String varFileName : varFileRefSet) {
+			VarFileDTO varFileDTOQuery = new VarFileDTO("", varFileName);
+			VarFile varFile = findSuitableVarFile(varFileDTOQuery);
+			if (Objects.isNull(varFile)) {
+				log.info("\n---missing depenence: " + varFileName);
+				continue;
+			}
+			VarFileDTO varFileDTO = new VarFileDTO(varFile);
+			processVarFile(mAll, varFileDTO);
+			if (toDo)
+				work1(varFileDTO);
+			echo(varFileRefSet.size());
 		}
 	}
 
-	protected void processVarFile(VarFileDTO varFileDTO) {
+	protected void processVarFile(Map<String, String> mAll, VarFileDTO varFileDTO) {
 		String fullPathName = varFileDTO.getFullPath() + varFileDTO.getVarFileName();
 		File realVarFile = new File(fullPathName);
 		if (realVarFile.exists()) {
@@ -45,7 +58,6 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		if (Objects.nonNull(varFileDTO.getMetaJson())) {
 
 			Map<String, String> m = varFileDTO.getMetaJson().getDependenciesAll(varFileDTO.getVarFileName());
-			Map<String, String> mAll = new HashMap<>();
 			mAll.putAll(m);
 			// System.out.println("+++before size: " + mAll.size());
 			m.forEach((k, v) -> processDependencies(mAll, k, v));
@@ -66,21 +78,12 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 					Map<String, String> mapDiff = cuteMap(mAll, m2);
 					mAll.putAll(mapDiff);
 					if (!CollectionUtils.isEmpty(mapDiff)) {
-						log.debug("+++depends size: " + mapDiff);
+						log.warn("+++ new depends size: " + mapDiff.size() + " total: " + mAll.size());
 					}
 					mapDiff.forEach((k2, v2) -> processDependencies(mAll, k2, v2));
 				}
 			}
 		}
-	}
-
-	protected void processDependTxt(VarFileDTO varFileDTO) {
-		VarFile varFile = findSuitableVarFile(varFileDTO);
-		if (Objects.isNull(varFile))
-			return;
-
-		processVarFile(new VarFileDTO(varFile));
-
 	}
 
 	void work1(VarFileDTO varFileDTO) {
@@ -98,7 +101,7 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		varFileRepository.save(varFileRef);
 		File realVarFile = new File(varFileRef.getFullPath() + varFileRef.getVarFileName());
 		if (!realVarFile.exists()) {
-			System.out.println("---db data deprecate2: " + varFileRef);
+			log.warn("---db data deprecate2: " + varFileRef);
 			varFileRepository.delete(varFileRef);
 			return null;
 		}

@@ -2,6 +2,10 @@ package vam.dto;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +45,7 @@ public class VarFileDTO {
 
 		try {
 			String str = varFile.getMetaDependencies();
-			if(Objects.nonNull(str)) {
+			if (Objects.nonNull(str)) {
 				ObjectMapper objectMapper = new ObjectMapper();
 				this.setMetaJson(new MetaJson());
 				this.getMetaJson().setDependencies(objectMapper.readTree(str).deepCopy());
@@ -177,5 +181,20 @@ public class VarFileDTO {
 		sb.append(".");
 		sb.append(version);
 		return sb.toString();
+	}
+
+	public void moveVarFileTo(String VAM_SOME_PATH) {
+		Path sDir = Paths.get(fullPath + varFileName);
+		String targetPath = VAM_SOME_PATH + creatorName + "\\";
+		File f = new File(targetPath);
+		if (!f.exists())
+			f.mkdirs();
+		Path tDir = Paths.get(targetPath, varFileName);
+		try {
+			System.out.println("\n---moving Duplicate: " + sDir);
+			Files.move(sDir, tDir, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -8,11 +8,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +32,12 @@ import vam.util.ZipUtils;
 @Slf4j
 public abstract class WorkVarFile {
 
-	protected String VAM_ROOT_PATH = "C:\\VAM\\virt-a-mate 1.20.77.9\\";
-	protected String VAM_FILE_PREFS = VAM_ROOT_PATH + "AddonPackagesFilePrefs\\";
+	protected String VAM_ROOT_PATH = "C:\\VAM\\";
+	protected String VAM_FILE_PREFS = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\AddonPackagesFilePrefs\\";
 	protected String VAM_ALLPACKAGES_PATH = VAM_ROOT_PATH + "AllPackages\\";
-	private String VAM_ADDON_PATH = VAM_ROOT_PATH + "AddonPackages\\";
-	private String VAM_BROKEN_PATH = VAM_ROOT_PATH + "Broken\\";
-	private String VAM_DUPLICATE_PATH = VAM_ROOT_PATH + "Duplicate\\";
+	private String VAM_ADDON_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\AddonPackages\\";
+	private String VAM_BROKEN_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\Broken\\";
+	private String VAM_DUPLICATE_PATH = VAM_ROOT_PATH+"Duplicate\\";
 	protected String VAR_EXTENSION = ".var";
 	protected String DEPEND_TXT_EXTENSION = ".depend.txt";
 
@@ -58,16 +59,6 @@ public abstract class WorkVarFile {
 		}
 	}
 
-//	protected VarFileDTO readVarFile(String fullPath) {
-//		int index = StringUtils.lastIndexOf(fullPath, File.separator);
-//		if (index >= 0) {
-//			String varFileName = StringUtils.substring(fullPath, index + 1);
-//			String path = StringUtils.substring(fullPath, 0, index + 1);
-//			return readVarFile(makeVarFileDTO(fullPath));
-//		}
-//		return null;
-//	}
-
 	protected VarFileDTO makeVarFileDTO(String fullPath) {
 		int index = StringUtils.lastIndexOf(fullPath, File.separator);
 		if (index >= 0) {
@@ -78,8 +69,8 @@ public abstract class WorkVarFile {
 		return null;
 	}
 
-	protected List<VarFileDTO> readDependTxt(String fullPath) {
-		List<VarFileDTO> varFileDTOList = new ArrayList<>();
+	protected Set<String> readDependTxt(String fullPath) {
+		Set<String> varFileRefSet = new HashSet<>();
 		BufferedReader reader;
 		try {
 			reader = new BufferedReader(new FileReader(fullPath));
@@ -90,17 +81,17 @@ public abstract class WorkVarFile {
 					continue;
 				String[] column = StringUtils.split(line);
 				if (column.length < 4) {
-					System.out.println("---skip " + line);
+					log.warn("---skip " + line);
 					continue;
 				}
 				// System.out.println("s1: " + column[0]);
-				varFileDTOList.add(new VarFileDTO(null, column[0]));
+				varFileRefSet.add(column[0]);
 			}
 			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return varFileDTOList;
+		return varFileRefSet;
 	}
 
 	protected VarFileDTO readVarFile(VarFileDTO varFileDTOQuery) {
@@ -112,22 +103,23 @@ public abstract class WorkVarFile {
 		return null;
 	}
 
-	protected List<VarFileDTO> fetchAllVarFiles(File file, String extension) {
-		List<VarFileDTO> list = new ArrayList<>();
+	protected Set<String> fetchAllVarFiles(File file, String extension) {
+		Set<String> varFileRefSet = new HashSet<>();
 		if (file.isDirectory()) {
 			for (File file1 : file.listFiles()) {
-				list.addAll(fetchAllVarFiles(file1, extension));
+				varFileRefSet.addAll(fetchAllVarFiles(file1, extension));
 			}
 		} else {
 			if (file.getAbsolutePath().endsWith(extension)) {
 				if (VAR_EXTENSION.equals(extension)) {
-					list.add(readVarFile(makeVarFileDTO(file.getAbsolutePath())));
+					VarFileDTO varFileDTO = makeVarFileDTO(file.getAbsolutePath());
+					varFileRefSet.add(varFileDTO.getVarFileName());
 				} else if (DEPEND_TXT_EXTENSION.equals(extension)) {
-					list.addAll(readDependTxt(file.getAbsolutePath()));
+					varFileRefSet.addAll(readDependTxt(file.getAbsolutePath()));
 				}
 			}
 		}
-		return list;
+		return varFileRefSet;
 	}
 
 	static int process = 0;
@@ -163,10 +155,10 @@ public abstract class WorkVarFile {
 						File f = new File(varFile.getFullPath() + varFile.getVarFileName());
 						if (f.exists()) {
 							System.out.print("---duplicate:" + varFileDTOQuery);
-							moveVarFileToDuplicate(varFileDTOQuery);
+							varFileDTOQuery.moveVarFileTo(VAM_DUPLICATE_PATH);
 							return;
 						} else {
-							System.out.print("---db data deprecate:" + varFile);
+							log.warn("---db data deprecate:" + varFile);
 							varFile.setFullPath(varFileDTOQuery.getFullPath());
 							varFile.setVarFileName(varFileDTOQuery.getVarFileName());
 							varFileRepository.saveAndFlush(varFile);
@@ -191,7 +183,8 @@ public abstract class WorkVarFile {
 				} else if (!varFileOld.getFullPath().equals(varFileNew.getFullPath())
 						|| !varFileOld.getVarFileName().equals(varFileNew.getVarFileName())) {
 					// System.out.print("duplicate:" + varFileNew);
-					moveVarFileToDuplicate(varFileNew);
+//					moveVarFileToDuplicate(varFileNew);
+					varFileDTONew.moveVarFileTo(VAM_DUPLICATE_PATH);
 				}
 			}
 		}
@@ -202,21 +195,6 @@ public abstract class WorkVarFile {
 		Path tDir = Paths.get(VAM_BROKEN_PATH, varFileDTONew.getVarFileName());
 		try {
 			System.out.println("\n---moving Broken: " + sDir);
-			Files.move(sDir, tDir, StandardCopyOption.REPLACE_EXISTING);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	protected void moveVarFileToDuplicate(VarFileDTO varFileNew) {
-		moveVarFileToDuplicate(new VarFile(varFileNew));
-	}
-
-	protected void moveVarFileToDuplicate(VarFile varFileNew) {
-		Path sDir = Paths.get(varFileNew.getFullPath(), varFileNew.getVarFileName());
-		Path tDir = Paths.get(VAM_DUPLICATE_PATH, varFileNew.getVarFileName());
-		try {
-			System.out.println("\n---moving Duplicate: " + sDir);
 			Files.move(sDir, tDir, StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -299,8 +277,8 @@ public abstract class WorkVarFile {
 			if (CollectionUtils.isEmpty(varFileOldList)) {
 				if (StringUtils.startsWith(varFileDTO.getCreatorName(), "https"))
 					System.out.println("debug");
-				log.debug("---missing depenence2: " + varFileDTO.getCreatorName() + "."
-						+ varFileDTO.getPackageName() + "." + varFileDTO.getVersion());
+				log.debug("---missing depenence2: " + varFileDTO.getCreatorName() + "." + varFileDTO.getPackageName()
+						+ "." + varFileDTO.getVersion());
 
 				return findSuitableVarFile2(varFileDTO);
 			} else {
@@ -313,8 +291,8 @@ public abstract class WorkVarFile {
 	private VarFile findSuitableVarFile2(VarFileDTO varFileDTO) {
 		List<VarFile> varFileOldList = varFileRepository.findBy(new VarFile(varFileDTO));
 		if (CollectionUtils.isEmpty(varFileOldList)) {
-			log.debug("---missing depenence1: " + varFileDTO.getCreatorName() + "."
-					+ varFileDTO.getPackageName() + "." + varFileDTO.getVersion());
+			log.debug("---missing depenence1: " + varFileDTO.getCreatorName() + "." + varFileDTO.getPackageName() + "."
+					+ varFileDTO.getVersion());
 			return null;
 		} else {
 			VarFile varFile = varFileOldList.get(0);
@@ -322,25 +300,14 @@ public abstract class WorkVarFile {
 		}
 	}
 
-
-//	VarFileDTO work2(VarFileDTO varFileDTOParent, VarFile varFileRef) {
-//		varFileRef.increaseReference(varFileDTOParent);
-//		varFileRepository.save(varFileRef);
-//		File realVarFile = new File(varFileRef.getFullPath() + varFileRef.getVarFileName());
-//		if (!realVarFile.exists()) {
-//			System.out.println("---db data deprecate2: " + varFileRef);
-//			varFileRepository.delete(varFileRef);
-//			return null;
-//		}
-//		createLinkFile(realVarFile);
-//		VarFileDTO varFileDTORef = readVarFile(makeVarFileDTO(realVarFile.getAbsolutePath()));
-//		varFileDTORef.realHide(VAM_FILE_PREFS);
-//		return varFileDTORef;
-//	}
-
-//
-//	void work4(VarFileDTO varFileDTORef) {
-//		varFileDTORef.realHide(VAM_FILE_PREFS);
-//	}
-
+	protected void echo(int total) {
+		process++;
+		if (process % 100 == 0) {
+			System.out.println("done: " + process + "/" + total);
+		} else if (process % 10 == 0) {
+			System.out.print(process);
+		} else {
+			System.out.print(".");
+		}
+	}
 }
