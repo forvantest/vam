@@ -7,13 +7,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Data;
@@ -21,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import vam.entity.VarFile;
 
 @Slf4j
+@JsonInclude(Include.NON_NULL) 
 @Data
 public class VarFileDTO {
 	public VarFileDTO(String fullPath, String varFileName) {
@@ -42,14 +49,22 @@ public class VarFileDTO {
 		this.version = varFile.getVersion();
 		this.fullPath = varFile.getFullPath();
 		this.varFileName = varFile.getVarFileName();
-
+		this.favorite = varFile.getFavorite();
+		this.referencesJson = varFile.getReferencesJson();
 		try {
+			ObjectMapper objectMapper = new ObjectMapper();
 			String str = varFile.getMetaDependencies();
 			if (Objects.nonNull(str)) {
-				ObjectMapper objectMapper = new ObjectMapper();
 				this.setMetaJson(new MetaJson());
 				this.getMetaJson().setDependencies(objectMapper.readTree(str).deepCopy());
 			}
+			String str2 = varFile.getScenesJson();
+			if (Objects.nonNull(str2)) {
+				List<SceneJson> myObjects = objectMapper.readValue(str2, new TypeReference<List<SceneJson>>() {
+				});
+				this.setSceneJsonList(myObjects);
+			}
+
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -81,6 +96,8 @@ public class VarFileDTO {
 
 	private MetaJson metaJson;
 	private Exception exception;
+	private Integer favorite;
+	private String referencesJson;
 
 	public String makeTitle() {
 		StringBuilder stringBuilder = new StringBuilder();
@@ -183,7 +200,7 @@ public class VarFileDTO {
 		return sb.toString();
 	}
 
-	public void moveVarFileTo(String VAM_SOME_PATH) {
+	public void moveVarFileTo(String VAM_SOME_PATH, String reason) {
 		Path sDir = Paths.get(fullPath + varFileName);
 		String targetPath = VAM_SOME_PATH + creatorName + "\\";
 		File f = new File(targetPath);
@@ -191,9 +208,33 @@ public class VarFileDTO {
 			f.mkdirs();
 		Path tDir = Paths.get(targetPath, varFileName);
 		try {
-			System.out.println("\n---moving Duplicate: " + sDir);
+			System.out.println("\n---moving "+reason+": " + sDir);
 			Files.move(sDir, tDir, StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void increaseFavorite() {
+		if (Objects.nonNull(favorite))
+			favorite++;
+		else
+			favorite = 1;
+	}
+
+	public void increaseReference(String parent) {
+		if (Objects.isNull(referencesJson))
+			referencesJson = "[]";
+		ObjectMapper objectMapper = new ObjectMapper();
+		Set<String> reference;
+		try {
+			reference = objectMapper.readValue(referencesJson, HashSet.class);
+			String key = parent;
+			reference.add(key);
+			referencesJson = objectMapper.writeValueAsString(reference);
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 	}

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -15,6 +17,7 @@ import vam.dto.meta.CustomOption;
 import vam.dto.meta.ReferenceIssue;
 
 @Data
+@JsonInclude(Include.NON_NULL) 
 @NoArgsConstructor
 public class MetaJson {
 	private String licenseType;

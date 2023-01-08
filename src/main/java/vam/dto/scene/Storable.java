@@ -1,12 +1,13 @@
 package vam.dto.scene;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.Data;
 
+@JsonInclude(Include.NON_NULL)
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Storable {

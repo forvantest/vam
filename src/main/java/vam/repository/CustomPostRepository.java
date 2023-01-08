@@ -8,5 +8,5 @@ import vam.entity.VarFile;
 public interface CustomPostRepository {
 	public List<VarFile> findBy(VarFileDTO varFileDTO);
 
-	public List<VarFile> findBy(VarFile varFile);
+	public List<VarFile> findByName(VarFileDTO varFileDTO);
 }

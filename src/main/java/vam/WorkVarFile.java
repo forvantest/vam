@@ -23,8 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import vam.dto.VarFileDTO;
-import vam.entity.VarFile;
-import vam.repository.VarFileRepository;
+import vam.repository.VarFileService;
 import vam.util.FileUtil;
 import vam.util.OsUtils;
 import vam.util.ZipUtils;
@@ -35,9 +34,10 @@ public abstract class WorkVarFile {
 	protected String VAM_ROOT_PATH = "C:\\VAM\\";
 	protected String VAM_FILE_PREFS = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\AddonPackagesFilePrefs\\";
 	protected String VAM_ALLPACKAGES_PATH = VAM_ROOT_PATH + "AllPackages\\";
+	protected String VAM_BASE_PATH = VAM_ALLPACKAGES_PATH + "base\\";
 	private String VAM_ADDON_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\AddonPackages\\";
 	private String VAM_BROKEN_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\Broken\\";
-	private String VAM_DUPLICATE_PATH = VAM_ROOT_PATH+"Duplicate\\";
+	private String VAM_DUPLICATE_PATH = VAM_ROOT_PATH + "Duplicate\\";
 	protected String VAR_EXTENSION = ".var";
 	protected String DEPEND_TXT_EXTENSION = ".depend.txt";
 
@@ -45,7 +45,7 @@ public abstract class WorkVarFile {
 	ZipUtils zipUtils;
 
 	@Autowired
-	public VarFileRepository varFileRepository;
+	public VarFileService varFileService;
 
 	@Autowired
 	ObjectMapper objectMapper;
@@ -145,23 +145,23 @@ public abstract class WorkVarFile {
 
 			if (file.getAbsolutePath().endsWith(VAR_EXTENSION)) {
 				VarFileDTO varFileDTOQuery = makeVarFileDTO(file.getAbsolutePath());
-				List<VarFile> varFileOldList2 = varFileRepository.findBy(varFileDTOQuery);
+				List<VarFileDTO> varFileOldList2 = varFileService.findBy(varFileDTOQuery);
 				if (!CollectionUtils.isEmpty(varFileOldList2)) {
-					VarFile varFile = varFileOldList2.get(0);
-					if (varFileDTOQuery.getFullPath().equals(varFile.getFullPath())
-							&& varFileDTOQuery.getVarFileName().equals(varFile.getVarFileName())) {
+					VarFileDTO varFileDTO = varFileOldList2.get(0);
+					if (varFileDTOQuery.getFullPath().equals(varFileDTO.getFullPath())
+							&& varFileDTOQuery.getVarFileName().equals(varFileDTO.getVarFileName())) {
 						return;
 					} else {
-						File f = new File(varFile.getFullPath() + varFile.getVarFileName());
+						File f = new File(varFileDTO.getFullPath() + varFileDTO.getVarFileName());
 						if (f.exists()) {
 							System.out.print("---duplicate:" + varFileDTOQuery);
-							varFileDTOQuery.moveVarFileTo(VAM_DUPLICATE_PATH);
+							varFileDTOQuery.moveVarFileTo(VAM_DUPLICATE_PATH,"duplicate1");
 							return;
 						} else {
-							log.warn("---db data deprecate:" + varFile);
-							varFile.setFullPath(varFileDTOQuery.getFullPath());
-							varFile.setVarFileName(varFileDTOQuery.getVarFileName());
-							varFileRepository.saveAndFlush(varFile);
+							log.warn("---db data deprecate:" + varFileDTO);
+							varFileDTO.setFullPath(varFileDTOQuery.getFullPath());
+							varFileDTO.setVarFileName(varFileDTOQuery.getVarFileName());
+							varFileService.update(varFileDTO);
 							return;
 						}
 					}
@@ -172,19 +172,22 @@ public abstract class WorkVarFile {
 					moveVarFileToBroken(varFileDTONew);
 					return;
 				}
-				VarFile varFileNew = new VarFile(varFileDTONew);
-				List<VarFile> varFileOldList = varFileRepository.findBy(varFileNew);
-				VarFile varFileOld = varFileNew.getSameVersion(varFileOldList);
-				if (Objects.isNull(varFileOld)) {
-					varFileRepository.saveAndFlush(varFileNew);
-				} else if (varFileNew.getFemaleCount() != varFileOld.getFemaleCount()) {
-					varFileOld.setFemaleCount(varFileNew.getFemaleCount());
-					varFileRepository.saveAndFlush(varFileOld);
-				} else if (!varFileOld.getFullPath().equals(varFileNew.getFullPath())
-						|| !varFileOld.getVarFileName().equals(varFileNew.getVarFileName())) {
-					// System.out.print("duplicate:" + varFileNew);
-//					moveVarFileToDuplicate(varFileNew);
-					varFileDTONew.moveVarFileTo(VAM_DUPLICATE_PATH);
+//				VarFile varFileNew = new VarFile(varFileDTONew);
+				List<VarFileDTO> varFileDTOOldList = varFileService.findBy(varFileDTONew);
+//				VarFileDTO varFileOld = varFileDTONew.getSameVersion(varFileOldList);
+				if (CollectionUtils.isEmpty(varFileDTOOldList)) {
+					varFileService.save(varFileDTONew);
+//				} else if (varFileNew.getFemaleCount() != varFileOld.getFemaleCount()) {
+//					varFileOld.setFemaleCount(varFileNew.getFemaleCount());
+//					varFileService.save(varFileOld);
+				} else {
+					VarFileDTO varFileDTOOld = varFileDTOOldList.get(0);
+
+					if (!varFileDTOOld.getFullPath().equals(varFileDTONew.getFullPath())
+							|| !varFileDTOOld.getVarFileName().equals(varFileDTONew.getVarFileName())) {
+						// System.out.print("duplicate:" + varFileNew);
+						varFileDTONew.moveVarFileTo(VAM_DUPLICATE_PATH,"duplicate2");
+					}
 				}
 			}
 		}
@@ -207,8 +210,11 @@ public abstract class WorkVarFile {
 				createLinkFile(file1);
 			}
 		} else {
-			if (file.getAbsolutePath().endsWith(VAR_EXTENSION))
-				FileUtil.createLinkFile(file, makeLinkFileName(file));
+			if (file.getAbsolutePath().endsWith(VAR_EXTENSION)) {
+				boolean b=FileUtil.createLinkFile(file, makeLinkFileName(file));
+				if(!b)
+					log.warn("\n---failed create link: " + file);
+			}
 		}
 	}
 
@@ -268,12 +274,12 @@ public abstract class WorkVarFile {
 		return map3;
 	}
 
-	protected VarFile findSuitableVarFile(VarFileDTO varFileDTO) {
-		List<VarFile> varFileOldList = null;
+	protected VarFileDTO findSuitableVarFile(VarFileDTO varFileDTO) {
+		List<VarFileDTO> varFileOldList = null;
 		if ("latest".equals(varFileDTO.getVersion())) {
 			return findSuitableVarFile2(varFileDTO);
 		} else {
-			varFileOldList = varFileRepository.findBy(varFileDTO);
+			varFileOldList = varFileService.findBy(varFileDTO);
 			if (CollectionUtils.isEmpty(varFileOldList)) {
 				if (StringUtils.startsWith(varFileDTO.getCreatorName(), "https"))
 					System.out.println("debug");
@@ -282,20 +288,20 @@ public abstract class WorkVarFile {
 
 				return findSuitableVarFile2(varFileDTO);
 			} else {
-				VarFile varFile = varFileOldList.get(0);
+				VarFileDTO varFile = varFileOldList.get(0);
 				return varFile;
 			}
 		}
 	}
 
-	private VarFile findSuitableVarFile2(VarFileDTO varFileDTO) {
-		List<VarFile> varFileOldList = varFileRepository.findBy(new VarFile(varFileDTO));
+	private VarFileDTO findSuitableVarFile2(VarFileDTO varFileDTO) {
+		List<VarFileDTO> varFileOldList = varFileService.findByName(varFileDTO);
 		if (CollectionUtils.isEmpty(varFileOldList)) {
 			log.debug("---missing depenence1: " + varFileDTO.getCreatorName() + "." + varFileDTO.getPackageName() + "."
 					+ varFileDTO.getVersion());
 			return null;
 		} else {
-			VarFile varFile = varFileOldList.get(0);
+			VarFileDTO varFile = varFileOldList.get(0);
 			return varFile;
 		}
 	}

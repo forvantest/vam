@@ -83,6 +83,7 @@ public class ZipUtils {
 			if (Objects.nonNull(zipFile))
 				zipFile.close();
 		} catch (Exception ex) {
+			varFileDTO.setException(ex);
 			System.out.println("\n" + ZIPFile);
 			System.out.println(ex.getMessage());
 			ex.printStackTrace();
@@ -90,18 +91,18 @@ public class ZipUtils {
 	}
 
 	static List<String> skipResourceExtension = Arrays.asList("sln", "vmb", "vab", "vaj", "vap", "vac", "dsf", "duf",
-			"vam", "cs", "cslist", "txt", "scene", "assetbundle", "manifest", "Assetbundle", "gif", "jpeg", "jpg",
+			"vam", "cs", "cslist", "txt", "scene", "assetbundle", "manifest", "gif", "jpeg", "jpg",
 			"png", "tif", "tga", "psd", "dll", "mp3", "wav", "ogg", "jsondb", "voicebundle", "mtl", "obj", "fav",
 			"colliders", "hide", "vapb");
 
 	static List<String> skipSaveExtension = Arrays.asList("embodyprofile", "vmi", "hide");
 
 	private VarFieldType checkTypeEnum(String title, ZipEntry zipEntry) {
+		String atomPath = zipEntry.getName().toLowerCase();
+		String atomExtension = getExtension(atomPath);
 		if ("meta.json".equals(zipEntry.getName())) {
 			return VarFieldType.META;
 		} else if (StringUtils.startsWith(zipEntry.getName(), "Custom")) {
-			String atomPath = zipEntry.getName().toLowerCase();
-			String atomExtension = getExtension(atomPath);
 			if (skipResourceExtension.contains(atomExtension)) {
 			} else if ("vmi".equals(atomExtension)) {
 				if (StringUtils.startsWith(atomPath, "custom/atom/person/morphs/female/"))
@@ -124,8 +125,6 @@ public class ZipUtils {
 				log.debug("warn1: " + zipEntry.getName());
 			}
 		} else if (StringUtils.startsWith(zipEntry.getName(), "Saves")) {
-			String atomPath = zipEntry.getName().toLowerCase();
-			String atomExtension = getExtension(atomPath);
 			String[] nameArray = StringUtils.split(atomPath, "/");
 			if (skipResourceExtension.contains(atomExtension)) {
 			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "saves/person/")) {
@@ -148,7 +147,7 @@ public class ZipUtils {
 			} else {
 				log.debug("warn3: " + title + " : " + zipEntry.getName());
 			}
-		} else if (skipResourceExtension.contains(getExtension(zipEntry.getName()))) {
+		} else if (skipResourceExtension.contains(atomExtension)) {
 		} else {
 			System.out.println("warn4: " + zipEntry.getName());
 		}

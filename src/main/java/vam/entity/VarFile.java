@@ -1,10 +1,9 @@
 package vam.entity;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,8 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,11 +23,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import vam.dto.MetaJson;
+import vam.dto.SceneJson;
 import vam.dto.VarFileDTO;
 
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
+@JsonInclude(Include.NON_NULL) 
 @Entity
 @Table(name = "varfile")
 public class VarFile implements Serializable, Comparable {
@@ -56,6 +58,8 @@ public class VarFile implements Serializable, Comparable {
 //	private Integer referenced;
 
 	private Integer scenes;
+
+	private String scenesJson;
 
 	private Integer femaleCount;
 	private Integer femaleGenitaliaCount;
@@ -90,6 +94,18 @@ public class VarFile implements Serializable, Comparable {
 		this.maleCount = varFileDTO.getMaleCount();
 		this.maleGenitaliaCount = varFileDTO.getMaleGenitaliaCount();
 		this.scenes = varFileDTO.getSceneJsonList().size();
+		this.favorite = varFileDTO.getFavorite();
+		this.referencesJson = varFileDTO.getReferencesJson();
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			List<SceneJson> easyList = new ArrayList<>();
+			varFileDTO.getSceneJsonList().forEach(s -> easyList.add(new SceneJson(s)));
+			scenesJson = objectMapper.writeValueAsString(easyList);
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public VarFile(String k, MetaJson v) {
@@ -101,25 +117,18 @@ public class VarFile implements Serializable, Comparable {
 		this.varFileName = "";
 	}
 
-	public VarFile getSameVersion(List<VarFile> varFileOldList) {
-		if (CollectionUtils.isEmpty(varFileOldList)) {
-			return null;
-		}
-
-		for (VarFile varFileOld : varFileOldList) {
-			String oleVersion = varFileOld.getVersion();
-			if (getVersion().equals(oleVersion))
-				return varFileOld;
-		}
-		return null;
-	}
-
-	public void increaseFavorite() {
-		if (Objects.nonNull(favorite))
-			favorite++;
-		else
-			favorite = 1;
-	}
+//	public VarFile getSameVersion(List<VarFile> varFileOldList) {
+//		if (CollectionUtils.isEmpty(varFileOldList)) {
+//			return null;
+//		}
+//
+//		for (VarFile varFileOld : varFileOldList) {
+//			String oleVersion = varFileOld.getVersion();
+//			if (getVersion().equals(oleVersion))
+//				return varFileOld;
+//		}
+//		return null;
+//	}
 
 //	public void increaseReferenced() {
 //		if (Objects.nonNull(referenced))
@@ -150,22 +159,5 @@ public class VarFile implements Serializable, Comparable {
 //			e.printStackTrace();
 //		}
 //	}
-
-	public void increaseReference(String parent) {
-		if (Objects.isNull(referencesJson))
-			referencesJson = "[]";
-		ObjectMapper objectMapper = new ObjectMapper();
-		Set<String> reference;
-		try {
-			reference = objectMapper.readValue(referencesJson, HashSet.class);
-			String key = parent;
-			reference.add(key);
-			referencesJson = objectMapper.writeValueAsString(reference);
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-	}
 
 }

@@ -39,7 +39,7 @@ public class FileUtil {
 		try {
 			File linkFile1 = new File(linkFile);
 			if (linkFile1.exists()) {
-				// System.out.println("warn6: linkFile already exist: " + linkFile1);
+				log.info("warn6: linkFile already exist: " + linkFile1);
 				return false;
 			} else if (!targetFile.exists()) {
 				System.out.println("warn7: targetFile doesn't exist: " + targetFile);
@@ -50,7 +50,7 @@ public class FileUtil {
 				checkFolderExist(linkfolder);
 				Path link = linkFile1.toPath();
 				Files.createSymbolicLink(link, source);
-				log.debug("linkFile create: " + linkFile1);
+				log.info("linkFile create: " + linkFile1);
 				return true;
 			}
 		} catch (Exception e) {

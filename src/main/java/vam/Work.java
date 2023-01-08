@@ -27,7 +27,7 @@ public class Work extends WorkDeployVarFile {
 	public void loadVarFileIntoDB(String targetDirectrory) {
 		File dir = new File(VAM_ALLPACKAGES_PATH);
 		allVarFilesToDB(dir);
-		Long count = varFileRepository.count();
+		Long count = varFileService.count();
 		System.out.println("total:" + count);
 	}
 
@@ -37,5 +37,11 @@ public class Work extends WorkDeployVarFile {
 
 	public void unDeploy(String targetDirectory) {
 		workUnDeployVarFile.process(targetDirectory);
+	}
+
+	public void moveReference() {
+		workUnDeployVarFile.creatorNameSet.forEach(name -> {
+			unDeploy("AllPackages/girl/" + name + "/");
+		});
 	}
 }

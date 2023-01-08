@@ -30,7 +30,8 @@ public class Application extends SpringBootServletInitializer {
 	private static void mession(Work work) {
 
 		work.loadVarFileIntoDB("AllPackages/");
-
+//		work.moveReference();
+		
 		// work.createLinkFile();
 //		work.unDeploy("AllPackages/girl/Archer/");
 //		work.unDeploy("AllPackages/girl/Dnaddr/");
@@ -43,12 +44,13 @@ public class Application extends SpringBootServletInitializer {
 //		work.unDeploy("AllPackages/girl/callimohu/");
 //		work.unDeploy("AllPackages/girl/CMA/");
 //		work.unDeploy("AllPackages/girl/");
-
+//		work.unDeploy("AllPackages/girl/yesmola/");
+		
 //		 work.unDeploy("AllPackages/girl/zzzat16h/");
 
 //			work.deploy("AllPackages/girl/");
 //		work.deploy("AllPackages/girl/Archer/");
-		work.deploy("AllPackages/girl/Dnaddr/");
+//		work.deploy("AllPackages/girl/Dnaddr/");
 //		work.deploy("AllPackages/girl/VAMDoll/");
 //		work.deploy("AllPackages/girl/VAM-YJ/");
 //		work.deploy("AllPackages/girl/lv/");
@@ -59,6 +61,8 @@ public class Application extends SpringBootServletInitializer {
 //		work.deploy("AllPackages/girl/callimohu/");
 //		work.deploy("AllPackages/girl/CMA/");
 
+		work.deploy("AllPackages/girl/yesmola/");
+		
 //		work.allUnHide("girl/realclone-support/");
 	}
 }
