@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import vam.entity.VarFile;
 
 @Slf4j
-@JsonInclude(Include.NON_NULL) 
+@JsonInclude(Include.NON_NULL)
 @Data
 public class VarFileDTO {
 	public VarFileDTO(String fullPath, String varFileName) {
@@ -107,6 +107,16 @@ public class VarFileDTO {
 		stringBuilder.append(".");
 		stringBuilder.append(version);
 		return stringBuilder.toString();
+	}
+
+	public void easySceneJson() {
+		try {
+			List<SceneJson> easyList = new ArrayList<>();
+			sceneJsonList.forEach(s -> easyList.add(new SceneJson(s)));
+			sceneJsonList = easyList;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private String makeHidePath(SceneJson sceneJson) {
@@ -207,11 +217,13 @@ public class VarFileDTO {
 		if (!f.exists())
 			f.mkdirs();
 		Path tDir = Paths.get(targetPath, varFileName);
-		try {
-			System.out.println("\n---moving "+reason+": " + sDir);
-			Files.move(sDir, tDir, StandardCopyOption.REPLACE_EXISTING);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (!sDir.endsWith(tDir)) {
+			try {
+				System.out.println("\n---moving " + reason + ": " + sDir);
+				Files.move(sDir, tDir, StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

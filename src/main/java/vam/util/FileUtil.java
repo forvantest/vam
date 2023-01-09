@@ -35,22 +35,18 @@ public class FileUtil {
 		return true;
 	}
 
-	public static boolean createLinkFile(File targetFile, String linkFile) {
+	public static boolean createLinkFile(File targetFile, File linkFile) {
 		try {
-			File linkFile1 = new File(linkFile);
-			if (linkFile1.exists()) {
-				log.info("warn6: linkFile already exist: " + linkFile1);
-				return false;
-			} else if (!targetFile.exists()) {
+			if (!targetFile.exists()) {
 				System.out.println("warn7: targetFile doesn't exist: " + targetFile);
 				return false;
 			} else {
 				Path source = targetFile.toPath();
-				String linkfolder = readPath(linkFile1.getAbsolutePath());
+				String linkfolder = readPath(linkFile.getAbsolutePath());
 				checkFolderExist(linkfolder);
-				Path link = linkFile1.toPath();
+				Path link = linkFile.toPath();
 				Files.createSymbolicLink(link, source);
-				log.info("linkFile create: " + linkFile1);
+				log.info("linkFile create: " + linkFile);
 				return true;
 			}
 		} catch (Exception e) {
@@ -96,7 +92,7 @@ public class FileUtil {
 		int index = StringUtils.lastIndexOf(fullPath, "\\");
 		if (index > 0) {
 			String linkFolderPath = StringUtils.substring(fullPath, 0, index);
-			if (!StringUtils.contains(VAM_ADDON_PATH, linkFolderPath) ) {
+			if (!StringUtils.contains(VAM_ADDON_PATH, linkFolderPath)) {
 				File linkFolder = new File(linkFolderPath);
 				if (linkFolder.exists() && linkFolder.list().length == 0) {
 					log.info("---linkFolder deleted: " + linkFolder);

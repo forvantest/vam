@@ -84,7 +84,7 @@ public abstract class WorkVarFile {
 					log.warn("---skip " + line);
 					continue;
 				}
-				// System.out.println("s1: " + column[0]);
+//				System.out.println("s1: " + column[0]);
 				varFileRefSet.add(column[0]);
 			}
 			reader.close();
@@ -146,49 +146,63 @@ public abstract class WorkVarFile {
 			if (file.getAbsolutePath().endsWith(VAR_EXTENSION)) {
 				VarFileDTO varFileDTOQuery = makeVarFileDTO(file.getAbsolutePath());
 				List<VarFileDTO> varFileOldList2 = varFileService.findBy(varFileDTOQuery);
-				if (!CollectionUtils.isEmpty(varFileOldList2)) {
-					VarFileDTO varFileDTO = varFileOldList2.get(0);
-					if (varFileDTOQuery.getFullPath().equals(varFileDTO.getFullPath())
-							&& varFileDTOQuery.getVarFileName().equals(varFileDTO.getVarFileName())) {
+				if (CollectionUtils.isEmpty(varFileOldList2)) {
+					VarFileDTO varFileDTONew = readVarFile(varFileDTOQuery);
+					if (Objects.nonNull(varFileDTONew.getException())) {
+						moveVarFileToBroken(varFileDTONew);
+					} else {
+						varFileDTONew.easySceneJson();
+						varFileService.save(varFileDTONew);
+					}
+				} else {
+					VarFileDTO varFileDTOOld = varFileOldList2.get(0);
+
+//					VarFileDTO varFileDTONew = readVarFile(varFileDTOQuery);
+//					if (varFileDTONew.getSceneJsonList() != varFileDTOOld.getSceneJsonList()) {
+//						varFileDTOOld.setSceneJsonList(varFileDTONew.getSceneJsonList());
+//						varFileService.update(varFileDTOOld);
+//					}
+
+					if (varFileDTOQuery.getFullPath().equals(varFileDTOOld.getFullPath())
+							&& varFileDTOQuery.getVarFileName().equals(varFileDTOOld.getVarFileName())) {
 						return;
 					} else {
-						File f = new File(varFileDTO.getFullPath() + varFileDTO.getVarFileName());
+						File f = new File(varFileDTOOld.getFullPath() + varFileDTOOld.getVarFileName());
 						if (f.exists()) {
 							System.out.print("---duplicate:" + varFileDTOQuery);
-							varFileDTOQuery.moveVarFileTo(VAM_DUPLICATE_PATH,"duplicate1");
+							varFileDTOQuery.moveVarFileTo(VAM_DUPLICATE_PATH, "duplicate1");
 							return;
 						} else {
-							log.warn("---db data deprecate:" + varFileDTO);
-							varFileDTO.setFullPath(varFileDTOQuery.getFullPath());
-							varFileDTO.setVarFileName(varFileDTOQuery.getVarFileName());
-							varFileService.update(varFileDTO);
+							log.warn("---db data deprecate:" + varFileDTOOld);
+							varFileDTOOld.setFullPath(varFileDTOQuery.getFullPath());
+							varFileDTOOld.setVarFileName(varFileDTOQuery.getVarFileName());
+							varFileService.update(varFileDTOOld);
 							return;
 						}
 					}
 				}
 
-				VarFileDTO varFileDTONew = readVarFile(varFileDTOQuery);
-				if (Objects.nonNull(varFileDTONew.getException())) {
-					moveVarFileToBroken(varFileDTONew);
-					return;
-				}
-//				VarFile varFileNew = new VarFile(varFileDTONew);
-				List<VarFileDTO> varFileDTOOldList = varFileService.findBy(varFileDTONew);
-//				VarFileDTO varFileOld = varFileDTONew.getSameVersion(varFileOldList);
-				if (CollectionUtils.isEmpty(varFileDTOOldList)) {
-					varFileService.save(varFileDTONew);
-//				} else if (varFileNew.getFemaleCount() != varFileOld.getFemaleCount()) {
-//					varFileOld.setFemaleCount(varFileNew.getFemaleCount());
-//					varFileService.save(varFileOld);
-				} else {
-					VarFileDTO varFileDTOOld = varFileDTOOldList.get(0);
-
-					if (!varFileDTOOld.getFullPath().equals(varFileDTONew.getFullPath())
-							|| !varFileDTOOld.getVarFileName().equals(varFileDTONew.getVarFileName())) {
-						// System.out.print("duplicate:" + varFileNew);
-						varFileDTONew.moveVarFileTo(VAM_DUPLICATE_PATH,"duplicate2");
-					}
-				}
+//				VarFileDTO varFileDTONew = readVarFile(varFileDTOQuery);
+//				if (Objects.nonNull(varFileDTONew.getException())) {
+//					moveVarFileToBroken(varFileDTONew);
+//					return;
+//				}
+////				VarFile varFileNew = new VarFile(varFileDTONew);
+////				List<VarFileDTO> varFileDTOOldList = varFileService.findBy(varFileDTONew);
+////				VarFileDTO varFileOld = varFileDTONew.getSameVersion(varFileOldList);
+//				if (CollectionUtils.isEmpty(varFileDTOOldList)) {
+//					varFileService.save(varFileDTONew);
+//				} else {
+//					VarFileDTO varFileDTOOld = varFileDTOOldList.get(0);
+//					if (varFileDTONew.getSceneJsonList() != varFileDTOOld.getSceneJsonList()) {
+//						varFileDTOOld.setSceneJsonList(varFileDTONew.getSceneJsonList());
+//						varFileService.save(varFileDTOOld);
+//					} else if (!varFileDTOOld.getFullPath().equals(varFileDTONew.getFullPath())
+//							|| !varFileDTOOld.getVarFileName().equals(varFileDTONew.getVarFileName())) {
+//						// System.out.print("duplicate:" + varFileNew);
+//						varFileDTONew.moveVarFileTo(VAM_DUPLICATE_PATH, "duplicate2");
+//					}
+//				}
 			}
 		}
 	}
@@ -211,9 +225,13 @@ public abstract class WorkVarFile {
 			}
 		} else {
 			if (file.getAbsolutePath().endsWith(VAR_EXTENSION)) {
-				boolean b=FileUtil.createLinkFile(file, makeLinkFileName(file));
-				if(!b)
-					log.warn("\n---failed create link: " + file);
+				String linkFileName = makeLinkFileName(file);
+				File linkFile = new File(linkFileName);
+				if (!linkFile.exists()) {
+					boolean b = FileUtil.createLinkFile(file, linkFile);
+					if (!b)
+						log.warn("\n---failed create link: " + file);
+				}
 			}
 		}
 	}

@@ -11,7 +11,6 @@ import org.springframework.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import vam.dto.VarFileDTO;
-import vam.entity.VarFile;
 
 @Slf4j
 public abstract class WorkDeployVarFile extends WorkVarFile {
@@ -47,6 +46,7 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		creatorNameSet.add("Neiro");
 		creatorNameSet.add("Wolverine");
 		creatorNameSet.add("yesmola");
+		creatorNameSet.add("Eros");
 	}
 
 	int dependCount = 0;
@@ -56,12 +56,9 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 
 		Map<String, String> mAll = new HashMap<>();
 		Set<String> varFileRefSet = fetchAllVarFiles(dir, VAR_EXTENSION);
-
-//		processVarFileRefSet(mAll, varFileRefSet, true);
 		varFileRefSet.forEach(k -> processDependencies(mAll, k, null));
 
 		Set<String> varFileRefSet2 = fetchAllVarFiles(dir, DEPEND_TXT_EXTENSION);
-//		processVarFileRefSet(mAll, varFileRefSet2, false);
 		varFileRefSet2.forEach(k -> processDependencies(mAll, k, varFileRefSet.iterator().next()));
 	}
 
@@ -105,6 +102,8 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 
 	private void processDependencies(Map<String, String> mAll, String k, String parent) {
 		VarFileDTO varFileQuery = new VarFileDTO(null, k);
+		if ("realclone.annafix2.1.var".equals(varFileQuery.getVarFileName()))
+			log.debug("debug " + varFileQuery.getVarFileName());
 		VarFileDTO varFileRef = findSuitableVarFile(varFileQuery);
 		if (Objects.nonNull(varFileRef)) {
 			VarFileDTO varFileDTOOld = work2(parent, varFileRef);
@@ -120,6 +119,8 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 					}
 				}
 			}
+		} else {
+			log.error("--- old depends not exist: " + varFileQuery.getVarFileName());
 		}
 	}
 
