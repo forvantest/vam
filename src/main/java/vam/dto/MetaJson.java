@@ -5,19 +5,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.springframework.util.CollectionUtils;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vam.dto.meta.CustomOption;
+import vam.dto.meta.Dependence;
 import vam.dto.meta.ReferenceIssue;
+import vam.util.CustomClothingDeserializer2;
+import vam.util.MyCustomDeserializer;
 
 @Data
-@JsonInclude(Include.NON_NULL) 
+@JsonInclude(Include.NON_NULL)
 @NoArgsConstructor
 public class MetaJson {
 	private String licenseType;
@@ -30,6 +35,7 @@ public class MetaJson {
 	private String instructions;
 	private String promotionalLink;
 	private String programVersion;
+
 	private List<String> contentList;
 
 	@JsonProperty("EAEndYear")
@@ -41,8 +47,8 @@ public class MetaJson {
 
 	private String secondaryLicenseType;
 
-	@JsonProperty("dependencies")
-	private ObjectNode dependencies;
+	@JsonDeserialize(using = CustomClothingDeserializer2.class)
+	private Map<String, Dependence> dependencies;
 
 	private CustomOption customOptions;
 
@@ -78,23 +84,32 @@ public class MetaJson {
 		Map<String, String> metaJsonMap = new LinkedHashMap<>();
 		if (Objects.isNull(dependencies))
 			return metaJsonMap;
+		fetchDependenciesAll(metaJsonMap, dependencies, parent);
+		return metaJsonMap;
+	}
 
-		dependencies.fields().forEachRemaining(e -> {
-			String varKey = e.getKey();
-			String licenseType = "";
-			if (Objects.nonNull(e.getValue().get("licenseType")))
-				licenseType = e.getValue().get("licenseType").asText();
-
-			JsonNode jf = e.getValue().get("dependencies");
-			if (Objects.nonNull(jf)) {
-				MetaJson metaJson = new MetaJson(varKey, licenseType, jf);
-				metaJsonMap.put(varKey, parent);
-				metaJsonMap.putAll(metaJson.getDependenciesAll(varKey));
-			} else {
-				metaJsonMap.put(varKey, parent);
+	private void fetchDependenciesAll(Map<String, String> metaJsonMap, Map<String, Dependence> dependencies,
+			String parent) {
+		dependencies.forEach((varKey, dependence) -> {
+//			String licenseType = "";
+//			if (Objects.nonNull(e.getValue().get("licenseType")))
+//				licenseType = value.get("licenseType").asText();
+//			JsonNode jf = e.getValue().get("dependencies");
+//			if (Objects.nonNull(jf)) {
+			metaJsonMap.put(varKey, parent);
+			if (!CollectionUtils.isEmpty(dependence.getDependencies())) {
+				fetchDependenciesAll(metaJsonMap, dependence.getDependencies(), varKey);
 			}
 		});
-		return metaJsonMap;
+	}
+
+	@JsonDeserialize(using = MyCustomDeserializer.class)
+	public void setContentList(List<String> contentList) {
+		this.contentList = contentList;
+	}
+
+	public List<String> getContentList() {
+		return contentList;
 	}
 
 }

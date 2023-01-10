@@ -36,7 +36,7 @@ public abstract class WorkVarFile {
 	protected String VAM_ALLPACKAGES_PATH = VAM_ROOT_PATH + "AllPackages\\";
 	protected String VAM_BASE_PATH = VAM_ALLPACKAGES_PATH + "base\\";
 	private String VAM_ADDON_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\AddonPackages\\";
-	private String VAM_BROKEN_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\Broken\\";
+	private String VAM_BROKEN_PATH = VAM_ROOT_PATH + "Broken\\";
 	private String VAM_DUPLICATE_PATH = VAM_ROOT_PATH + "Duplicate\\";
 	protected String VAR_EXTENSION = ".var";
 	protected String DEPEND_TXT_EXTENSION = ".depend.txt";
@@ -123,7 +123,7 @@ public abstract class WorkVarFile {
 	}
 
 	static int process = 0;
-	static int skipProcess = 0;
+	static int skipProcess = 8040;
 
 	protected void allVarFilesToDB(File file) {
 		if (file.isDirectory()) {
@@ -139,6 +139,8 @@ public abstract class WorkVarFile {
 				System.out.println("skip: " + process);
 			} else if (process % 10 == 0) {
 				System.out.print(process);
+			} else if (process == 8905) {
+				System.out.print("debug");
 			} else {
 				System.out.print(".");
 			}

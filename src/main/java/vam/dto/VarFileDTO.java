@@ -17,19 +17,15 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import vam.entity.VarFile;
 
 @Slf4j
 @JsonInclude(Include.NON_NULL)
 @Data
 public class VarFileDTO {
+
 	public VarFileDTO(String fullPath, String varFileName) {
 		String[] varNameArray = StringUtils.split(varFileName, ".");
 		if (varNameArray.length >= 1)
@@ -42,37 +38,40 @@ public class VarFileDTO {
 		this.varFileName = varFileName;
 	}
 
-	public VarFileDTO(VarFile varFile) {
-		super();
-		this.creatorName = varFile.getCreatorName();
-		this.packageName = varFile.getPackageName();
-		this.version = varFile.getVersion();
-		this.fullPath = varFile.getFullPath();
-		this.varFileName = varFile.getVarFileName();
-		this.favorite = varFile.getFavorite();
-		this.referencesJson = varFile.getReferencesJson();
-		try {
-			ObjectMapper objectMapper = new ObjectMapper();
-//			String str = varFile.getMetaDependencies();
-//			if (Objects.nonNull(str)) {
-//				this.setMetaJson(new MetaJson());
-//				this.getMetaJson().setDependencies(objectMapper.readTree(str).deepCopy());
+//	public VarFileDTO(VarFile varFile) {
+//		super();
+//		this.creatorName = varFile.getCreatorName();
+//		this.packageName = varFile.getPackageName();
+//		this.version = varFile.getVersion();
+//		this.fullPath = varFile.getFullPath();
+//		this.varFileName = varFile.getVarFileName();
+//		this.favorite = varFile.getFavorite();
+//		this.referencesJson = varFile.getReferencesJson();
+//		try {
+////			String str = varFile.getMetaDependencies();
+////			if (Objects.nonNull(str)) {
+////				this.setMetaJson(new MetaJson());
+////				this.getMetaJson().setDependencies(objectMapper.readTree(str).deepCopy());
+////			}
+//			String str2 = varFile.getScenesJson();
+//			if (Objects.nonNull(str2)) {
+//				List<SceneJson> myObjects = objectMapper.readValue(str2, new TypeReference<List<SceneJson>>() {
+//				});
+//				this.setSceneJsonList(myObjects);
 //			}
-			String str2 = varFile.getScenesJson();
-			if (Objects.nonNull(str2)) {
-				List<SceneJson> myObjects = objectMapper.readValue(str2, new TypeReference<List<SceneJson>>() {
-				});
-				this.setSceneJsonList(myObjects);
-			}
-			String str3 = varFile.getDependencies();
-			if (Objects.nonNull(str3)) {
-				this.dependencies = objectMapper.readValue(str3, new TypeReference<Set<String>>() {
-				});
-			}
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
+//			String str3 = varFile.getDependencies();
+//			if (Objects.nonNull(str3)) {
+//				this.dependencies = objectMapper.readValue(str3, new TypeReference<Set<String>>() {
+//				});
+//			}
+//		} catch (JsonProcessingException e) {
+//			e.printStackTrace();
+//		}
+//
+//	}
 
+	public VarFileDTO() {
+		super();
 	}
 
 	private Integer femaleCount;
@@ -239,20 +238,19 @@ public class VarFileDTO {
 			favorite = 1;
 	}
 
-	public void increaseReference(String parent) {
-		if (Objects.isNull(referencesJson))
-			referencesJson = "[]";
-		ObjectMapper objectMapper = new ObjectMapper();
-		Set<String> reference;
-		try {
-			reference = objectMapper.readValue(referencesJson, HashSet.class);
-			String key = parent;
-			reference.add(key);
-			referencesJson = objectMapper.writeValueAsString(reference);
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-	}
+//	public void increaseReference(String parent) {
+//		if (Objects.isNull(referencesJson))
+//			referencesJson = "[]";
+//		Set<String> reference;
+//		try {
+//			reference = objectMapper.readValue(referencesJson, HashSet.class);
+//			String key = parent;
+//			reference.add(key);
+//			referencesJson = objectMapper.writeValueAsString(reference);
+//		} catch (JsonMappingException e) {
+//			e.printStackTrace();
+//		} catch (JsonProcessingException e) {
+//			e.printStackTrace();
+//		}
+//	}
 }

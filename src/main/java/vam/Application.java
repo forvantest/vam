@@ -55,7 +55,7 @@ public class Application extends SpringBootServletInitializer {
 //		work.deploy("AllPackages/girl/VAMDoll/");
 //		work.deploy("AllPackages/girl/VAM-YJ/");
 //		work.deploy("AllPackages/girl/lv/");
-//		work.deploy("AllPackages/girl/realclone/");
+		work.deploy("AllPackages/girl/realclone/");
 		// work.deploy("AllPackages/girl/zzzat16h/");
 //		work.deploy("AllPackages/girl/uugg/");
 //		work.deploy("AllPackages/girl/Anom/");

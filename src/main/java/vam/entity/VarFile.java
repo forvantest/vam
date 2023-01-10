@@ -1,9 +1,6 @@
 package vam.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,19 +9,16 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import vam.dto.MetaJson;
-import vam.dto.SceneJson;
-import vam.dto.VarFileDTO;
 
 @Data
 @NoArgsConstructor
@@ -34,6 +28,8 @@ import vam.dto.VarFileDTO;
 @Table(name = "varfile")
 public class VarFile implements Serializable, Comparable {
 
+	@Autowired
+	public ObjectMapper objectMapper;
 	/**
 	 * 
 	 */
@@ -50,8 +46,6 @@ public class VarFile implements Serializable, Comparable {
 	private String version;
 
 //	private String metaDependencies;
-
-	private Integer dependenciesSize;
 
 	private String dependencies;
 
@@ -73,44 +67,42 @@ public class VarFile implements Serializable, Comparable {
 	private String fullPath;
 	private String varFileName;
 
-	public VarFile(VarFileDTO varFileDTO) {
-		super();
-
-		this.creatorName = varFileDTO.getCreatorName();
-		this.packageName = varFileDTO.getPackageName();
-		this.version = varFileDTO.getVersion();
-		this.fullPath = varFileDTO.getFullPath();
-		this.varFileName = varFileDTO.getVarFileName();
-		if (Objects.nonNull(varFileDTO.getDependencies())) {
-			try {
-				ObjectMapper objectMapper = new ObjectMapper();
-//				this.metaDependencies = objectMapper
-//						.writeValueAsString(varFileDTO.getMetaJson().getDependenciesAll(""));
-				this.dependencies = objectMapper.writeValueAsString(varFileDTO.getDependencies());
-
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			this.dependenciesSize = varFileDTO.getDependencies().size();
-		}
-		this.femaleCount = varFileDTO.getFemaleCount();
-		this.femaleGenitaliaCount = varFileDTO.getFemaleGenitaliaCount();
-		this.maleCount = varFileDTO.getMaleCount();
-		this.maleGenitaliaCount = varFileDTO.getMaleGenitaliaCount();
-		this.scenes = varFileDTO.getSceneJsonList().size();
-		this.favorite = varFileDTO.getFavorite();
-		this.referencesJson = varFileDTO.getReferencesJson();
-		ObjectMapper objectMapper = new ObjectMapper();
-		try {
-			List<SceneJson> easyList = new ArrayList<>();
-			varFileDTO.getSceneJsonList().forEach(s -> easyList.add(new SceneJson(s)));
-			scenesJson = objectMapper.writeValueAsString(easyList);
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-	}
+//	public VarFile(VarFileDTO varFileDTO) {
+//		super();
+//
+//		this.creatorName = varFileDTO.getCreatorName();
+//		this.packageName = varFileDTO.getPackageName();
+//		this.version = varFileDTO.getVersion();
+//		this.fullPath = varFileDTO.getFullPath();
+//		this.varFileName = varFileDTO.getVarFileName();
+//		if (Objects.nonNull(varFileDTO.getDependencies())) {
+//			try {
+////				this.metaDependencies = objectMapper
+////						.writeValueAsString(varFileDTO.getMetaJson().getDependenciesAll(""));
+//				this.dependencies = objectMapper.writeValueAsString(varFileDTO.getDependencies());
+//
+//			} catch (JsonProcessingException e) {
+//				e.printStackTrace();
+//			}
+//			this.dependenciesSize = varFileDTO.getDependencies().size();
+//		}
+//		this.femaleCount = varFileDTO.getFemaleCount();
+//		this.femaleGenitaliaCount = varFileDTO.getFemaleGenitaliaCount();
+//		this.maleCount = varFileDTO.getMaleCount();
+//		this.maleGenitaliaCount = varFileDTO.getMaleGenitaliaCount();
+//		this.scenes = varFileDTO.getSceneJsonList().size();
+//		this.favorite = varFileDTO.getFavorite();
+//		this.referencesJson = varFileDTO.getReferencesJson();
+//		try {
+//			List<SceneJson> easyList = new ArrayList<>();
+//			varFileDTO.getSceneJsonList().forEach(s -> easyList.add(new SceneJson(s)));
+//			scenesJson = objectMapper.writeValueAsString(easyList);
+//		} catch (JsonMappingException e) {
+//			e.printStackTrace();
+//		} catch (JsonProcessingException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public VarFile(String k, MetaJson v) {
 		String[] ss = StringUtils.split(k, ".");

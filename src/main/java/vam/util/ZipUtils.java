@@ -17,18 +17,16 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipFile;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.io.JsonEOFException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import lombok.extern.slf4j.Slf4j;
 import vam.dto.MetaJson;
@@ -48,7 +46,8 @@ import vam.dto.scene.StorableGeometry;
 @Component
 public class ZipUtils {
 
-	private ObjectMapper objectMapper = new ObjectMapper();
+	@Autowired
+	public ObjectMapper objectMapper;
 
 	/**
 	 * 解壓縮
@@ -146,7 +145,7 @@ public class ZipUtils {
 			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "saves/person/")) {
 				// System.out.print("Saves.Person.json...");
 			} else if ("person".equals(nameArray[1])) {
-				if ("pose".equals(nameArray[2])) {
+				if ("pose".equals(nameArray[2]) && "json".equals(atomExtension)) {
 					return VarFieldType.SAVES_PERSON_POSE_DOT_JSON;
 				} else {
 					System.out.println("warn2: " + title + " : " + zipEntry.getName());
@@ -178,6 +177,11 @@ public class ZipUtils {
 				jsonText = unZipFile(zipFile, zipEntry);
 				fixedString = StringUtils.replace(jsonText, "\uFEFF", "");
 				if (Objects.nonNull(fixedString) || StringUtils.isEmpty(fixedString)) {
+
+//					JavaType customClassCollection = objectMapper.getTypeFactory().constructCollectionType(List.class,
+//							String.class);
+//					List<String> beanList = (List<String>) objectMapper.readValue(fixedString, customClassCollection);
+
 					MetaJson metaJson = objectMapper.readValue(fixedString, MetaJson.class);
 					Map<String, String> mapDependencies = metaJson.getDependenciesAll("");
 					varFileDTO.getDependencies().addAll(mapDependencies.keySet());
@@ -187,7 +191,12 @@ public class ZipUtils {
 //					varFileDTO.setMetaJson(metaJson);
 				}
 			} catch (JsonMappingException ex) {
-				varFileDTO.setException(ex);
+				ex.printStackTrace();
+				log.debug(ex.getMessage());
+
+				log.debug("\n" + varFileDTO.getFullPath() + varFileDTO.getVarFileName());
+				log.debug(jsonText);
+				// varFileDTO.setException(ex);
 			} catch (JsonEOFException ex) {
 				varFileDTO.setException(ex);
 			} catch (JsonParseException ex) {
@@ -217,11 +226,6 @@ public class ZipUtils {
 					System.out.println("warn11: empty json:" + varFileDTO);
 				} else {
 
-					SimpleModule module = new SimpleModule("CustomClothingSerializer",
-							new Version(1, 0, 0, null, null, null));
-					module.addDeserializer(Clothing.class, new CustomClothingDeserializer());
-					objectMapper.registerModule(module);
-					objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 //					Clothing car = new Clothing("yellow", "renault");
 //					String carJson = objectMapper.writeValueAsString(car);
 
@@ -260,7 +264,8 @@ public class ZipUtils {
 					varFileDTO.getPoseJsons().add(poseJson);
 				}
 			} catch (JsonParseException ex) {
-				varFileDTO.setException(ex);
+				System.out.println(ex.getMessage());
+				ex.printStackTrace();
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
 				ex.printStackTrace();

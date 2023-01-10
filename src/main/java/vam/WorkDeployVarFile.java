@@ -9,6 +9,9 @@ import java.util.Set;
 
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import lombok.extern.slf4j.Slf4j;
 import vam.dto.VarFileDTO;
 
@@ -47,6 +50,8 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		creatorNameSet.add("Wolverine");
 		creatorNameSet.add("yesmola");
 		creatorNameSet.add("Eros");
+		creatorNameSet.add("VAMDoll");
+		creatorNameSet.add("KDollMASTA");
 	}
 
 	int dependCount = 0;
@@ -140,7 +145,7 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 			varFileDTORef.increaseFavorite();
 			varFileService.update(varFileDTORef);
 		} else {
-			varFileDTORef.increaseReference(parent);
+			increaseReference(varFileDTORef, parent);
 			varFileService.update(varFileDTORef);
 			varFileDTORef.realHide(VAM_FILE_PREFS);
 		}
@@ -153,6 +158,23 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		}
 		createLinkFile(realVarFile);
 		return varFileDTORef;
+	}
+
+	public void increaseReference(VarFileDTO varFileDTO, String parent) {
+		if (Objects.isNull(varFileDTO.getReferencesJson()))
+			varFileDTO.setReferencesJson("[]");
+		Set<String> reference;
+		try {
+			reference = objectMapper.readValue(varFileDTO.getReferencesJson(), HashSet.class);
+			String key = parent;
+			reference.add(key);
+			String referencesJson = objectMapper.writeValueAsString(reference);
+			varFileDTO.setReferencesJson(referencesJson);
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 
 //	void work3(File realVarFile) {

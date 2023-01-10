@@ -10,6 +10,7 @@ import org.springframework.util.CollectionUtils;
 
 import vam.dto.VarFileDTO;
 import vam.entity.VarFile;
+import vam.util.MapperUtils;
 
 @Service
 public class VarFileService {
@@ -17,18 +18,23 @@ public class VarFileService {
 	@Autowired
 	VarFileRepository varFileRepository;
 
+	@Autowired
+	MapperUtils mapperUtils;
+
 	public List<VarFileDTO> findBy(VarFileDTO varFileDTOQuery) {
 		List<VarFile> varFileList = findEnitiy(varFileDTOQuery);
-		List<VarFileDTO> varFileDTOList = varFileList.stream().map(e -> new VarFileDTO(e)).collect(Collectors.toList());
+		List<VarFileDTO> varFileDTOList = varFileList.stream().map(e -> mapperUtils.convertVarFileDTO(e))
+				.collect(Collectors.toList());
 		return varFileDTOList;
 	}
 
 	public List<VarFileDTO> findByName(VarFileDTO varFileDTO) {
 		List<VarFile> varFileList = varFileRepository.findByName(varFileDTO);
-		List<VarFileDTO> varFileDTOList = varFileList.stream().map(e -> new VarFileDTO(e)).collect(Collectors.toList());
+		List<VarFileDTO> varFileDTOList = varFileList.stream().map(e -> mapperUtils.convertVarFileDTO(e))
+				.collect(Collectors.toList());
 		return varFileDTOList;
 	}
-	
+
 	private List<VarFile> findEnitiy(VarFileDTO varFileDTOQuery) {
 		List<VarFile> varFileList = varFileRepository.findBy(varFileDTOQuery);
 		return varFileList;
@@ -39,7 +45,7 @@ public class VarFileService {
 	}
 
 	public void save(VarFileDTO varFileDTO) {
-		varFileRepository.save(new VarFile(varFileDTO));
+		varFileRepository.save(mapperUtils.convertVarFile(varFileDTO));
 	}
 
 	public void update(VarFileDTO varFileDTO) {
