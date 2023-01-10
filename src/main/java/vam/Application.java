@@ -30,7 +30,7 @@ public class Application extends SpringBootServletInitializer {
 	private static void mession(Work work) {
 
 		work.loadVarFileIntoDB("AllPackages/");
-		work.moveReference();
+//		work.moveReference();
 
 		// work.createLinkFile();
 //		work.unDeploy("AllPackages/girl/Archer/");

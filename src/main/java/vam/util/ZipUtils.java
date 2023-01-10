@@ -7,8 +7,11 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,16 +20,29 @@ import org.apache.tools.zip.ZipFile;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.io.JsonEOFException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import lombok.extern.slf4j.Slf4j;
 import vam.dto.MetaJson;
 import vam.dto.PoseJson;
 import vam.dto.SceneJson;
 import vam.dto.VarFileDTO;
+import vam.dto.enumration.AtomType;
 import vam.dto.enumration.VarFieldType;
+import vam.dto.scene.Atom;
+import vam.dto.scene.Clothing;
+import vam.dto.scene.Hair;
+import vam.dto.scene.Morph;
+import vam.dto.scene.Storable;
+import vam.dto.scene.StorableGeometry;
 
 @Slf4j
 @Component
@@ -91,9 +107,9 @@ public class ZipUtils {
 	}
 
 	static List<String> skipResourceExtension = Arrays.asList("sln", "vmb", "vab", "vaj", "vap", "vac", "dsf", "duf",
-			"vam", "cs", "cslist", "txt", "scene", "assetbundle", "manifest", "gif", "jpeg", "jpg",
-			"png", "tif", "tga", "psd", "dll", "mp3", "wav", "ogg", "jsondb", "voicebundle", "mtl", "obj", "fav",
-			"colliders", "hide", "vapb");
+			"vam", "cs", "cslist", "txt", "scene", "assetbundle", "manifest", "gif", "jpeg", "jpg", "png", "tif", "tga",
+			"psd", "dll", "mp3", "wav", "ogg", "jsondb", "voicebundle", "mtl", "obj", "fav", "colliders", "hide",
+			"vapb");
 
 	static List<String> skipSaveExtension = Arrays.asList("embodyprofile", "vmi", "hide");
 
@@ -128,7 +144,7 @@ public class ZipUtils {
 			String[] nameArray = StringUtils.split(atomPath, "/");
 			if (skipResourceExtension.contains(atomExtension)) {
 			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "saves/person/")) {
-				//System.out.print("Saves.Person.json...");
+				// System.out.print("Saves.Person.json...");
 			} else if ("person".equals(nameArray[1])) {
 				if ("pose".equals(nameArray[2])) {
 					return VarFieldType.SAVES_PERSON_POSE_DOT_JSON;
@@ -163,9 +179,12 @@ public class ZipUtils {
 				fixedString = StringUtils.replace(jsonText, "\uFEFF", "");
 				if (Objects.nonNull(fixedString) || StringUtils.isEmpty(fixedString)) {
 					MetaJson metaJson = objectMapper.readValue(fixedString, MetaJson.class);
-				//	if(StringUtils.contains(fixedString, "Alter3go.Studio_Poses_collection_1_3.latest"))
-					//	System.out.println("debug2: " + varFileDTO.getVarFileName());
-					varFileDTO.setMetaJson(metaJson);
+					Map<String, String> mapDependencies = metaJson.getDependenciesAll("");
+					varFileDTO.getDependencies().addAll(mapDependencies.keySet());
+					// if(StringUtils.contains(fixedString,
+					// "Alter3go.Studio_Poses_collection_1_3.latest"))
+					// System.out.println("debug2: " + varFileDTO.getVarFileName());
+//					varFileDTO.setMetaJson(metaJson);
 				}
 			} catch (JsonMappingException ex) {
 				varFileDTO.setException(ex);
@@ -197,16 +216,38 @@ public class ZipUtils {
 				if (Objects.isNull(fixedString) || StringUtils.isEmpty(fixedString)) {
 					System.out.println("warn11: empty json:" + varFileDTO);
 				} else {
+
+					SimpleModule module = new SimpleModule("CustomClothingSerializer",
+							new Version(1, 0, 0, null, null, null));
+					module.addDeserializer(Clothing.class, new CustomClothingDeserializer());
+					objectMapper.registerModule(module);
+					objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+//					Clothing car = new Clothing("yellow", "renault");
+//					String carJson = objectMapper.writeValueAsString(car);
+
 					SceneJson sceneJson = objectMapper.readValue(fixedString, SceneJson.class);
 					sceneJson.setScenePath(zipEntry.getName());
 					varFileDTO.getSceneJsonList().add(sceneJson);
+					if (Objects.nonNull(sceneJson.getAtoms()))
+						varFileDTO.getDependencies().addAll(convertDependencies(sceneJson.getAtoms()));
 				}
 			} catch (JsonParseException ex) {
 				varFileDTO.setException(ex);
+			} catch (InvalidFormatException ex) {
+				System.out.println(ex.getMessage());
+				ex.printStackTrace();
+			} catch (UnrecognizedPropertyException ex) {
+				System.out.println(ex.getMessage());
+				ex.printStackTrace();
+			} catch (MismatchedInputException ex) {
+				System.out.println(ex.getMessage());
+				// ex.printStackTrace();
+			} catch (NullPointerException ex) {
+				System.out.println(ex.getMessage());
+				// ex.printStackTrace();
 			} catch (Exception ex) {
-				varFileDTO.setException(ex);
+				// varFileDTO.setException(ex);
 				System.out.println("\n" + varFileDTO.getFullPath() + varFileDTO.getVarFileName());
-				System.out.println(jsonText);
 				ex.printStackTrace();
 				System.out.println(ex.getMessage());
 			}
@@ -225,6 +266,42 @@ public class ZipUtils {
 				ex.printStackTrace();
 			}
 		}
+	}
+
+	private Set<String> convertDependencies(List<Atom> atoms) {
+		Set<String> dependencies = new HashSet<>();
+		for (Atom atom : atoms) {
+			if (atom.getType() == AtomType.Person) {
+				for (Storable storable : atom.getStorables()) {
+					if ("geometry".equals(storable.getId())) {
+						StorableGeometry storableGeometry = storable;
+						for (Clothing clothing : storableGeometry.getClothing()) {
+							if (Objects.nonNull(clothing.getVarName()))
+								dependencies.add(clothing.getVarName());
+						}
+						for (Hair hair : storableGeometry.getHair()) {
+							if (Objects.nonNull(hair.getVarName()))
+								dependencies.add(hair.getVarName());
+						}
+						for (Morph morph : storableGeometry.getMorphs()) {
+							if (Objects.nonNull(morph.getVarName()))
+								dependencies.add(morph.getVarName());
+						}
+					}
+				}
+			}
+		}
+		return dependencies;
+	}
+
+	private String takeVarName(String fullRef) {
+		int startIdx = StringUtils.indexOf(fullRef, "=");
+		int endIdx = StringUtils.indexOf(fullRef, ":");
+		if (0 <= startIdx && startIdx < endIdx) {
+			String varName = StringUtils.substring(fullRef, startIdx, endIdx);
+			return varName;
+		} else
+			return null;
 	}
 
 	private String unZipFile(ZipFile zipFile, ZipEntry zipEntry) {

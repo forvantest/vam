@@ -53,18 +53,22 @@ public class VarFileDTO {
 		this.referencesJson = varFile.getReferencesJson();
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
-			String str = varFile.getMetaDependencies();
-			if (Objects.nonNull(str)) {
-				this.setMetaJson(new MetaJson());
-				this.getMetaJson().setDependencies(objectMapper.readTree(str).deepCopy());
-			}
+//			String str = varFile.getMetaDependencies();
+//			if (Objects.nonNull(str)) {
+//				this.setMetaJson(new MetaJson());
+//				this.getMetaJson().setDependencies(objectMapper.readTree(str).deepCopy());
+//			}
 			String str2 = varFile.getScenesJson();
 			if (Objects.nonNull(str2)) {
 				List<SceneJson> myObjects = objectMapper.readValue(str2, new TypeReference<List<SceneJson>>() {
 				});
 				this.setSceneJsonList(myObjects);
 			}
-
+			String str3 = varFile.getDependencies();
+			if (Objects.nonNull(str3)) {
+				this.dependencies = objectMapper.readValue(str3, new TypeReference<Set<String>>() {
+				});
+			}
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -86,6 +90,7 @@ public class VarFileDTO {
 	private String fullPath;
 	private String varFileName;
 
+	private Set<String> dependencies = new HashSet<>();
 	// Saves
 	// scene
 	private List<SceneJson> sceneJsonList = new ArrayList();
@@ -94,7 +99,7 @@ public class VarFileDTO {
 
 	// Custom
 
-	private MetaJson metaJson;
+//	private MetaJson metaJson;
 	private Exception exception;
 	private Integer favorite;
 	private String referencesJson;

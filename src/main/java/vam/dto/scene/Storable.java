@@ -10,7 +10,7 @@ import lombok.Data;
 @JsonInclude(Include.NON_NULL)
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Storable {
+public class Storable extends StorableGeometry {
 	String id;
 	ObjectNode trigger;
 	ObjectNode plugins;

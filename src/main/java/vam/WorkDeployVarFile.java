@@ -108,9 +108,11 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		if (Objects.nonNull(varFileRef)) {
 			VarFileDTO varFileDTOOld = work2(parent, varFileRef);
 			if (Objects.nonNull(varFileDTOOld)) {
-				if (Objects.nonNull(varFileDTOOld.getMetaJson())) {
-					Map<String, String> m2 = varFileDTOOld.getMetaJson()
-							.getDependenciesAll(varFileDTOOld.getVarFileName());
+				if (Objects.nonNull(varFileDTOOld.getDependencies())) {
+					Map<String, String> m2 = new HashMap<>();
+					for (String key : varFileDTOOld.getDependencies()) {
+						m2.put(key, varFileDTOOld.getVarFileName());
+					}
 					Map<String, String> mapDiff = cuteMap(mAll, m2);
 					mAll.putAll(mapDiff);
 					if (!CollectionUtils.isEmpty(mapDiff)) {

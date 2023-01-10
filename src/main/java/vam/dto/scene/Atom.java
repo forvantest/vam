@@ -8,14 +8,15 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.Data;
+import vam.dto.enumration.AtomType;
 
-@JsonInclude(Include.NON_NULL) 
+@JsonInclude(Include.NON_NULL)
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Atom {
 	String id;
 	Boolean on;
-	String type;
+	AtomType type;
 	Position position;
 	Position rotation;
 	Position containerPosition;

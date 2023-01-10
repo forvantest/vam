@@ -29,7 +29,7 @@ import vam.dto.VarFileDTO;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-@JsonInclude(Include.NON_NULL) 
+@JsonInclude(Include.NON_NULL)
 @Entity
 @Table(name = "varfile")
 public class VarFile implements Serializable, Comparable {
@@ -49,9 +49,11 @@ public class VarFile implements Serializable, Comparable {
 
 	private String version;
 
-	private String metaDependencies;
+//	private String metaDependencies;
 
 	private Integer dependenciesSize;
+
+	private String dependencies;
 
 	private String referencesJson;
 
@@ -79,15 +81,17 @@ public class VarFile implements Serializable, Comparable {
 		this.version = varFileDTO.getVersion();
 		this.fullPath = varFileDTO.getFullPath();
 		this.varFileName = varFileDTO.getVarFileName();
-		if (Objects.nonNull(varFileDTO.getMetaJson())) {
+		if (Objects.nonNull(varFileDTO.getDependencies())) {
 			try {
 				ObjectMapper objectMapper = new ObjectMapper();
-				this.metaDependencies = objectMapper
-						.writeValueAsString(varFileDTO.getMetaJson().getDependenciesAll(""));
+//				this.metaDependencies = objectMapper
+//						.writeValueAsString(varFileDTO.getMetaJson().getDependenciesAll(""));
+				this.dependencies = objectMapper.writeValueAsString(varFileDTO.getDependencies());
+
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
-			this.dependenciesSize = varFileDTO.getMetaJson().getDependenciesAll("").size();
+			this.dependenciesSize = varFileDTO.getDependencies().size();
 		}
 		this.femaleCount = varFileDTO.getFemaleCount();
 		this.femaleGenitaliaCount = varFileDTO.getFemaleGenitaliaCount();
