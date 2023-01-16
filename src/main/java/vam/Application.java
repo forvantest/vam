@@ -33,38 +33,38 @@ public class Application extends SpringBootServletInitializer {
 //		work.moveReference();
 
 		// work.createLinkFile();
-//		work.unDeploy("AllPackages/girl/Archer/");
-//		work.unDeploy("AllPackages/girl/Dnaddr/");
-//		work.unDeploy("AllPackages/girl/VAMDoll/");
-//		work.unDeploy("AllPackages/girl/VAM-YJ/");
-//		work.unDeploy("AllPackages/girl/lv/");
-//		work.unDeploy("AllPackages/girl/realclone/");
-//		work.unDeploy("AllPackages/girl/uugg/");
-//		work.unDeploy("AllPackages/girl/Anom/");
-//		work.unDeploy("AllPackages/girl/callimohu/");
-//		work.unDeploy("AllPackages/girl/CMA/");
-//		work.unDeploy("AllPackages/girl/");
-//		work.unDeploy("AllPackages/girl/yesmola/");
-//		work.unDeploy("AllPackages/girl/Solerrain/");
+//		work.unDeploy("Archer");
+//		work.unDeploy("Dnaddr");
+//		work.unDeploy("VAMDoll");
+//		work.unDeploy("VAM-YJ");
+//		work.unDeploy("lv");
+//		work.unDeploy("realclone");
+//		work.unDeploy("uugg");
+//		work.unDeploy("Anom");
+//		work.unDeploy("callimohu");
+//		work.unDeploy("CMA");
+//		work.unDeploy("");
+//		work.unDeploy("yesmola");
+//		work.unDeploy("Solerrain");
 
-//		 work.unDeploy("AllPackages/girl/zzzat16h/");
+//		 work.unDeploy("zzzat16h");
 
-//		work.deploy("AllPackages/girl/");
-//		work.deploy("AllPackages/girl/Archer/");
-//		work.deploy("AllPackages/girl/Dnaddr/");
-//		work.deploy("AllPackages/girl/VAMDoll/");
-//		work.deploy("AllPackages/girl/VAM-YJ/");
-//		work.deploy("AllPackages/girl/lv/");
-		work.deploy("AllPackages/girl/realclone/");
-		// work.deploy("AllPackages/girl/zzzat16h/");
-//		work.deploy("AllPackages/girl/uugg/");
-//		work.deploy("AllPackages/girl/Anom/");
-//		work.deploy("AllPackages/girl/callimohu/");
-//		work.deploy("AllPackages/girl/CMA/");
-//		work.deploy("AllPackages/girl/Solerrain/");
+//		work.deploy("");
+//		work.deploy("Archer");
+//		work.deploy("Dnaddr");
+//		work.deploy("VAMDoll");
+//		work.deploy("VAM-YJ");
+//		work.deploy("lv");
+//		work.deploy("realclone");
+		// work.deploy("zzzat16h");
+//		work.deploy("uugg");
+//		work.deploy("Anom");
+//		work.deploy("callimohu");
+//		work.deploy("CMA");
+//		work.deploy("Solerrain");
 
-//		work.deploy("AllPackages/girl/yesmola/");
+//		work.deploy("yesmola");
 
-//		work.allUnHide("girl/realclone-support/");
+//		work.allUnHide("girl/realclone-support");
 	}
 }

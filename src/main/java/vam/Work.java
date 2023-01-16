@@ -41,7 +41,7 @@ public class Work extends WorkDeployVarFile {
 
 	public void moveReference() {
 		workUnDeployVarFile.creatorNameSet.forEach(name -> {
-			unDeploy("AllPackages/girl/" + name + "/");
+			unDeploy(name + "/");
 		});
 	}
 }

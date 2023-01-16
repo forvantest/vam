@@ -22,8 +22,8 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 	{
 		creatorNameSet = new HashSet<>();
 		creatorNameSet.add("Dnaddr");
-		creatorNameSet.add("Archer");
 		creatorNameSet.add("realclone");
+		creatorNameSet.add("Archer");
 		creatorNameSet.add("VAM-YJ");
 		creatorNameSet.add("lv");
 		creatorNameSet.add("CMA");
@@ -52,66 +52,37 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		creatorNameSet.add("Eros");
 		creatorNameSet.add("VAMDoll");
 		creatorNameSet.add("KDollMASTA");
+		creatorNameSet.add("Bamair1984");
+		creatorNameSet.add("BIGDOG");
+		creatorNameSet.add("Keiaono");
+		creatorNameSet.add("MK47");
+		creatorNameSet.add("ReAcg");
+		creatorNameSet.add("rose1");
+		creatorNameSet.add("rose11");
+		creatorNameSet.add("QWERTY");
+
 	}
 
 	int dependCount = 0;
 
 	protected void process(String targetDirectory) {
-		File dir = new File(VAM_ROOT_PATH + targetDirectory);
+		File dir = new File(VAM_ALLPACKAGES_PATH + targetDirectory);
 
 		Map<String, String> mAll = new HashMap<>();
 		Set<String> varFileRefSet = fetchAllVarFiles(dir, VAR_EXTENSION);
-		varFileRefSet.forEach(k -> processDependencies(mAll, k, null));
+		varFileRefSet.forEach(k -> processDependencies(mAll, k, null, targetDirectory));
 
-		Set<String> varFileRefSet2 = fetchAllVarFiles(dir, DEPEND_TXT_EXTENSION);
-		varFileRefSet2.forEach(k -> processDependencies(mAll, k, varFileRefSet.iterator().next()));
+//		Set<String> varFileRefSet2 = fetchAllVarFiles(dir, DEPEND_TXT_EXTENSION);
+//		varFileRefSet2.forEach(k -> processDependencies(mAll, k, varFileRefSet.iterator().next()));
 	}
 
-//	private void processVarFileRefSet(Map<String, String> mAll, Set<String> varFileRefSet, boolean toDo) {
-//		process = 0;
-//		for (String varFileName : varFileRefSet) {
-//			VarFileDTO varFileDTOQuery = new VarFileDTO("", varFileName);
-//			VarFile varFile = findSuitableVarFile(varFileDTOQuery);
-//			if (Objects.isNull(varFile)) {
-//				log.info("\n---missing depenence: " + varFileName);
-//				continue;
-//			}
-//			VarFileDTO varFileDTO = new VarFileDTO(varFile);
-//			processVarFile(mAll, varFileDTO);
-////			if (toDo)
-//////				work1(varFile);
-////			else
-////				work4(varFile);
-//			echo(varFileRefSet.size());
-//		}
-//	}
-
-//	protected void processVarFile(Map<String, String> mAll, VarFileDTO varFileDTO) {
-//		String fullPathName = varFileDTO.getFullPath() + varFileDTO.getVarFileName();
-//		File realVarFile = new File(fullPathName);
-//		if (realVarFile.exists()) {
-//			work3(realVarFile);
-//		} else {
-//			log.warn("warn8: varFile doesn't exist: " + varFileDTO.getFullPath() + "  " + varFileDTO.getVarFileName());
-//		}
-//
-//		if (Objects.nonNull(varFileDTO.getMetaJson())) {
-//
-//			Map<String, String> m = varFileDTO.getMetaJson().getDependenciesAll(varFileDTO.getVarFileName());
-//			mAll.putAll(m);
-//			// System.out.println("+++before size: " + mAll.size());
-//			m.forEach((k, v) -> processDependencies(mAll, k, v));
-//			// System.out.println("+++after size: " + mAll.size());
-//		}
-//	}
-
-	private void processDependencies(Map<String, String> mAll, String k, String parent) {
+	private void processDependencies(Map<String, String> mAll, String k, String parent, String groupName) {
 		VarFileDTO varFileQuery = new VarFileDTO(null, k);
 		if ("realclone.annafix2.1.var".equals(varFileQuery.getVarFileName()))
 			log.debug("debug " + varFileQuery.getVarFileName());
 		VarFileDTO varFileRef = findSuitableVarFile(varFileQuery);
 		if (Objects.nonNull(varFileRef)) {
-			VarFileDTO varFileDTOOld = work2(parent, varFileRef);
+			VarFileDTO varFileDTOOld = work2(parent, varFileRef, groupName);
 			if (Objects.nonNull(varFileDTOOld)) {
 				if (Objects.nonNull(varFileDTOOld.getDependencies())) {
 					Map<String, String> m2 = new HashMap<>();
@@ -121,8 +92,8 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 					Map<String, String> mapDiff = cuteMap(mAll, m2);
 					mAll.putAll(mapDiff);
 					if (!CollectionUtils.isEmpty(mapDiff)) {
-						log.warn("+++ new depends size: " + mapDiff.size() + " total: " + mAll.size());
-						mapDiff.forEach((k2, v2) -> processDependencies(mAll, k2, v2));
+						log.info("+++ new depends size: " + mapDiff.size() + " total: " + mAll.size());
+						mapDiff.forEach((k2, v2) -> processDependencies(mAll, k2, v2, groupName));
 					}
 				}
 			}
@@ -131,16 +102,8 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		}
 	}
 
-//	void work1(VarFile varFile) {
-//		VarFileDTO varFileDTO = new VarFileDTO(varFile);
-//		varFileDTO.favorite(VAM_FILE_PREFS);
-//		varFile.increaseFavorite();
-//		varFileRepository.save(varFile);
-//	}
-
-	VarFileDTO work2(String parent, VarFileDTO varFileDTORef) {
+	VarFileDTO work2(String parent, VarFileDTO varFileDTORef, String groupName) {
 		if (Objects.isNull(parent)) {
-//			varFileDTORef = new VarFileDTO(varFileDTORef);
 			varFileDTORef.favorite(VAM_FILE_PREFS);
 			varFileDTORef.increaseFavorite();
 			varFileService.update(varFileDTORef);
@@ -156,7 +119,7 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 			varFileService.delete(varFileDTORef);
 			return null;
 		}
-		createLinkFile(realVarFile);
+		createLinkFile(realVarFile, groupName);
 		return varFileDTORef;
 	}
 
@@ -177,11 +140,4 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		}
 	}
 
-//	void work3(File realVarFile) {
-//		createLinkFile(realVarFile);
-//	}
-//
-//	void work4(VarFile varFile) {
-//
-//	}
 }

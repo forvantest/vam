@@ -193,13 +193,14 @@ public class ZipUtils {
 			} catch (JsonMappingException ex) {
 				ex.printStackTrace();
 				log.debug(ex.getMessage());
-
 				log.debug("\n" + varFileDTO.getFullPath() + varFileDTO.getVarFileName());
 				log.debug(jsonText);
 				// varFileDTO.setException(ex);
 			} catch (JsonEOFException ex) {
+				ex.printStackTrace();
 				varFileDTO.setException(ex);
 			} catch (JsonParseException ex) {
+				ex.printStackTrace();
 				varFileDTO.setException(ex);
 			} catch (Exception ex) {
 				System.out.println("\n" + varFileDTO.getFullPath() + varFileDTO.getVarFileName());

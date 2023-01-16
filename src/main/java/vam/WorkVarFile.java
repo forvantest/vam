@@ -33,9 +33,9 @@ public abstract class WorkVarFile {
 
 	protected String VAM_ROOT_PATH = "C:\\VAM\\";
 	protected String VAM_FILE_PREFS = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\AddonPackagesFilePrefs\\";
-	protected String VAM_ALLPACKAGES_PATH = VAM_ROOT_PATH + "AllPackages\\";
+	protected String VAM_ALLPACKAGES_PATH = VAM_ROOT_PATH + "AllPackages\\___VarTidied___\\";
 	protected String VAM_BASE_PATH = VAM_ALLPACKAGES_PATH + "base\\";
-	private String VAM_ADDON_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\AddonPackages\\";
+	private String VAM_ADDON_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\___addonpacksswitch ___\\";
 	private String VAM_BROKEN_PATH = VAM_ROOT_PATH + "Broken\\";
 	private String VAM_DUPLICATE_PATH = VAM_ROOT_PATH + "Duplicate\\";
 	protected String VAR_EXTENSION = ".var";
@@ -123,7 +123,7 @@ public abstract class WorkVarFile {
 	}
 
 	static int process = 0;
-	static int skipProcess = 8040;
+	static int skipProcess = 0;
 
 	protected void allVarFilesToDB(File file) {
 		if (file.isDirectory()) {
@@ -220,14 +220,14 @@ public abstract class WorkVarFile {
 		}
 	}
 
-	protected void createLinkFile(File file) {
+	protected void createLinkFile(File file, String groupName) {
 		if (file.isDirectory()) {
 			for (File file1 : file.listFiles()) {
-				createLinkFile(file1);
+				createLinkFile(file1, groupName);
 			}
 		} else {
 			if (file.getAbsolutePath().endsWith(VAR_EXTENSION)) {
-				String linkFileName = makeLinkFileName(file);
+				String linkFileName = makeLinkFileName(file, groupName);
 				File linkFile = new File(linkFileName);
 				if (!linkFile.exists()) {
 					boolean b = FileUtil.createLinkFile(file, linkFile);
@@ -238,26 +238,27 @@ public abstract class WorkVarFile {
 		}
 	}
 
-	protected void deleteLinkFile(File file) {
+	protected void deleteLinkFile(File file, String groupName) {
 		if (file.isDirectory()) {
 			for (File file1 : file.listFiles()) {
-				deleteLinkFile(file1);
+				deleteLinkFile(file1, groupName);
 			}
 		} else {
 			if (file.getAbsolutePath().endsWith(VAR_EXTENSION))
-				FileUtil.deleteLinkFile(VAM_ADDON_PATH, makeLinkFileName(file));
+				FileUtil.deleteLinkFile(VAM_ADDON_PATH, makeLinkFileName(file, groupName));
 		}
 	}
 
-	protected String makeLinkFileName(File file) {
-		String linkFileName = StringUtils.replace(file.getAbsolutePath(), VAM_ALLPACKAGES_PATH, VAM_ADDON_PATH);
+	protected String makeLinkFileName(File file, String groupName) {
+		String linkFileName = StringUtils.replace(file.getAbsolutePath(), VAM_ALLPACKAGES_PATH,
+				VAM_ADDON_PATH + groupName + "\\___VarsLink___\\");
 		return linkFileName;
 	}
 
-	protected void createLinkFile(List<String> targetDirectrories) {
+	protected void createLinkFile(List<String> targetDirectrories, String groupName) {
 		for (String targetDirectrory : targetDirectrories) {
 			File file = new File(VAM_ROOT_PATH + targetDirectrory);
-			createLinkFile(file);
+			createLinkFile(file, groupName);
 		}
 	}
 

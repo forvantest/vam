@@ -41,8 +41,9 @@ public class MyCustomDeserializer extends JsonDeserializer<List<String>> {
 				try {
 					jsonParser.nextToken();
 				} catch (JsonParseException ex) {
-					String acceptError = "Unexpected character (']' (code 93)):";
+					String acceptError = "Unexpected character ('";
 					if (StringUtils.startsWith(ex.getMessage(), acceptError)) {
+						System.out.println(ex.getMessage());
 						break;
 					}
 					System.out.println(ex.getMessage());

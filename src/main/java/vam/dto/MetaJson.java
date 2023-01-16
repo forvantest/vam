@@ -36,6 +36,7 @@ public class MetaJson {
 	private String promotionalLink;
 	private String programVersion;
 
+	@JsonDeserialize(using = MyCustomDeserializer.class)
 	private List<String> contentList;
 
 	@JsonProperty("EAEndYear")

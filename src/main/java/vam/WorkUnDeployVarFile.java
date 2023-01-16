@@ -10,16 +10,10 @@ import vam.dto.VarFileDTO;
 @Service("WorkUnDeployVarFile")
 public class WorkUnDeployVarFile extends WorkDeployVarFile {
 
-//	@Override
-//	void work1(VarFile varFile) {
-//		VarFileDTO varFileDTO = new VarFileDTO(varFile);
-//		varFileDTO.unHide(VAM_FILE_PREFS);
-//	}
-
 	@Override
-	VarFileDTO work2(String parent, VarFileDTO varFileDTORef) {
+	VarFileDTO work2(String parent, VarFileDTO varFileDTORef, String groupName) {
 		File realVarFile = new File(varFileDTORef.getFullPath() + varFileDTORef.getVarFileName());
-		deleteLinkFile(realVarFile);
+		deleteLinkFile(realVarFile, groupName);
 		varFileDTORef.unHide(VAM_FILE_PREFS);
 		if (Objects.nonNull(parent)) {
 			if (!creatorNameSet.contains(varFileDTORef.getCreatorName()))
@@ -28,15 +22,4 @@ public class WorkUnDeployVarFile extends WorkDeployVarFile {
 		return varFileDTORef;
 	}
 
-//	@Override
-//	void work3(File realVarFile) {
-//		deleteLinkFile(realVarFile);
-//	}
-//
-//	@Override
-//	void work4(VarFile varFile) {
-//		VarFileDTO varFileDTO = new VarFileDTO(varFile);
-//		if (!creatorNameSet.contains(varFileDTO.getCreatorName()))
-//			varFileDTO.moveVarFileTo(VAM_BASE_PATH);
-//	}
 }

@@ -55,7 +55,7 @@ public class FileUtil {
 		}
 	}
 
-	private static boolean checkFolderExist(String linkfolder) {
+	public static boolean checkFolderExist(String linkfolder) {
 		File linkfolder1 = new File(linkfolder);
 		if (linkfolder1.exists()) {
 			return true;
@@ -63,6 +63,11 @@ public class FileUtil {
 			linkfolder1.mkdirs();
 			return false;
 		}
+	}
+
+	public static boolean checkFileExist(String filePath) {
+		File file = new File(filePath);
+		return file.exists();
 	}
 
 	private static String readPath(String fullPath) {

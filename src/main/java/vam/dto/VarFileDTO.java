@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import vam.util.FileUtil;
 
 @Slf4j
 @JsonInclude(Include.NON_NULL)
@@ -215,19 +216,24 @@ public class VarFileDTO {
 	}
 
 	public void moveVarFileTo(String VAM_SOME_PATH, String reason) {
-		Path sDir = Paths.get(fullPath + varFileName);
+		String srcPath = fullPath + varFileName;
+		Path sDir = Paths.get(srcPath);
 		String targetPath = VAM_SOME_PATH + creatorName + "\\";
-		File f = new File(targetPath);
-		if (!f.exists())
-			f.mkdirs();
+		FileUtil.checkFolderExist(targetPath);
 		Path tDir = Paths.get(targetPath, varFileName);
-		if (!sDir.endsWith(tDir)) {
+		if (!FileUtil.checkFileExist(srcPath)) {
+			System.out.println("\n--X--moving failed src not exist " + reason + ": " + srcPath);
+		} else if (!sDir.endsWith(tDir)) {
 			try {
 				System.out.println("\n---moving " + reason + ": " + sDir);
 				Files.move(sDir, tDir, StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		} else if (FileUtil.checkFileExist(targetPath + varFileName)) {
+			log.debug("\n--X--moving failed target exist " + reason + ": " + targetPath + varFileName);
+		} else {
+			log.error("\n---moving failed " + reason + ": " + sDir);
 		}
 	}
 
