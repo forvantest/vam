@@ -19,20 +19,28 @@ public class FileUtil {
 	 * @param linkFile   鏈結文件位置
 	 * @return
 	 */
-	public static boolean createLinkFile(String targetFile, String linkFile) {
+	public static boolean createLinkFile(String link1, String target1) {
 
 		try {
-			File sourceFile = new File(targetFile);
-			File linkFile1 = new File(linkFile);
-			Path source = sourceFile.toPath();
+			File targetFile = new File(target1);
+			File linkFile1 = new File(link1);
+			Path target = targetFile.toPath();
 			Path link = linkFile1.toPath();
-			Files.createSymbolicLink(source, link);
+			deleteIfExists(link1);
+			Files.createSymbolicLink(link, target);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 
 		return true;
+	}
+
+	private static void deleteIfExists(String filePath) {
+		File file = new File(filePath);
+		if (file.exists()) {
+			file.delete();
+		}
 	}
 
 	public static boolean createLinkFile(File targetFile, File linkFile) {

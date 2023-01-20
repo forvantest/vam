@@ -60,7 +60,11 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		creatorNameSet.add("rose1");
 		creatorNameSet.add("rose11");
 		creatorNameSet.add("QWERTY");
-
+		creatorNameSet.add("mai");
+		creatorNameSet.add("Thorn");
+		creatorNameSet.add("ADADE");
+		creatorNameSet.add("FRK");
+		creatorNameSet.add("hero774");
 	}
 
 	int dependCount = 0;
@@ -104,13 +108,13 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 
 	VarFileDTO work2(String parent, VarFileDTO varFileDTORef, String groupName) {
 		if (Objects.isNull(parent)) {
-			varFileDTORef.favorite(VAM_FILE_PREFS);
+			varFileDTORef.favorite(VAM_ALLFAVORITE_PATH + groupName);
 			varFileDTORef.increaseFavorite();
 			varFileService.update(varFileDTORef);
 		} else {
 			increaseReference(varFileDTORef, parent);
 			varFileService.update(varFileDTORef);
-			varFileDTORef.realHide(VAM_FILE_PREFS);
+			varFileDTORef.realHide(VAM_ALLFAVORITE_PATH + groupName);
 		}
 
 		File realVarFile = new File(varFileDTORef.getFullPath() + varFileDTORef.getVarFileName());

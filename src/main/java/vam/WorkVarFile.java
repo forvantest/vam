@@ -32,30 +32,36 @@ import vam.util.ZipUtils;
 public abstract class WorkVarFile {
 
 	protected String VAM_ROOT_PATH = "C:\\VAM\\";
-	protected String VAM_FILE_PREFS = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\AddonPackagesFilePrefs\\";
+	protected String VAM_FILE_ADDONPACKAGES = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\AddonPackages\\";
+	protected String VAM_FILE_ADDONPACKAGESFILEPREFS = VAM_ROOT_PATH
+			+ "virt-a-mate 1.20.77.9\\AddonPackagesFilePrefs\\";
+
+	protected String VAM_ALLFAVORITE_PATH = VAM_ROOT_PATH
+			+ "virt-a-mate 1.20.77.9\\___addonPackagesFilePrefsswitch ___\\";
+	protected String VAM_ADDON_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\___addonpacksswitch ___\\";
+
 	protected String VAM_ALLPACKAGES_PATH = VAM_ROOT_PATH + "AllPackages\\___VarTidied___\\";
 	protected String VAM_BASE_PATH = VAM_ALLPACKAGES_PATH + "base\\";
-	private String VAM_ADDON_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\___addonpacksswitch ___\\";
 	private String VAM_BROKEN_PATH = VAM_ROOT_PATH + "Broken\\";
 	private String VAM_DUPLICATE_PATH = VAM_ROOT_PATH + "Duplicate\\";
 	protected String VAR_EXTENSION = ".var";
 	protected String DEPEND_TXT_EXTENSION = ".depend.txt";
 
 	@Autowired
-	ZipUtils zipUtils;
+	public ZipUtils zipUtils;
 
 	@Autowired
 	public VarFileService varFileService;
 
 	@Autowired
-	ObjectMapper objectMapper;
+	public ObjectMapper objectMapper;
 
 	public WorkVarFile() {
 		super();
 
 		if (OsUtils.isUnix()) {
 			VAM_ROOT_PATH = "/home/forva/VAM/virt-a-mate 1.20.77.9/";
-			VAM_FILE_PREFS = VAM_ROOT_PATH + "AddonPackagesFilePrefs/";
+			VAM_FILE_ADDONPACKAGESFILEPREFS = VAM_ROOT_PATH + "AddonPackagesFilePrefs/";
 		}
 	}
 

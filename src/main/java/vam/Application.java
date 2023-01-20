@@ -21,7 +21,7 @@ public class Application extends SpringBootServletInitializer {
 		time1 = System.currentTimeMillis();
 		mession(context.getBean(Work.class));
 		time2 = System.currentTimeMillis();
-		System.out.println("mession 花了：" + (time2 - time1) / 1000 + "秒");
+		System.out.println("mission 花了：" + (time2 - time1) / 1000 + "秒");
 
 		System.out.println("\n\nok");
 		System.exit(0);
@@ -29,8 +29,11 @@ public class Application extends SpringBootServletInitializer {
 
 	private static void mession(Work work) {
 
-		work.loadVarFileIntoDB("AllPackages/");
+//		work.loadVarFileIntoDB("AllPackages/");
 //		work.moveReference();
+
+//		work.deploy();
+		work.switchAuthor("Solerrain");
 
 		// work.createLinkFile();
 //		work.unDeploy("Archer");

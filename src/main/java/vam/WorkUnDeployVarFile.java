@@ -14,7 +14,7 @@ public class WorkUnDeployVarFile extends WorkDeployVarFile {
 	VarFileDTO work2(String parent, VarFileDTO varFileDTORef, String groupName) {
 		File realVarFile = new File(varFileDTORef.getFullPath() + varFileDTORef.getVarFileName());
 		deleteLinkFile(realVarFile, groupName);
-		varFileDTORef.unHide(VAM_FILE_PREFS);
+		varFileDTORef.unHide(VAM_ALLFAVORITE_PATH + groupName);
 		if (Objects.nonNull(parent)) {
 			if (!creatorNameSet.contains(varFileDTORef.getCreatorName()))
 				varFileDTORef.moveVarFileTo(VAM_BASE_PATH, "used");
