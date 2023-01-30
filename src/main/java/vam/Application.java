@@ -28,12 +28,16 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	private static void mession(Work work) {
-
-//		work.loadVarFileIntoDB("AllPackages/");
-//		work.moveReference();
-
+		work.clearUseLessDB();
+		work.loadVarFileIntoDB("AllPackages/");
+		work.moveReference();
 //		work.deploy();
-		work.switchAuthor("Solerrain");
+//		work.deployBestScene(BestScene.HotChicksVR);
+//		work.deployBestGirl(BestGirl.mai);
+//		work.switchAuthor(BestGirl.mai);
+//		work.switchAuthor(BestScene.HotChicksVR);
+//		work.switchAuthor("FRK");
+//		work.switchAuthor("Eros");
 
 		// work.createLinkFile();
 //		work.unDeploy("Archer");

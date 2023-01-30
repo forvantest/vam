@@ -65,4 +65,9 @@ public class VarFileService {
 		}
 	}
 
+	public List<VarFileDTO> findAll() {
+		List<VarFile> list = varFileRepository.findAll();
+		return list.stream().map(mapperUtils::convertVarFileDTO).collect(Collectors.toList());
+	}
+
 }

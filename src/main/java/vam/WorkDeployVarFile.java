@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,70 +19,74 @@ import vam.dto.VarFileDTO;
 @Slf4j
 public abstract class WorkDeployVarFile extends WorkVarFile {
 
-	static Set<String> creatorNameSet;
-	{
-		creatorNameSet = new HashSet<>();
-		creatorNameSet.add("Dnaddr");
-		creatorNameSet.add("realclone");
-		creatorNameSet.add("Archer");
-		creatorNameSet.add("VAM-YJ");
-		creatorNameSet.add("lv");
-		creatorNameSet.add("CMA");
-		creatorNameSet.add("VAMDoll");
-		creatorNameSet.add("Anom");
-		creatorNameSet.add("Hcg");
-		creatorNameSet.add("HT");
-		creatorNameSet.add("zzzat16h");
-		creatorNameSet.add("uugg");
-		creatorNameSet.add("mio");
-		creatorNameSet.add("callimohu");
-		creatorNameSet.add("ye666");
-		creatorNameSet.add("Xspada");
-		creatorNameSet.add("VKStyle");
-		creatorNameSet.add("VAM_GS");
-		creatorNameSet.add("sortof");
-		creatorNameSet.add("Solerrain");
-		creatorNameSet.add("rose1");
-		creatorNameSet.add("qingfeng");
-		creatorNameSet.add("Qing");
-		creatorNameSet.add("passerby");
-		creatorNameSet.add("MRdong");
-		creatorNameSet.add("Neiro");
-		creatorNameSet.add("Wolverine");
-		creatorNameSet.add("yesmola");
-		creatorNameSet.add("Eros");
-		creatorNameSet.add("VAMDoll");
-		creatorNameSet.add("KDollMASTA");
-		creatorNameSet.add("Bamair1984");
-		creatorNameSet.add("BIGDOG");
-		creatorNameSet.add("Keiaono");
-		creatorNameSet.add("MK47");
-		creatorNameSet.add("ReAcg");
-		creatorNameSet.add("rose1");
-		creatorNameSet.add("rose11");
-		creatorNameSet.add("QWERTY");
-		creatorNameSet.add("mai");
-		creatorNameSet.add("Thorn");
-		creatorNameSet.add("ADADE");
-		creatorNameSet.add("FRK");
-		creatorNameSet.add("hero774");
-	}
+//	static Set<String> creatorNameSet;
+//	{
+//		creatorNameSet = new HashSet<>();
+//		creatorNameSet.add("Dnaddr");
+//		creatorNameSet.add("realclone");
+//		creatorNameSet.add("Archer");
+//		creatorNameSet.add("VAM-YJ");
+//		creatorNameSet.add("lv");
+//		creatorNameSet.add("CMA");
+//		creatorNameSet.add("VAMDoll");
+//		creatorNameSet.add("Anom");
+//		creatorNameSet.add("Hcg");
+//		creatorNameSet.add("HT");
+//		creatorNameSet.add("zzzat16h");
+//		creatorNameSet.add("uugg");
+//		creatorNameSet.add("mio");
+//		creatorNameSet.add("callimohu");
+//		creatorNameSet.add("ye666");
+//		creatorNameSet.add("Xspada");
+//		creatorNameSet.add("VKStyle");
+//		creatorNameSet.add("VAM_GS");
+//		creatorNameSet.add("sortof");
+//		creatorNameSet.add("Solerrain");
+//		creatorNameSet.add("rose1");
+//		creatorNameSet.add("qingfeng");
+//		creatorNameSet.add("Qing");
+//		creatorNameSet.add("passerby");
+//		creatorNameSet.add("MRdong");
+//		creatorNameSet.add("Neiro");
+//		creatorNameSet.add("Wolverine");
+//		creatorNameSet.add("yesmola");
+//		creatorNameSet.add("Eros");
+//		creatorNameSet.add("VAMDoll");
+//		creatorNameSet.add("KDollMASTA");
+//		creatorNameSet.add("Bamair1984");
+//		creatorNameSet.add("BIGDOG");
+//		creatorNameSet.add("Keiaono");
+//		creatorNameSet.add("MK47");
+//		creatorNameSet.add("ReAcg");
+//		creatorNameSet.add("rose1");
+//		creatorNameSet.add("rose11");
+//		creatorNameSet.add("QWERTY");
+//		creatorNameSet.add("mai");
+//		creatorNameSet.add("Thorn");
+//		creatorNameSet.add("ADADE");
+//		creatorNameSet.add("FRK");
+//		creatorNameSet.add("hero774");
+//	}
 
 	int dependCount = 0;
 
-	protected void process(String targetDirectory) {
+	protected Map<String, VarFileDTO> process(String targetDirectory) {
 		File dir = new File(VAM_ALLPACKAGES_PATH + targetDirectory);
-
 		Map<String, String> mAll = new HashMap<>();
+		Map<String, VarFileDTO> mLack = new HashMap<>();
 		Set<String> varFileRefSet = fetchAllVarFiles(dir, VAR_EXTENSION);
-		varFileRefSet.forEach(k -> processDependencies(mAll, k, null, targetDirectory));
-
+		varFileRefSet.forEach(k -> processDependencies(mAll, mLack, k, null, targetDirectory));
 //		Set<String> varFileRefSet2 = fetchAllVarFiles(dir, DEPEND_TXT_EXTENSION);
 //		varFileRefSet2.forEach(k -> processDependencies(mAll, k, varFileRefSet.iterator().next()));
+		log.warn("+++ deploy: " + targetDirectory + " --- lack depenencies: " + mLack.size());
+		return mLack;
 	}
 
-	private void processDependencies(Map<String, String> mAll, String k, String parent, String groupName) {
+	private void processDependencies(Map<String, String> mAll, Map<String, VarFileDTO> mLack, String k, String parent,
+			String groupName) {
 		VarFileDTO varFileQuery = new VarFileDTO(null, k);
+		if (StringUtils.endsWith(varFileQuery.getVarFileName(), ":"))
+			log.debug("debug 2" + varFileQuery.getVarFileName());
 		if ("realclone.annafix2.1.var".equals(varFileQuery.getVarFileName()))
 			log.debug("debug " + varFileQuery.getVarFileName());
 		VarFileDTO varFileRef = findSuitableVarFile(varFileQuery);
@@ -97,12 +102,13 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 					mAll.putAll(mapDiff);
 					if (!CollectionUtils.isEmpty(mapDiff)) {
 						log.info("+++ new depends size: " + mapDiff.size() + " total: " + mAll.size());
-						mapDiff.forEach((k2, v2) -> processDependencies(mAll, k2, v2, groupName));
+						mapDiff.forEach((k2, v2) -> processDependencies(mAll, mLack, k2, v2, groupName));
 					}
 				}
 			}
 		} else {
-			log.error("--- old depends not exist: " + varFileQuery.getVarFileName());
+			mLack.put(varFileQuery.getVarFileName(), varFileQuery);
+			log.info("--- old depends not exist: " + varFileQuery.getVarFileName());
 		}
 	}
 

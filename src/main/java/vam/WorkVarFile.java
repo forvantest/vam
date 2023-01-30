@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -328,6 +329,7 @@ public abstract class WorkVarFile {
 					+ varFileDTO.getVersion());
 			return null;
 		} else {
+			Collections.sort(varFileOldList);
 			VarFileDTO varFile = varFileOldList.get(0);
 			return varFile;
 		}

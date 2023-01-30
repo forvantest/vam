@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.springframework.stereotype.Service;
 
 import vam.dto.VarFileDTO;
+import vam.dto.enumration.BestGirl;
 
 @Service("WorkUnDeployVarFile")
 public class WorkUnDeployVarFile extends WorkDeployVarFile {
@@ -16,7 +17,7 @@ public class WorkUnDeployVarFile extends WorkDeployVarFile {
 		deleteLinkFile(realVarFile, groupName);
 		varFileDTORef.unHide(VAM_ALLFAVORITE_PATH + groupName);
 		if (Objects.nonNull(parent)) {
-			if (!creatorNameSet.contains(varFileDTORef.getCreatorName()))
+			if (!BestGirl.contains(varFileDTORef.getCreatorName()))
 				varFileDTORef.moveVarFileTo(VAM_BASE_PATH, "used");
 		}
 		return varFileDTORef;

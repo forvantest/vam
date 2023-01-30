@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -87,11 +89,26 @@ public class MapperUtils {
 			if (Objects.nonNull(str3)) {
 				Set<String> dependencies = objectMapper.readValue(str3, new TypeReference<Set<String>>() {
 				});
-				varFileDTO.setDependencies(dependencies);
+				Set<String> dependencies1 = dependencies.stream().filter(key -> usefull(key))
+						.collect(Collectors.toSet());
+				varFileDTO.setDependencies(dependencies1);
 			}
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return varFileDTO;
+	}
+
+	public boolean usefull(String key) {
+		if (StringUtils.endsWith(key, ":"))
+			return false;
+
+		if ("self".equals(key.toLowerCase()))
+			return false;
+
+		if ("custom".equals(key.toLowerCase()))
+			return false;
+
+		return true;
 	}
 }

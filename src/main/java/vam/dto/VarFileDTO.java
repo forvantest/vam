@@ -25,7 +25,7 @@ import vam.util.FileUtil;
 @Slf4j
 @JsonInclude(Include.NON_NULL)
 @Data
-public class VarFileDTO {
+public class VarFileDTO implements Comparable {
 
 	public VarFileDTO(String fullPath, String varFileName) {
 		String[] varNameArray = StringUtils.split(varFileName, ".");
@@ -242,6 +242,18 @@ public class VarFileDTO {
 			favorite++;
 		else
 			favorite = 1;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		if (!StringUtils.isNumeric(this.version))
+			return -1;
+
+		VarFileDTO varFileDTO = (VarFileDTO) o;
+		if (!StringUtils.isNumeric(varFileDTO.version))
+			return 1;
+
+		return Integer.parseInt(varFileDTO.getVersion()) - Integer.parseInt(this.version);
 	}
 
 //	public void increaseReference(String parent) {
