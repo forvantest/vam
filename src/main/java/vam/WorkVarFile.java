@@ -31,15 +31,15 @@ import vam.util.ZipUtils;
 
 @Slf4j
 public abstract class WorkVarFile {
-
 	protected String VAM_ROOT_PATH = "C:\\VAM\\";
-	protected String VAM_FILE_ADDONPACKAGES = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\AddonPackages\\";
-	protected String VAM_FILE_ADDONPACKAGESFILEPREFS = VAM_ROOT_PATH
-			+ "virt-a-mate 1.20.77.9\\AddonPackagesFilePrefs\\";
 
-	protected String VAM_ALLFAVORITE_PATH = VAM_ROOT_PATH
-			+ "virt-a-mate 1.20.77.9\\___addonPackagesFilePrefsswitch ___\\";
-	protected String VAM_ADDON_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9\\___addonpacksswitch ___\\";
+	protected String VAM_APP_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9-1\\";
+
+	protected String VAM_FILE_ADDONPACKAGES = VAM_APP_PATH + "AddonPackages\\";
+	protected String VAM_FILE_ADDONPACKAGESFILEPREFS = VAM_APP_PATH + "AddonPackagesFilePrefs\\";
+
+	protected String VAM_ALLFAVORITE_PATH = VAM_APP_PATH + "___addonPackagesFilePrefsswitch ___\\";
+	protected String VAM_ADDON_PATH = VAM_APP_PATH + "___addonpacksswitch ___\\";
 
 	protected String VAM_ALLPACKAGES_PATH = VAM_ROOT_PATH + "AllPackages\\___VarTidied___\\";
 	protected String VAM_BASE_PATH = VAM_ALLPACKAGES_PATH + "base\\";

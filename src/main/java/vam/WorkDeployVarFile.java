@@ -71,6 +71,12 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 	int dependCount = 0;
 
 	protected Map<String, VarFileDTO> process(String targetDirectory) {
+		Map<String, VarFileDTO> mLack = processPri(targetDirectory);
+		log.warn("+++ deploy: " + targetDirectory + " --- lack depenencies: " + mLack.size());
+		return mLack;
+	}
+
+	protected Map<String, VarFileDTO> processPri(String targetDirectory) {
 		File dir = new File(VAM_ALLPACKAGES_PATH + targetDirectory);
 		Map<String, String> mAll = new HashMap<>();
 		Map<String, VarFileDTO> mLack = new HashMap<>();
@@ -78,7 +84,6 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		varFileRefSet.forEach(k -> processDependencies(mAll, mLack, k, null, targetDirectory));
 //		Set<String> varFileRefSet2 = fetchAllVarFiles(dir, DEPEND_TXT_EXTENSION);
 //		varFileRefSet2.forEach(k -> processDependencies(mAll, k, varFileRefSet.iterator().next()));
-		log.warn("+++ deploy: " + targetDirectory + " --- lack depenencies: " + mLack.size());
 		return mLack;
 	}
 

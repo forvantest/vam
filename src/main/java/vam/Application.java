@@ -7,6 +7,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import vam.dto.enumration.BestGirl;
+
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan
@@ -28,14 +30,23 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	private static void mession(Work work) {
-		work.clearUseLessDB();
-		work.loadVarFileIntoDB("AllPackages/");
-		work.moveReference();
-//		work.deploy();
+//		work.clearUseLessDB();
+//		work.loadVarFileIntoDB("AllPackages/");
+//		work.moveReference();
+		work.deploy();
+//		work.deployBestScene(BestScene.TGC);
+
+//		work.deployBestScene(BestScene.Chill_PopRun);
+//		work.deployBestScene(BestScene.abcTits);
 //		work.deployBestScene(BestScene.HotChicksVR);
+//		work.deployBestScene(BestScene.androinz);
 //		work.deployBestGirl(BestGirl.mai);
-//		work.switchAuthor(BestGirl.mai);
+		work.switchAuthor(BestGirl.mai);
+//		work.switchAuthor(BestScene.TGC);
+//		work.switchAuthor(BestScene.Chill_PopRun);
+//		work.deployBestScene(BestScene.abcTits);
 //		work.switchAuthor(BestScene.HotChicksVR);
+//		work.switchAuthor(BestScene.androinz);
 //		work.switchAuthor("FRK");
 //		work.switchAuthor("Eros");
 
