@@ -1,6 +1,7 @@
 package vam;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import vam.dto.VarFileDTO;
@@ -45,9 +47,9 @@ public class Work extends WorkDeployVarFile {
 		System.out.println("total:" + count);
 	}
 
-	public void deploy(String targetDirectory) {
-		process(targetDirectory);
-	}
+//	public void deploy(String targetDirectory) {
+//		process(targetDirectory, targetDirectory);
+//	}
 
 	public void unDeploy(String targetDirectory, Map<String, VarFileDTO> mLack, Map<String, Set<String>> msLack) {
 		for (String key : mLack.keySet()) {
@@ -58,7 +60,7 @@ public class Work extends WorkDeployVarFile {
 			}
 			ss.add(targetDirectory);
 		}
-		mLack.putAll(workUnDeployVarFile.process(targetDirectory));
+		mLack.putAll(workUnDeployVarFile.process(targetDirectory, targetDirectory));
 	}
 
 	public void moveReference() {
@@ -77,45 +79,65 @@ public class Work extends WorkDeployVarFile {
 		ls.forEach(v -> {
 			System.out.println("--- old depenence missing: " + v + "\t\t" + msLack.get(v).toString());
 		});
-
-//		List<String> ls = mLack.keySet().stream().collect(Collectors.toList());
-//		Collections.sort(ls);
-//		ls.forEach(v -> {
-//			System.out.println("--- old depenence missing: " + v + "\t\t" + mLack.get(v).getCreatorName());
-//		});
 	}
 
-	public void deploy() {
+	public void deploy(String groupName) {
 		BestGirl[] ea = BestGirl.values();
 		for (int i = 0; i < ea.length; i++) {
-			deployBestGirl(ea[i]);
+			deployBestGirl(ea[i], groupName);
 		}
 		BestScene[] es = BestScene.values();
 		for (int i = 0; i < es.length; i++) {
-			deployBestScene(es[i]);
+			deployBestScene(es[i], groupName);
 		}
+		switchAuthor(groupName);
 	}
 
-	public void deployBestGirl(BestGirl bestGirl) {
-		process(bestGirl.getDescription() + "/");
+	public void deployBestGirl(BestGirl bestGirl, String groupName) {
+		process(bestGirl.getDescription() + "/", groupName);
+		if (StringUtils.isEmpty(groupName))
+			switchAuthor(bestGirl.getDescription());
 	}
 
-	public void deployBestScene(BestScene bestScene) {
-		process(bestScene.getDescription() + "/");
+	public void deployBestScene(BestScene bestScene, String groupName) {
+		process(bestScene.getDescription() + "/", groupName);
+		if (StringUtils.isEmpty(groupName))
+			switchAuthor(bestScene.getDescription());
 	}
 
-	public void switchAuthor(BestGirl bg) {
-		switchAuthor(bg.getDescription());
-	}
-
-	public void switchAuthor(BestScene bs) {
-		switchAuthor(bs.getDescription());
+	public void deployBestSceneGirl(BestScene bestScene, BestGirl bestGirl, String groupName) {
+		process(bestGirl.getDescription() + "/", groupName);
+		process(bestScene.getDescription() + "/", groupName);
+		switchAuthor(groupName);
 	}
 
 	private void switchAuthor(String author) {
-		switchPackage(author);
-		switchFavorite(author);
+		addPackage(author);
+		addFavorite(author);
 		additional(author);
+	}
+
+//	public void switchAuthor(BestGirl bg) {
+//		switchAuthor(bg.getDescription());
+//	}
+//
+//	public void switchAuthor(BestScene bs) {
+//		switchAuthor(bs.getDescription());
+//	}
+
+	public void switchAuthor(BestScene bs, BestGirl bg) {
+		List<String> authorList = new ArrayList<>();
+		authorList.add(bs.getDescription());
+		authorList.add(bg.getDescription());
+		switchAuthor(authorList);
+	}
+
+	private void switchAuthor(List<String> authorList) {
+		for (String author : authorList) {
+			addPackage(author);
+			addFavorite(author);
+		}
+		// additional(author);
 	}
 
 	static Set<String> additionalVarList;
@@ -143,15 +165,15 @@ public class Work extends WorkDeployVarFile {
 			log.warn("\n---failed additional: " + targetFile);
 	}
 
-	private void switchPackage(String author) {
+	private void addPackage(String author) {
 		String linkfolder = VAM_FILE_ADDONPACKAGES;
-		String targetfolder = VAM_ADDON_PATH + author + "\\";
+		String targetfolder = VAM_ADDON_PATH + author;
 		boolean b = FileUtil.createLinkFile(linkfolder, targetfolder);
 		if (!b)
 			log.warn("\n---failed switchPackage: " + targetfolder);
 	}
 
-	private void switchFavorite(String author) {
+	private void addFavorite(String author) {
 		String linkfolder = VAM_FILE_ADDONPACKAGESFILEPREFS;
 		String targetfolder = VAM_ALLFAVORITE_PATH + author + "\\";
 		boolean b = FileUtil.createLinkFile(linkfolder, targetfolder);
@@ -166,7 +188,7 @@ public class Work extends WorkDeployVarFile {
 			File dir = new File(targetFile);
 			if (!dir.exists()) {
 				varFileService.delete(varFileDTO);
-				log.warn("\n---delete: " + varFileDTO.getVarFileName());
+				log.warn("\n---delete db: " + varFileDTO.getVarFileName());
 			}
 		});
 	}

@@ -70,14 +70,14 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 
 	int dependCount = 0;
 
-	protected Map<String, VarFileDTO> process(String targetDirectory) {
-		Map<String, VarFileDTO> mLack = processPri(targetDirectory);
-		log.warn("+++ deploy: " + targetDirectory + " --- lack depenencies: " + mLack.size());
+	protected Map<String, VarFileDTO> process(String sourceDirectory, String targetDirectory) {
+		Map<String, VarFileDTO> mLack = processPri(sourceDirectory, targetDirectory);
+		log.warn("+++ deploy: " + sourceDirectory + " --- lack depenencies: " + mLack.size());
 		return mLack;
 	}
 
-	protected Map<String, VarFileDTO> processPri(String targetDirectory) {
-		File dir = new File(VAM_ALLPACKAGES_PATH + targetDirectory);
+	protected Map<String, VarFileDTO> processPri(String sourceDirectory, String targetDirectory) {
+		File dir = new File(VAM_ALLPACKAGES_PATH + sourceDirectory);
 		Map<String, String> mAll = new HashMap<>();
 		Map<String, VarFileDTO> mLack = new HashMap<>();
 		Set<String> varFileRefSet = fetchAllVarFiles(dir, VAR_EXTENSION);
@@ -134,7 +134,7 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 			varFileService.delete(varFileDTORef);
 			return null;
 		}
-		createLinkFile(realVarFile, groupName);
+		createLinkFile(varFileDTORef, realVarFile, groupName);
 		return varFileDTORef;
 	}
 

@@ -227,14 +227,14 @@ public abstract class WorkVarFile {
 		}
 	}
 
-	protected void createLinkFile(File file, String groupName) {
+	protected void createLinkFile(VarFileDTO varFileDTORef, File file, String groupName) {
 		if (file.isDirectory()) {
 			for (File file1 : file.listFiles()) {
-				createLinkFile(file1, groupName);
+				createLinkFile(varFileDTORef, file1, groupName);
 			}
 		} else {
 			if (file.getAbsolutePath().endsWith(VAR_EXTENSION)) {
-				String linkFileName = makeLinkFileName(file, groupName);
+				String linkFileName = makeLinkFileName(varFileDTORef, file, groupName);
 				File linkFile = new File(linkFileName);
 				if (!linkFile.exists()) {
 					boolean b = FileUtil.createLinkFile(file, linkFile);
@@ -245,29 +245,29 @@ public abstract class WorkVarFile {
 		}
 	}
 
-	protected void deleteLinkFile(File file, String groupName) {
+	protected void deleteLinkFile(VarFileDTO varFileDTORef, File file, String groupName) {
 		if (file.isDirectory()) {
 			for (File file1 : file.listFiles()) {
-				deleteLinkFile(file1, groupName);
+				deleteLinkFile(varFileDTORef, file1, groupName);
 			}
 		} else {
 			if (file.getAbsolutePath().endsWith(VAR_EXTENSION))
-				FileUtil.deleteLinkFile(VAM_ADDON_PATH, makeLinkFileName(file, groupName));
+				FileUtil.deleteLinkFile(VAM_ADDON_PATH, makeLinkFileName(varFileDTORef, file, groupName));
 		}
 	}
 
-	protected String makeLinkFileName(File file, String groupName) {
-		String linkFileName = StringUtils.replace(file.getAbsolutePath(), VAM_ALLPACKAGES_PATH,
-				VAM_ADDON_PATH + groupName + "\\___VarsLink___\\");
+	protected String makeLinkFileName(VarFileDTO varFileDTORef, File file, String groupName) {
+		String linkFileName = VAM_ADDON_PATH + groupName + "___VarsLink___\\" + varFileDTORef.getCreatorName() + "\\"
+				+ varFileDTORef.getVarFileName();
 		return linkFileName;
 	}
 
-	protected void createLinkFile(List<String> targetDirectrories, String groupName) {
-		for (String targetDirectrory : targetDirectrories) {
-			File file = new File(VAM_ROOT_PATH + targetDirectrory);
-			createLinkFile(file, groupName);
-		}
-	}
+//	protected void createLinkFile(List<String> targetDirectrories, String groupName) {
+//		for (String targetDirectrory : targetDirectrories) {
+//			File file = new File(VAM_ROOT_PATH + targetDirectrory);
+//			createLinkFile(varFileDTORef,file, groupName);
+//		}
+//	}
 
 //	public void connect() {
 //		Connection conn = null;

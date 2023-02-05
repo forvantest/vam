@@ -1,8 +1,10 @@
 package vam.dto.enumration;
 
 public enum BestScene {
-	HotChicksVR("HotChicksVR"), androinz("androinz"), abcTits("abc tits"), 
-	Chill_PopRun("Chill_PopRun"), TGC("TGC");
+	HotChicksVR("HotChicksVR"), androinz("androinz"), abcTits("abc tits"), Chill_PopRun("Chill_PopRun"), TGC("TGC"),
+	noheadnoleg("noheadnoleg"), KittyMocap("KittyMocap"), LDR("LDR"), jyy("jyy"), SlamT("SlamT"),
+	ReignMocap("ReignMocap"), Zam55555("Zam55555"), AlpacaLaps("AlpacaLaps"), ZenMocap("ZenMocap"), Tiseb("Tiseb"),
+	flyroxy("flyroxy"), Vihper("Vihper");
 
 	private String description;
 

@@ -7,8 +7,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import vam.dto.enumration.BestGirl;
-
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan
@@ -30,18 +28,83 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	private static void mession(Work work) {
-//		work.clearUseLessDB();
-//		work.loadVarFileIntoDB("AllPackages/");
+		work.clearUseLessDB();
+		work.loadVarFileIntoDB("AllPackages/");
 //		work.moveReference();
-		work.deploy();
-//		work.deployBestScene(BestScene.TGC);
+//		work.deploy("AA_ALL/");
+//		work.deployBestGirl(BestGirl.ye666);
+//		work.deployBestSceneGirl(BestScene.HotChicksVR, BestGirl.Dnaddr, "AA2_HotChicksVR_Dnaddr\\");
+//		work.deployBestSceneGirl(BestScene.androinz, BestGirl.realclone, "AA2_androinz_realclone\\");
+//		work.deployBestSceneGirl(BestScene.abcTits, BestGirl.Archer, "AA2_abcTits_Archer\\");
+//		work.deployBestSceneGirl(BestScene.Chill_PopRun, BestGirl.VAMYJ, "AA2_Chill_PopRun_VAMYJ\\");
+//		work.deployBestSceneGirl(BestScene.TGC, BestGirl.lv, "AA2_TGC_lv\\");
+//		work.deployBestSceneGirl(BestScene.noheadnoleg, BestGirl.Eros, "AA2_noheadnoleg_Eros\\");
+//		work.deployBestSceneGirl(BestScene.KittyMocap, BestGirl.Hcg, "AA2_KittyMocap_Hcg\\");
+//		work.deployBestSceneGirl(BestScene.LDR, BestGirl.Solerrain, "AA2_LDR_Solerrain\\");
+//		work.deployBestSceneGirl(BestScene.jyy, BestGirl.passerby, "AA2_jyy_passerby\\");
+//		work.deployBestSceneGirl(BestScene.SlamT, BestGirl.callimohu, "AA2_SlamT_callimohu\\");
+//		work.deployBestSceneGirl(BestScene.ReignMocap, BestGirl.ye666, "AA2_ReignMocap_ye666\\");
+//		work.deployBestSceneGirl(BestScene.Zam55555, BestGirl.zzzat16h, "AA2_Zam55555_zzzat16h\\");
+//		work.deployBestSceneGirl(BestScene.AlpacaLaps, BestGirl.VKStyle, "AA2_AlpacaLaps_VKStyle\\");
+//		work.deployBestSceneGirl(BestScene.ZenMocap, BestGirl.VAM_GS, "AA2_ZenMocap_VAM_GS\\");
+//		work.deployBestSceneGirl(BestScene.Tiseb, BestGirl.sortof, "AA2_Tiseb_sortof\\");
+//		work.deployBestSceneGirl(BestScene.flyroxy, BestGirl.MRdong, "AA2_flyroxy_MRdong\\");
+//		work.deployBestSceneGirl(BestScene.Vihper, BestGirl.ReAcg, "AA2_Vihper_ReAcg\\");
 
+//		Dnaddr("Dnaddr"),
+//		realclone("realclone"),
+//		Archer("Archer"),
+//		VAMYJ("VAM-YJ"),
+//		lv("lv"),
+//		Eros("Eros"),
+//		Hcg("Hcg"),
+//		Solerrain("Solerrain"),	
+//		passerby("passerby"),
+//		callimohu("callimohu"),
+//		ye666("ye666"),
+//		zzzat16h("zzzat16h"),
+//		VKStyle("VKStyle"),
+//		VAM_GS("VAM_GS"),
+//		sortof("sortof"),
+//		MRdong("MRdong"),
+//		ReAcg("ReAcg"),
+//		
+//		BIGDOG("BIGDOG"),
+//		yesmola("yesmola"),
+//		FRK("FRK"),
+//		CMA("CMA"),
+//		mai("mai"),
+//		Thorn("Thorn"),
+//		mio("mio"),
+//		HT("HT"),
+//		Anom("Anom"),
+//		VAMDoll("VAMDoll"),
+//		KDollMASTA("KDollMASTA"),
+//		Bamair1984("Bamair1984"),
+//		qingfeng("qingfeng"),
+//		Qing("Qing"),
+//		rose1("rose1"),	
+//		rose11("rose11"),
+//		Xspada("Xspada"),
+//		ADADE("ADADE"),
+//		Wolverine("Wolverine"),
+//		Neiro("Neiro"),
+//		QWERTY("QWERTY"),
+//		MK47("MK47"),
+//		Keiaono("Keiaono"),
+//		hero774("hero774"),
+
+		// work.deployBestSceneGirl(BestScene.LDR, BestGirl.callimohu,
+		// "AA_LDRcallimohu\\");
+
+//		work.switchAuthor(BestScene.KittyMocap, BestGirl.Dnaddr);
 //		work.deployBestScene(BestScene.Chill_PopRun);
 //		work.deployBestScene(BestScene.abcTits);
+//		work.switchAuthor(BestScene.noheadnoleg);
 //		work.deployBestScene(BestScene.HotChicksVR);
 //		work.deployBestScene(BestScene.androinz);
 //		work.deployBestGirl(BestGirl.mai);
-		work.switchAuthor(BestGirl.mai);
+//		work.switchAuthor(BestGirl.mai);
 //		work.switchAuthor(BestScene.TGC);
 //		work.switchAuthor(BestScene.Chill_PopRun);
 //		work.deployBestScene(BestScene.abcTits);

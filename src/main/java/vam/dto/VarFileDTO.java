@@ -227,6 +227,7 @@ public class VarFileDTO implements Comparable {
 			try {
 				System.out.println("\n---moving " + reason + ": " + sDir);
 				Files.move(sDir, tDir, StandardCopyOption.REPLACE_EXISTING);
+				this.setFullPath(targetPath);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
