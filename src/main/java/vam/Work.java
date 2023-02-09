@@ -117,13 +117,15 @@ public class Work extends WorkDeployVarFile {
 		additional(author);
 	}
 
-//	public void switchAuthor(BestGirl bg) {
-//		switchAuthor(bg.getDescription());
-//	}
-//
-//	public void switchAuthor(BestScene bs) {
-//		switchAuthor(bs.getDescription());
-//	}
+	public void deployBestGirl(BestGirl bestGirl) {
+		process(bestGirl.getDescription() + "/", bestGirl.getDescription() + "/");
+		switchAuthor(bestGirl.getDescription());
+	}
+
+	public void deployBestScene(BestScene bestScene) {
+		process(bestScene.getDescription() + "/", bestScene.getDescription() + "/");
+		switchAuthor(bestScene.getDescription());
+	}
 
 	public void switchAuthor(BestScene bs, BestGirl bg) {
 		List<String> authorList = new ArrayList<>();

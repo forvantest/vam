@@ -92,7 +92,7 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		VarFileDTO varFileQuery = new VarFileDTO(null, k);
 		if (StringUtils.endsWith(varFileQuery.getVarFileName(), ":"))
 			log.debug("debug 2" + varFileQuery.getVarFileName());
-		if ("realclone.annafix2.1.var".equals(varFileQuery.getVarFileName()))
+		if ("Alter3go.Skin_A1_3.1.var".equals(varFileQuery.getVarFileName()))
 			log.debug("debug " + varFileQuery.getVarFileName());
 		VarFileDTO varFileRef = findSuitableVarFile(varFileQuery);
 		if (Objects.nonNull(varFileRef)) {

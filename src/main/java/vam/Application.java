@@ -7,6 +7,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import vam.dto.enumration.BestGirl;
+import vam.dto.enumration.BestScene;
+
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan
@@ -50,6 +53,11 @@ public class Application extends SpringBootServletInitializer {
 //		work.deployBestSceneGirl(BestScene.Tiseb, BestGirl.sortof, "AA2_Tiseb_sortof\\");
 //		work.deployBestSceneGirl(BestScene.flyroxy, BestGirl.MRdong, "AA2_flyroxy_MRdong\\");
 //		work.deployBestSceneGirl(BestScene.Vihper, BestGirl.ReAcg, "AA2_Vihper_ReAcg\\");
+//		work.deployBestSceneGirl(BestScene.Universens, BestGirl.CMA, "AA2_Universens_CMA\\");
+//		work.deployBestSceneGirl(BestScene.xinxiu, BestGirl.yesmola, "AA2_xinxiu_yesmola\\");
+//		work.deployBestSceneGirl(BestScene.UJVAM, BestGirl.mai, "AA2_UJVAM_mai\\");
+
+		work.deployBestSceneGirl(BestScene.FeiSama, BestGirl.FRK, "AA2_FeiSama_FRK\\");
 
 //		Dnaddr("Dnaddr"),
 //		realclone("realclone"),
@@ -68,12 +76,12 @@ public class Application extends SpringBootServletInitializer {
 //		sortof("sortof"),
 //		MRdong("MRdong"),
 //		ReAcg("ReAcg"),
-//		
-//		BIGDOG("BIGDOG"),
-//		yesmola("yesmola"),
-//		FRK("FRK"),
 //		CMA("CMA"),
+//		yesmola("yesmola"),
 //		mai("mai"),
+
+//		BIGDOG("BIGDOG"),
+//		FRK("FRK"),
 //		Thorn("Thorn"),
 //		mio("mio"),
 //		HT("HT"),
@@ -98,12 +106,11 @@ public class Application extends SpringBootServletInitializer {
 		// "AA_LDRcallimohu\\");
 
 //		work.switchAuthor(BestScene.KittyMocap, BestGirl.Dnaddr);
-//		work.deployBestScene(BestScene.Chill_PopRun);
-//		work.deployBestScene(BestScene.abcTits);
-//		work.switchAuthor(BestScene.noheadnoleg);
+//		work.deployBestScene(BestScene.Universens);
+//		work.switchAuthor(BestScene.Universens);
 //		work.deployBestScene(BestScene.HotChicksVR);
 //		work.deployBestScene(BestScene.androinz);
-//		work.deployBestGirl(BestGirl.mai);
+//		work.deployBestGirl(BestGirl.CMA);
 //		work.switchAuthor(BestGirl.mai);
 //		work.switchAuthor(BestScene.TGC);
 //		work.switchAuthor(BestScene.Chill_PopRun);

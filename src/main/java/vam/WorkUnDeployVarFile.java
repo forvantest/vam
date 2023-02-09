@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import vam.dto.VarFileDTO;
 import vam.dto.enumration.BestGirl;
+import vam.dto.enumration.BestScene;
 
 @Slf4j
 @Service("WorkUnDeployVarFile")
@@ -21,7 +22,8 @@ public class WorkUnDeployVarFile extends WorkDeployVarFile {
 		deleteLinkFile(varFileDTORef, realVarFile, groupName);
 		varFileDTORef.unHide(VAM_ALLFAVORITE_PATH + groupName);
 		if (Objects.nonNull(parent)) {
-			if (!BestGirl.contains(varFileDTORef.getCreatorName())) {
+			if (!BestGirl.contains(varFileDTORef.getCreatorName())
+					&& !BestScene.contains(varFileDTORef.getCreatorName())) {
 				if (!StringUtils.startsWith(varFileDTORef.getFullPath(), VAM_BASE_PATH)) {
 					varFileDTORef.moveVarFileTo(VAM_BASE_PATH, "used");
 					varFileService.update(varFileDTORef);
