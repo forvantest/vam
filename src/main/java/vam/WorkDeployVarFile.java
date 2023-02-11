@@ -3,9 +3,11 @@ package vam;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
@@ -71,24 +73,32 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 	int dependCount = 0;
 
 	protected Map<String, VarFileDTO> process(String sourceDirectory, String targetDirectory) {
-		Map<String, VarFileDTO> mLack = processPri(sourceDirectory, targetDirectory);
-		log.warn("+++ deploy: " + sourceDirectory + " --- lack depenencies: " + mLack.size());
+		Map<String, VarFileDTO> mVar = new HashMap<>();
+		Map<String, VarFileDTO> mLack = processPri(mVar, sourceDirectory, targetDirectory);
+		List<VarFileDTO> favList = mVar.values().stream()
+				.filter(v -> v.getBFavorite() == null ? false : v.getBFavorite()).collect(Collectors.toList());
+		List<VarFileDTO> hideList = mVar.values().stream().filter(v -> v.getBHide() == null ? false : v.getBHide())
+				.collect(Collectors.toList());
+		log.warn("+++ deploy:{} fav:{} hide:{} --- lack depenencies:{} ", sourceDirectory, favList.size(),
+				hideList.size(), mLack.size());
+
 		return mLack;
 	}
 
-	protected Map<String, VarFileDTO> processPri(String sourceDirectory, String targetDirectory) {
+	protected Map<String, VarFileDTO> processPri(Map<String, VarFileDTO> mVar, String sourceDirectory,
+			String targetDirectory) {
 		File dir = new File(VAM_ALLPACKAGES_PATH + sourceDirectory);
-		Map<String, String> mAll = new HashMap<>();
+		Map<String, VarFileDTO> mAll = new HashMap<>();
 		Map<String, VarFileDTO> mLack = new HashMap<>();
 		Set<String> varFileRefSet = fetchAllVarFiles(dir, VAR_EXTENSION);
-		varFileRefSet.forEach(k -> processDependencies(mAll, mLack, k, null, targetDirectory));
+		varFileRefSet.forEach(k -> processDependencies(mVar, mAll, mLack, k, null, targetDirectory));
 //		Set<String> varFileRefSet2 = fetchAllVarFiles(dir, DEPEND_TXT_EXTENSION);
 //		varFileRefSet2.forEach(k -> processDependencies(mAll, k, varFileRefSet.iterator().next()));
 		return mLack;
 	}
 
-	private void processDependencies(Map<String, String> mAll, Map<String, VarFileDTO> mLack, String k, String parent,
-			String groupName) {
+	private void processDependencies(Map<String, VarFileDTO> mVar, Map<String, VarFileDTO> mAll,
+			Map<String, VarFileDTO> mLack, String k, String parent, String groupName) {
 		VarFileDTO varFileQuery = new VarFileDTO(null, k);
 		if (StringUtils.endsWith(varFileQuery.getVarFileName(), ":"))
 			log.debug("debug 2" + varFileQuery.getVarFileName());
@@ -99,17 +109,19 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 			VarFileDTO varFileDTOOld = work2(parent, varFileRef, groupName);
 			if (Objects.nonNull(varFileDTOOld)) {
 				if (Objects.nonNull(varFileDTOOld.getDependencies())) {
-					Map<String, String> m2 = new HashMap<>();
+					Map<String, VarFileDTO> m2 = new HashMap<>();
 					for (String key : varFileDTOOld.getDependencies()) {
-						m2.put(key, varFileDTOOld.getVarFileName());
+						m2.put(key, varFileDTOOld);
 					}
-					Map<String, String> mapDiff = cuteMap(mAll, m2);
+					Map<String, VarFileDTO> mapDiff = cuteMap(mAll, m2);
 					mAll.putAll(mapDiff);
 					if (!CollectionUtils.isEmpty(mapDiff)) {
 						log.info("+++ new depends size: " + mapDiff.size() + " total: " + mAll.size());
-						mapDiff.forEach((k2, v2) -> processDependencies(mAll, mLack, k2, v2, groupName));
+						mapDiff.forEach(
+								(k2, v2) -> processDependencies(mVar, mAll, mLack, k2, v2.getVarFileName(), groupName));
 					}
 				}
+				mVar.put(varFileDTOOld.getVarFileName(), varFileDTOOld);
 			}
 		} else {
 			mLack.put(varFileQuery.getVarFileName(), varFileQuery);

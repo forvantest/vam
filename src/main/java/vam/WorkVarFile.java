@@ -235,12 +235,7 @@ public abstract class WorkVarFile {
 		} else {
 			if (file.getAbsolutePath().endsWith(VAR_EXTENSION)) {
 				String linkFileName = makeLinkFileName(varFileDTORef, file, groupName);
-				File linkFile = new File(linkFileName);
-				if (!linkFile.exists()) {
-					boolean b = FileUtil.createLinkFile(file, linkFile);
-					if (!b)
-						log.warn("\n---failed create link: " + file);
-				}
+				FileUtil.createLinkFile2(file, linkFileName, false);
 			}
 		}
 	}
@@ -292,8 +287,8 @@ public abstract class WorkVarFile {
 //		}
 //	}
 
-	protected Map<String, String> cuteMap(Map<String, String> m1, Map<String, String> m2) {
-		Map<String, String> map3 = new HashMap<>();
+	protected Map<String, VarFileDTO> cuteMap(Map<String, VarFileDTO> m1, Map<String, VarFileDTO> m2) {
+		Map<String, VarFileDTO> map3 = new HashMap<>();
 		for (String key : m2.keySet()) {
 			if (!m1.containsKey(key)) {
 				map3.put(key, m2.get(key));

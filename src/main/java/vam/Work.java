@@ -160,27 +160,27 @@ public class Work extends WorkDeployVarFile {
 	}
 
 	private void additional(VarFileDTO varFileDTO, String author) {
-		String linkFile = VAM_ADDON_PATH + author + "\\___VarsLink___\\" + varFileDTO.getVarFileName();
-		String targetFile = varFileDTO.getFullPath() + varFileDTO.getVarFileName();
-		boolean b = FileUtil.createLinkFile(linkFile, targetFile);
-		if (!b)
-			log.warn("\n---failed additional: " + targetFile);
+		String linkFileName = VAM_ADDON_PATH + author + "\\___VarsLink___\\" + varFileDTO.getVarFileName();
+		String targetFileName = varFileDTO.getFullPath() + varFileDTO.getVarFileName();
+		File targetFile = new File(targetFileName);
+		FileUtil.createLinkFile2(targetFile, linkFileName, false);
+//		boolean b =
+//		if (!b)
+//			log.warn("\n---failed additional: " + targetFile);
 	}
 
 	private void addPackage(String author) {
-		String linkfolder = VAM_FILE_ADDONPACKAGES;
-		String targetfolder = VAM_ADDON_PATH + author;
-		boolean b = FileUtil.createLinkFile(linkfolder, targetfolder);
-		if (!b)
-			log.warn("\n---failed switchPackage: " + targetfolder);
+		String linkFileName = VAM_FILE_ADDONPACKAGES;
+		String targetFileName = VAM_ADDON_PATH + author;
+		File targetFile = new File(targetFileName);
+		FileUtil.createLinkFile2(targetFile, linkFileName, true);
 	}
 
 	private void addFavorite(String author) {
-		String linkfolder = VAM_FILE_ADDONPACKAGESFILEPREFS;
-		String targetfolder = VAM_ALLFAVORITE_PATH + author + "\\";
-		boolean b = FileUtil.createLinkFile(linkfolder, targetfolder);
-		if (!b)
-			log.warn("\n---failed switchFavorite: " + targetfolder);
+		String linkFileName = VAM_FILE_ADDONPACKAGESFILEPREFS;
+		String targetFileName = VAM_ALLFAVORITE_PATH + author + "\\";
+		File targetFile = new File(targetFileName);
+		FileUtil.createLinkFile2(targetFile, linkFileName, true);
 	}
 
 	public void clearUseLessDB() {

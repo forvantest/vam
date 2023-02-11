@@ -1,6 +1,7 @@
 package vam;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -35,7 +36,8 @@ public class WorkUnDeployVarFile extends WorkDeployVarFile {
 
 	@Override
 	protected Map<String, VarFileDTO> process(String sourceDirectory, String targetDirectory) {
-		Map<String, VarFileDTO> mLack = processPri(sourceDirectory, targetDirectory);
+		Map<String, VarFileDTO> mVar = new HashMap<>();
+		Map<String, VarFileDTO> mLack = processPri(mVar, sourceDirectory, targetDirectory);
 		log.warn("--- undeploy: " + targetDirectory + " --- lack depenencies: " + mLack.size());
 		return mLack;
 	}

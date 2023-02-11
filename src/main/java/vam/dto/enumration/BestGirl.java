@@ -42,6 +42,7 @@ public enum BestGirl {
 	MK47("MK47"),
 	Keiaono("Keiaono"),
 	hero774("hero774"),
+	ILoveDolls("ILoveDolls")
 	
 	;
 

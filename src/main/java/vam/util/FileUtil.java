@@ -19,7 +19,7 @@ public class FileUtil {
 	 * @param linkFile   鏈結文件位置
 	 * @return
 	 */
-	public static boolean createLinkFile(String link1, String target1) {
+	private static boolean createLinkFile(String link1, String target1) {
 
 		try {
 			File targetFile = new File(target1);
@@ -115,6 +115,38 @@ public class FileUtil {
 			}
 		}
 		return null;
+	}
+
+	public static void createLinkFile2(File file, String linkFileName, boolean overwrite) {
+		File linkFile = new File(linkFileName);
+		boolean fileExist = linkFile.exists();
+		boolean isSymbolicLink = Files.isSymbolicLink(linkFile.toPath());
+		if (fileExist) {
+			if (isSymbolicLink) {
+				if (overwrite) {
+					if (linkFile.delete()) {
+						boolean b = createLinkFile(file, linkFile);
+						if (!b)
+							log.warn("\n---failed create link: " + file);
+					}
+				} else
+					log.debug("---SymbolicLink exist1, skip: " + linkFileName);
+			} else {
+				if (linkFile.delete()) {
+					boolean b = createLinkFile(file, linkFile);
+					if (!b)
+						log.warn("\n---failed create link: " + file);
+				}
+			}
+		} else {
+			if (isSymbolicLink) {
+				log.debug("---SymbolicLink exist2, skip: " + linkFileName);
+			} else {
+				boolean b = createLinkFile(file, linkFile);
+				if (!b)
+					log.warn("\n---failed create link: " + file);
+			}
+		}
 	}
 
 }

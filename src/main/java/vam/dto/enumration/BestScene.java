@@ -5,7 +5,7 @@ public enum BestScene {
 	noheadnoleg("noheadnoleg"), KittyMocap("KittyMocap"), LDR("LDR"), jyy("jyy"), SlamT("SlamT"),
 	ReignMocap("ReignMocap"), Zam55555("Zam55555"), AlpacaLaps("AlpacaLaps"), ZenMocap("ZenMocap"), Tiseb("Tiseb"),
 	flyroxy("flyroxy"), Vihper("Vihper"), Universens("Universens"), xinxiu("xinxiu"), UJVAM("UJVAM"),
-	FeiSama("FeiSama");
+	FeiSama("FeiSama"), Nial("Nial"), IAmAFox("IAmAFox");
 
 	private String description;
 

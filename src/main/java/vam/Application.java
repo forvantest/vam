@@ -31,8 +31,8 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	private static void mession(Work work) {
-		work.clearUseLessDB();
-		work.loadVarFileIntoDB("AllPackages/");
+//		work.clearUseLessDB();
+//		work.loadVarFileIntoDB("AllPackages/");
 //		work.moveReference();
 //		work.deploy("AA_ALL/");
 //		work.deployBestGirl(BestGirl.ye666);
@@ -57,6 +57,8 @@ public class Application extends SpringBootServletInitializer {
 //		work.deployBestSceneGirl(BestScene.xinxiu, BestGirl.yesmola, "AA2_xinxiu_yesmola\\");
 //		work.deployBestSceneGirl(BestScene.UJVAM, BestGirl.mai, "AA2_UJVAM_mai\\");
 
+//		work.deployBestSceneGirl(BestScene.Nial, BestGirl.Thorn, "AA2_Nial_Thorn\\");
+
 		work.deployBestSceneGirl(BestScene.FeiSama, BestGirl.FRK, "AA2_FeiSama_FRK\\");
 
 //		Dnaddr("Dnaddr"),
@@ -79,9 +81,9 @@ public class Application extends SpringBootServletInitializer {
 //		CMA("CMA"),
 //		yesmola("yesmola"),
 //		mai("mai"),
+//		FRK("FRK"),
 
 //		BIGDOG("BIGDOG"),
-//		FRK("FRK"),
 //		Thorn("Thorn"),
 //		mio("mio"),
 //		HT("HT"),

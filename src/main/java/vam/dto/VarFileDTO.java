@@ -103,6 +103,8 @@ public class VarFileDTO implements Comparable {
 	private Exception exception;
 	private Integer favorite;
 	private String referencesJson;
+	private Boolean bFavorite;
+	private Boolean bHide;
 
 	public String makeTitle() {
 		StringBuilder stringBuilder = new StringBuilder();
@@ -137,10 +139,12 @@ public class VarFileDTO implements Comparable {
 
 	public void realHide(String VAM_FILE_PREFS) {
 		tagVarFile(VAM_FILE_PREFS, ".hide");
+		bHide = true;
 	}
 
 	public void favorite(String VAM_FILE_PREFS) {
 		tagVarFile(VAM_FILE_PREFS, ".fav");
+		bFavorite = true;
 	}
 
 	private void tagVarFile(String VAM_FILE_PREFS, String extension) {
