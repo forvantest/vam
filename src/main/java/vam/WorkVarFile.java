@@ -43,6 +43,8 @@ public abstract class WorkVarFile {
 
 	protected String VAM_ALLPACKAGES_PATH = VAM_ROOT_PATH + "AllPackages\\___VarTidied___\\";
 	protected String VAM_BASE_PATH = VAM_ALLPACKAGES_PATH + "base\\";
+	protected String VAM_BEST_GIRL_PATH = VAM_ALLPACKAGES_PATH + "best_girl\\";
+	protected String VAM_BEST_SCENE_PATH = VAM_ALLPACKAGES_PATH + "best_scene\\";
 	private String VAM_BROKEN_PATH = VAM_ROOT_PATH + "Broken\\";
 	private String VAM_DUPLICATE_PATH = VAM_ROOT_PATH + "Duplicate\\";
 	protected String VAR_EXTENSION = ".var";
@@ -134,8 +136,13 @@ public abstract class WorkVarFile {
 
 	protected void allVarFilesToDB(File file) {
 		if (file.isDirectory()) {
-			for (File file1 : file.listFiles()) {
-				allVarFilesToDB(file1);
+			if (file.list().length == 0) {
+				log.error("\n---delete empty folder: {} ", file);
+				file.delete();
+			} else {
+				for (File file1 : file.listFiles()) {
+					allVarFilesToDB(file1);
+				}
 			}
 		} else {
 			process++;

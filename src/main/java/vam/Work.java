@@ -47,9 +47,16 @@ public class Work extends WorkDeployVarFile {
 		System.out.println("total:" + count);
 	}
 
-//	public void deploy(String targetDirectory) {
-//		process(targetDirectory, targetDirectory);
-//	}
+	public void unDeploy(BestGirl bestGirl) {
+		Map<String, VarFileDTO> mLack = new HashMap<>();
+		Map<String, Set<String>> msLack = new HashMap<>();
+		unDeploy(bestGirl.getDescription(), mLack, msLack);
+		List<String> ls = msLack.keySet().stream().collect(Collectors.toList());
+		Collections.sort(ls);
+		ls.forEach(v -> {
+			System.out.println("--- old depenence missing: " + v + "\t\t" + msLack.get(v).toString());
+		});
+	}
 
 	public void unDeploy(String targetDirectory, Map<String, VarFileDTO> mLack, Map<String, Set<String>> msLack) {
 		for (String key : mLack.keySet()) {
@@ -68,11 +75,11 @@ public class Work extends WorkDeployVarFile {
 		Map<String, Set<String>> msLack = new HashMap<>();
 		BestGirl[] ea = BestGirl.values();
 		for (int i = 0; i < ea.length; i++) {
-			unDeploy(ea[i].getDescription() + "/", mLack, msLack);
+			unDeploy(ea[i].getDescription(), mLack, msLack);
 		}
 		BestScene[] es = BestScene.values();
 		for (int i = 0; i < es.length; i++) {
-			unDeploy(es[i].getDescription() + "/", mLack, msLack);
+			unDeploy(es[i].getDescription(), mLack, msLack);
 		}
 		List<String> ls = msLack.keySet().stream().collect(Collectors.toList());
 		Collections.sort(ls);
@@ -106,8 +113,8 @@ public class Work extends WorkDeployVarFile {
 	}
 
 	public void deployBestSceneGirl(BestScene bestScene, BestGirl bestGirl, String groupName) {
-		process(bestGirl.getDescription() + "/", groupName);
-		process(bestScene.getDescription() + "/", groupName);
+		process(bestGirl.getDescription(), groupName);
+		process(bestScene.getDescription(), groupName);
 		switchAuthor(groupName);
 	}
 
@@ -118,7 +125,7 @@ public class Work extends WorkDeployVarFile {
 	}
 
 	public void deployBestGirl(BestGirl bestGirl) {
-		process(bestGirl.getDescription() + "/", bestGirl.getDescription() + "/");
+		process(bestGirl.getDescription(), bestGirl.getDescription() + "/");
 		switchAuthor(bestGirl.getDescription());
 	}
 

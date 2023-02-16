@@ -43,6 +43,13 @@ public class FileUtil {
 		}
 	}
 
+	public static void deleteFolderIfEmpty(String folderPath) {
+		File file = new File(folderPath);
+		if (file.exists() && file.isDirectory() && file.list().length == 0) {
+			file.delete();
+		}
+	}
+
 	public static boolean createLinkFile(File targetFile, File linkFile) {
 		try {
 			if (!targetFile.exists()) {

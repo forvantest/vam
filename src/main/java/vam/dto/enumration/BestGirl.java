@@ -42,8 +42,8 @@ public enum BestGirl {
 	MK47("MK47"),
 	Keiaono("Keiaono"),
 	hero774("hero774"),
-	ILoveDolls("ILoveDolls")
-	
+	ILoveDolls("ILoveDolls"),
+	starlu("starlu"),VR_Addict("VR_Addict"),
 	;
 
 	private String description;

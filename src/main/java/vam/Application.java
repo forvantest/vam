@@ -7,9 +7,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import vam.dto.enumration.BestGirl;
-import vam.dto.enumration.BestScene;
-
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan
@@ -31,9 +28,9 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	private static void mession(Work work) {
-//		work.clearUseLessDB();
-//		work.loadVarFileIntoDB("AllPackages/");
-//		work.moveReference();
+		work.clearUseLessDB();
+		work.loadVarFileIntoDB("AllPackages/");
+		work.moveReference();
 //		work.deploy("AA_ALL/");
 //		work.deployBestGirl(BestGirl.ye666);
 //		work.deployBestSceneGirl(BestScene.HotChicksVR, BestGirl.Dnaddr, "AA2_HotChicksVR_Dnaddr\\");
@@ -58,8 +55,11 @@ public class Application extends SpringBootServletInitializer {
 //		work.deployBestSceneGirl(BestScene.UJVAM, BestGirl.mai, "AA2_UJVAM_mai\\");
 
 //		work.deployBestSceneGirl(BestScene.Nial, BestGirl.Thorn, "AA2_Nial_Thorn\\");
+		// work.deployBestSceneGirl(BestScene.FeiSama, BestGirl.FRK,
+		// "AA2_FeiSama_FRK\\");
 
-		work.deployBestSceneGirl(BestScene.FeiSama, BestGirl.FRK, "AA2_FeiSama_FRK\\");
+//		work.deployBestSceneGirl(BestScene.NisVamX, BestGirl.starlu, "AA2_NisVamX_starlu\\");
+//		work.deployBestSceneGirl(BestScene.MK_47, BestGirl.MK47, "AA2_MK_47_MK47\\");
 
 //		Dnaddr("Dnaddr"),
 //		realclone("realclone"),
@@ -123,7 +123,7 @@ public class Application extends SpringBootServletInitializer {
 //		work.switchAuthor("Eros");
 
 		// work.createLinkFile();
-//		work.unDeploy("Archer");
+//		work.unDeploy(BestGirl.Archer);
 //		work.unDeploy("Dnaddr");
 //		work.unDeploy("VAMDoll");
 //		work.unDeploy("VAM-YJ");

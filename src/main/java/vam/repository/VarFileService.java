@@ -70,4 +70,9 @@ public class VarFileService {
 		return list.stream().map(mapperUtils::convertVarFileDTO).collect(Collectors.toList());
 	}
 
+	public List<VarFileDTO> findByAuthor(String sourceDirectory) {
+		List<VarFile> list = varFileRepository.findByCreatorName(sourceDirectory);
+		return list.stream().map(mapperUtils::convertVarFileDTO).collect(Collectors.toList());
+	}
+
 }

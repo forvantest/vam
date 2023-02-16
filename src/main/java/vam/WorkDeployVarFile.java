@@ -87,10 +87,13 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 
 	protected Map<String, VarFileDTO> processPri(Map<String, VarFileDTO> mVar, String sourceDirectory,
 			String targetDirectory) {
-		File dir = new File(VAM_ALLPACKAGES_PATH + sourceDirectory);
+
+		List<VarFileDTO> varFileDTOList = varFileService.findByAuthor(sourceDirectory);
+		Set<String> varFileRefSet = varFileDTOList.stream().map(VarFileDTO::getVarFileName).collect(Collectors.toSet());
+		File sourceDir = new File(VAM_ALLPACKAGES_PATH + sourceDirectory);
 		Map<String, VarFileDTO> mAll = new HashMap<>();
 		Map<String, VarFileDTO> mLack = new HashMap<>();
-		Set<String> varFileRefSet = fetchAllVarFiles(dir, VAR_EXTENSION);
+//		Set<String> varFileRefSet = fetchAllVarFiles(sourceDir, VAR_EXTENSION);
 		varFileRefSet.forEach(k -> processDependencies(mVar, mAll, mLack, k, null, targetDirectory));
 //		Set<String> varFileRefSet2 = fetchAllVarFiles(dir, DEPEND_TXT_EXTENSION);
 //		varFileRefSet2.forEach(k -> processDependencies(mAll, k, varFileRefSet.iterator().next()));
