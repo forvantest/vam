@@ -7,6 +7,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import vam.dto.enumration.BestScene;
+
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan
@@ -28,13 +30,14 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	private static void mession(Work work) {
-		work.clearUseLessDB();
-		work.loadVarFileIntoDB("AllPackages/");
-		work.moveReference();
+//		work.clearUseLessDB();
+//		work.loadVarFileIntoDB("AllPackages/");
+//		work.moveReference(null);
+//		work.moveReference(BestScene.Ispinox.getDescription());
 //		work.deploy("AA_ALL/");
-//		work.deployBestGirl(BestGirl.ye666);
+//		work.deployBestGirl(BestGirl.Archer);
 //		work.deployBestSceneGirl(BestScene.HotChicksVR, BestGirl.Dnaddr, "AA2_HotChicksVR_Dnaddr\\");
-//		work.deployBestSceneGirl(BestScene.androinz, BestGirl.realclone, "AA2_androinz_realclone\\");
+//		work.deployBestSceneGirl(BestScene.Androinz, BestGirl.realclone, "AA2_androinz_realclone\\");
 //		work.deployBestSceneGirl(BestScene.abcTits, BestGirl.Archer, "AA2_abcTits_Archer\\");
 //		work.deployBestSceneGirl(BestScene.Chill_PopRun, BestGirl.VAMYJ, "AA2_Chill_PopRun_VAMYJ\\");
 //		work.deployBestSceneGirl(BestScene.TGC, BestGirl.lv, "AA2_TGC_lv\\");
@@ -45,6 +48,7 @@ public class Application extends SpringBootServletInitializer {
 //		work.deployBestSceneGirl(BestScene.SlamT, BestGirl.callimohu, "AA2_SlamT_callimohu\\");
 //		work.deployBestSceneGirl(BestScene.ReignMocap, BestGirl.ye666, "AA2_ReignMocap_ye666\\");
 //		work.deployBestSceneGirl(BestScene.Zam55555, BestGirl.zzzat16h, "AA2_Zam55555_zzzat16h\\");
+//		work.deployBestSceneGirl(BestScene.Zam55555, BestGirl.ADADE, "AA2_Zam55555_ADADE\\");
 //		work.deployBestSceneGirl(BestScene.AlpacaLaps, BestGirl.VKStyle, "AA2_AlpacaLaps_VKStyle\\");
 //		work.deployBestSceneGirl(BestScene.ZenMocap, BestGirl.VAM_GS, "AA2_ZenMocap_VAM_GS\\");
 //		work.deployBestSceneGirl(BestScene.Tiseb, BestGirl.sortof, "AA2_Tiseb_sortof\\");
@@ -54,34 +58,18 @@ public class Application extends SpringBootServletInitializer {
 //		work.deployBestSceneGirl(BestScene.xinxiu, BestGirl.yesmola, "AA2_xinxiu_yesmola\\");
 //		work.deployBestSceneGirl(BestScene.UJVAM, BestGirl.mai, "AA2_UJVAM_mai\\");
 
+		work.deployBestSceneGirl(BestScene.SlamT, null, 1, "AA2_SlamT_10girls\\");
+
 //		work.deployBestSceneGirl(BestScene.Nial, BestGirl.Thorn, "AA2_Nial_Thorn\\");
 		// work.deployBestSceneGirl(BestScene.FeiSama, BestGirl.FRK,
 		// "AA2_FeiSama_FRK\\");
 
 //		work.deployBestSceneGirl(BestScene.NisVamX, BestGirl.starlu, "AA2_NisVamX_starlu\\");
 //		work.deployBestSceneGirl(BestScene.MK_47, BestGirl.MK47, "AA2_MK_47_MK47\\");
+//		work.deployBestSceneGirl(BestScene.Vr_Addict, BestGirl.VR_Addict, "AA2_VR_Addict\\");
 
-//		Dnaddr("Dnaddr"),
-//		realclone("realclone"),
-//		Archer("Archer"),
-//		VAMYJ("VAM-YJ"),
-//		lv("lv"),
-//		Eros("Eros"),
-//		Hcg("Hcg"),
-//		Solerrain("Solerrain"),	
-//		passerby("passerby"),
-//		callimohu("callimohu"),
-//		ye666("ye666"),
-//		zzzat16h("zzzat16h"),
-//		VKStyle("VKStyle"),
-//		VAM_GS("VAM_GS"),
-//		sortof("sortof"),
-//		MRdong("MRdong"),
-//		ReAcg("ReAcg"),
-//		CMA("CMA"),
-//		yesmola("yesmola"),
-//		mai("mai"),
-//		FRK("FRK"),
+		// work.deployBestSceneGirl(BestScene.Ispinox, BestGirl.Thorn,
+		// "AA2_Ispinox_Thorn\\");
 
 //		BIGDOG("BIGDOG"),
 //		Thorn("Thorn"),

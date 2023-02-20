@@ -70,16 +70,20 @@ public class Work extends WorkDeployVarFile {
 		mLack.putAll(workUnDeployVarFile.process(targetDirectory, targetDirectory));
 	}
 
-	public void moveReference() {
+	public void moveReference(String author) {
 		Map<String, VarFileDTO> mLack = new HashMap<>();
 		Map<String, Set<String>> msLack = new HashMap<>();
 		BestGirl[] ea = BestGirl.values();
-		for (int i = 0; i < ea.length; i++) {
-			unDeploy(ea[i].getDescription(), mLack, msLack);
-		}
-		BestScene[] es = BestScene.values();
-		for (int i = 0; i < es.length; i++) {
-			unDeploy(es[i].getDescription(), mLack, msLack);
+		if (Objects.isNull(author)) {
+			for (int i = 0; i < ea.length; i++) {
+				unDeploy(ea[i].getDescription(), mLack, msLack);
+			}
+			BestScene[] es = BestScene.values();
+			for (int i = 0; i < es.length; i++) {
+				unDeploy(es[i].getDescription(), mLack, msLack);
+			}
+		} else {
+			unDeploy(author, mLack, msLack);
 		}
 		List<String> ls = msLack.keySet().stream().collect(Collectors.toList());
 		Collections.sort(ls);
@@ -113,8 +117,14 @@ public class Work extends WorkDeployVarFile {
 	}
 
 	public void deployBestSceneGirl(BestScene bestScene, BestGirl bestGirl, String groupName) {
-		process(bestGirl.getDescription(), groupName);
 		process(bestScene.getDescription(), groupName);
+		process(bestGirl.getDescription(), groupName);
+		switchAuthor(groupName);
+	}
+
+	public void deployBestSceneGirl(BestScene bestScene, BestGirl bestGirl, int num, String groupName) {
+		process(bestScene.getDescription(), groupName);
+		processSomeGirl(Objects.nonNull(bestGirl) ? bestGirl.getDescription() : null, num, groupName);
 		switchAuthor(groupName);
 	}
 
@@ -156,7 +166,8 @@ public class Work extends WorkDeployVarFile {
 		additionalVarList.add("JayJayWon.UIAssist(Patron).latest");
 		additionalVarList.add("JayJayWon.VARHubThumbnails.latest");
 		additionalVarList.add("JayJayWon.VUML.latest");
-		additionalVarList.add("JayJayWon.SexAssist.latest");
+//		additionalVarList.add("JayJayWon.SexAssist.latest");
+		additionalVarList.add("Vinput.AutoThruster.latest");
 	}
 
 	private void additional(String author) {

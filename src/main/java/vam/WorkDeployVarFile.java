@@ -1,6 +1,7 @@
 package vam;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import lombok.extern.slf4j.Slf4j;
 import vam.dto.VarFileDTO;
+import vam.dto.enumration.BestGirl;
 
 @Slf4j
 public abstract class WorkDeployVarFile extends WorkVarFile {
@@ -85,27 +87,66 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		return mLack;
 	}
 
+	protected Map<String, VarFileDTO> processSomeGirl(String sourceDirectory, int num, String targetDirectory) {
+		Map<String, VarFileDTO> mVar = new HashMap<>();
+		Map<String, VarFileDTO> mLack = giveMeGirl(mVar, sourceDirectory, num, targetDirectory);
+		List<VarFileDTO> favList = mVar.values().stream()
+				.filter(v -> v.getBFavorite() == null ? false : v.getBFavorite()).collect(Collectors.toList());
+		List<VarFileDTO> hideList = mVar.values().stream().filter(v -> v.getBHide() == null ? false : v.getBHide())
+				.collect(Collectors.toList());
+		log.warn("+++ deploy:{} fav:{} hide:{} --- lack depenencies:{} ", sourceDirectory, favList.size(),
+				hideList.size(), mLack.size());
+
+		return mLack;
+	}
+
+	protected Map<String, VarFileDTO> giveMeGirl(Map<String, VarFileDTO> mVar, String author, int num,
+			String targetDirectory) {
+		List<VarFileDTO> varFileDTOList = new ArrayList<>();
+		List<VarFileDTO> varFileDTOList3 = new ArrayList<>();
+		if (Objects.nonNull(author)) {
+			varFileDTOList3 = varFileService.findByAuthor(author);
+		} else {
+			for (BestGirl bestGirl : BestGirl.values()) {
+				List<VarFileDTO> varFileDTOList2 = varFileService.findByAuthor(bestGirl.getDescription());
+				varFileDTOList3.addAll(varFileDTOList2);
+			}
+		}
+		for (int i = 0; i < num; i++) {
+			int index = (int) (Math.random() * varFileDTOList3.size());
+			VarFileDTO varFileDTO = varFileDTOList3.get(index);
+			varFileDTOList.add(varFileDTO);
+			log.warn("+++ deploy girl:{}/{} {}", i, num, varFileDTO.getVarFileName());
+		}
+		Set<String> varFileRefSet = varFileDTOList.stream().map(VarFileDTO::getVarFileName).collect(Collectors.toSet());
+		return processPri(mVar, varFileRefSet, targetDirectory);
+	}
+
 	protected Map<String, VarFileDTO> processPri(Map<String, VarFileDTO> mVar, String sourceDirectory,
 			String targetDirectory) {
-
 		List<VarFileDTO> varFileDTOList = varFileService.findByAuthor(sourceDirectory);
 		Set<String> varFileRefSet = varFileDTOList.stream().map(VarFileDTO::getVarFileName).collect(Collectors.toSet());
-		File sourceDir = new File(VAM_ALLPACKAGES_PATH + sourceDirectory);
+		return processPri(mVar, varFileRefSet, targetDirectory);
+	}
+
+	private Map<String, VarFileDTO> processPri(Map<String, VarFileDTO> mVar, Set<String> varFileRefSet,
+			String targetDirectory) {
+//		File sourceDir = new File(VAM_ALLPACKAGES_PATH + sourceDirectory);
 		Map<String, VarFileDTO> mAll = new HashMap<>();
 		Map<String, VarFileDTO> mLack = new HashMap<>();
 //		Set<String> varFileRefSet = fetchAllVarFiles(sourceDir, VAR_EXTENSION);
-		varFileRefSet.forEach(k -> processDependencies(mVar, mAll, mLack, k, null, targetDirectory));
+		varFileRefSet.forEach(k -> processDependencies(mVar, mAll, mLack, k, null, targetDirectory, 0));
 //		Set<String> varFileRefSet2 = fetchAllVarFiles(dir, DEPEND_TXT_EXTENSION);
 //		varFileRefSet2.forEach(k -> processDependencies(mAll, k, varFileRefSet.iterator().next()));
 		return mLack;
 	}
 
 	private void processDependencies(Map<String, VarFileDTO> mVar, Map<String, VarFileDTO> mAll,
-			Map<String, VarFileDTO> mLack, String k, String parent, String groupName) {
+			Map<String, VarFileDTO> mLack, String k, String parent, String groupName, int level) {
 		VarFileDTO varFileQuery = new VarFileDTO(null, k);
 		if (StringUtils.endsWith(varFileQuery.getVarFileName(), ":"))
 			log.debug("debug 2" + varFileQuery.getVarFileName());
-		if ("Alter3go.Skin_A1_3.1.var".equals(varFileQuery.getVarFileName()))
+		if ("Ark1F1.Raven_Update.1.var".equals(varFileQuery.getVarFileName()))
 			log.debug("debug " + varFileQuery.getVarFileName());
 		VarFileDTO varFileRef = findSuitableVarFile(varFileQuery);
 		if (Objects.nonNull(varFileRef)) {
@@ -118,15 +159,15 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 					}
 					Map<String, VarFileDTO> mapDiff = cuteMap(mAll, m2);
 					mAll.putAll(mapDiff);
-					if (!CollectionUtils.isEmpty(mapDiff)) {
+					if (!CollectionUtils.isEmpty(mapDiff) && level < 4) {
 						log.info("+++ new depends size: " + mapDiff.size() + " total: " + mAll.size());
-						mapDiff.forEach(
-								(k2, v2) -> processDependencies(mVar, mAll, mLack, k2, v2.getVarFileName(), groupName));
+						mapDiff.forEach((k2, v2) -> processDependencies(mVar, mAll, mLack, k2, v2.getVarFileName(),
+								groupName, level + 1));
 					}
 				}
 				mVar.put(varFileDTOOld.getVarFileName(), varFileDTOOld);
 			}
-		} else {
+		} else if (Objects.isNull(parent)) {
 			mLack.put(varFileQuery.getVarFileName(), varFileQuery);
 			log.info("--- old depends not exist: " + varFileQuery.getVarFileName());
 		}
