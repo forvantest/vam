@@ -56,6 +56,10 @@ public class MapperUtils {
 			varFileDTO.getSceneJsonList().forEach(s -> easyList.add(new SceneJson(s)));
 			String scenesJson = objectMapper.writeValueAsString(easyList);
 			varFile.setScenesJson(scenesJson);
+			String soundJson = objectMapper.writeValueAsString(varFileDTO.getSoundList());
+			varFile.setScenesJson(scenesJson);
+			varFile.setSoundJson(soundJson);
+			varFile.setSoundCount(varFileDTO.getSoundList().size());
 		} catch (JsonMappingException e) {
 			e.printStackTrace();
 		} catch (JsonProcessingException e) {
@@ -79,11 +83,17 @@ public class MapperUtils {
 //				this.setMetaJson(new MetaJson());
 //				this.getMetaJson().setDependencies(objectMapper.readTree(str).deepCopy());
 //			}
-			String str2 = varFile.getScenesJson();
-			if (Objects.nonNull(str2)) {
-				List<SceneJson> myObjects = objectMapper.readValue(str2, new TypeReference<List<SceneJson>>() {
+			String str1 = varFile.getScenesJson();
+			if (Objects.nonNull(str1)) {
+				List<SceneJson> myObjects = objectMapper.readValue(str1, new TypeReference<List<SceneJson>>() {
 				});
 				varFileDTO.setSceneJsonList(myObjects);
+			}
+			String str2 = varFile.getSoundJson();
+			if (Objects.nonNull(str2)) {
+				List<String> myObjects = objectMapper.readValue(str2, new TypeReference<List<String>>() {
+				});
+				varFileDTO.setSoundList(myObjects);
 			}
 			String str3 = varFile.getDependencies();
 			if (Objects.nonNull(str3)) {

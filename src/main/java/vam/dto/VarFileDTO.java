@@ -94,6 +94,9 @@ public class VarFileDTO implements Comparable {
 	// Saves
 	// scene
 	private List<SceneJson> sceneJsonList = new ArrayList();
+
+	private List<String> soundList = new ArrayList();
+
 //	Person\pose\
 	private List<PoseJson> poseJsons = new ArrayList();
 

@@ -147,10 +147,10 @@ public abstract class WorkVarFile {
 		} else {
 			process++;
 			if (process < skipProcess) {
-				System.out.print("skip: " + process);
+				System.out.print("skip1: " + process);
 				return;
 			} else if (process % 100 == 0) {
-				System.out.println("skip: " + process);
+				System.out.println("skip2: " + process);
 			} else if (process % 10 == 0) {
 				System.out.print(process);
 			} else if (process == 8905) {

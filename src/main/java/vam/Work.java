@@ -101,50 +101,61 @@ public class Work extends WorkDeployVarFile {
 		for (int i = 0; i < es.length; i++) {
 			deployBestScene(es[i], groupName);
 		}
-		switchAuthor(groupName);
+		switchAuthor(null, groupName);
 	}
 
 	public void deployBestGirl(BestGirl bestGirl, String groupName) {
 		process(bestGirl.getDescription() + "/", groupName);
 		if (StringUtils.isEmpty(groupName))
-			switchAuthor(bestGirl.getDescription());
+			switchAuthor(null, bestGirl.getDescription());
 	}
 
 	public void deployBestScene(BestScene bestScene, String groupName) {
 		process(bestScene.getDescription() + "/", groupName);
 		if (StringUtils.isEmpty(groupName))
-			switchAuthor(bestScene.getDescription());
+			switchAuthor(null, bestScene.getDescription());
 	}
 
 	public void deployBestSceneGirl(BestScene bestScene, BestGirl bestGirl, String groupName) {
 		process(bestScene.getDescription(), groupName);
 		process(bestGirl.getDescription(), groupName);
-		switchAuthor(groupName);
+		switchAuthor(null, groupName);
 	}
 
 	public void deployBestSceneGirl(BestScene bestScene, BestGirl bestGirl, int num, String groupName) {
-		process(bestScene.getDescription(), groupName);
-		processSomeGirl(Objects.nonNull(bestGirl) ? bestGirl.getDescription() : null, num, groupName);
-		switchAuthor(groupName);
+		Map<String, VarFileDTO> var1 = process(bestScene.getDescription(), groupName);
+		Map<String, VarFileDTO> var2 = processSomeGirl(Objects.nonNull(bestGirl) ? bestGirl.getDescription() : null,
+				num, groupName);
+		Map<String, VarFileDTO> varAll = new HashMap<>();
+		varAll.putAll(var1);
+		varAll.putAll(var2);
+		switchAuthor(varAll, groupName);
 	}
 
-	private void switchAuthor(String author) {
+	public void deployOneSceneOneGirl(String bestSceneVarName, String bestGirlVarName, String groupName) {
+		processSingle(bestSceneVarName, groupName);
+		processSingle("Ispinox.Red3Some_Part2_1_2.latest", groupName);
+		processSingle(bestGirlVarName, groupName);
+		switchAuthor(null, groupName);
+	}
+
+	private void switchAuthor(Map<String, VarFileDTO> varAll, String author) {
 		addPackage(author);
 		addFavorite(author);
-		additional(author);
+		additional(varAll, author);
 	}
 
 	public void deployBestGirl(BestGirl bestGirl) {
 		process(bestGirl.getDescription(), bestGirl.getDescription() + "/");
-		switchAuthor(bestGirl.getDescription());
+		switchAuthor(null, bestGirl.getDescription());
 	}
 
 	public void deployBestScene(BestScene bestScene) {
 		process(bestScene.getDescription() + "/", bestScene.getDescription() + "/");
-		switchAuthor(bestScene.getDescription());
+		switchAuthor(null, bestScene.getDescription());
 	}
 
-	public void switchAuthor(BestScene bs, BestGirl bg) {
+	public void switchAuthor(Map<String, VarFileDTO> var, BestScene bs, BestGirl bg) {
 		List<String> authorList = new ArrayList<>();
 		authorList.add(bs.getDescription());
 		authorList.add(bg.getDescription());
@@ -166,14 +177,28 @@ public class Work extends WorkDeployVarFile {
 		additionalVarList.add("JayJayWon.UIAssist(Patron).latest");
 		additionalVarList.add("JayJayWon.VARHubThumbnails.latest");
 		additionalVarList.add("JayJayWon.VUML.latest");
+		additionalVarList.add("ToumeiHitsuji.DiviningRod.latest");
+		additionalVarList.add("DoesNotCat.RealFakeLabias.latest");
+		additionalVarList.add("JayJayWon.OrificeAligner.latest");
+		additionalVarList.add("Captain Varghoss.BellyBulger.latest");
+		additionalVarList.add("Nyaacho.MorphMassManager外观拼凑.11.latest");
+
+		additionalVarList.add("AcidBubbles.BlendShapes.latest");
+		additionalVarList.add("OrangeGumi.Pp_Danmenz_A_v004.1.latest");
+//		additionalVarList.add("cotyounoyume.ExpressionBlushingAndTearsFullVer.latest");
+//		additionalVarList.add("Saking55.AutoBulger.latest");
 //		additionalVarList.add("JayJayWon.SexAssist.latest");
-		additionalVarList.add("Vinput.AutoThruster.latest");
+//		additionalVarList.add("Vinput.AutoThruster.latest");
+
 	}
 
-	private void additional(String author) {
+	private void additional(Map<String, VarFileDTO> varAll, String author) {
 		additionalVarList.forEach(varFileName -> {
 			VarFileDTO varFileDTO = findSuitableVarFile(new VarFileDTO("", varFileName));
-			additional(varFileDTO, author);
+			if (!varAll.containsKey(varFileDTO.getVarFileName())) {
+				additional(varFileDTO, author);
+				varAll.put(varFileName, varFileDTO);
+			}
 		});
 	}
 

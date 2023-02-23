@@ -57,6 +57,9 @@ public class VarFile implements Serializable, Comparable {
 
 	private String scenesJson;
 
+	private String soundJson;
+	private Integer soundCount;
+
 	private Integer femaleCount;
 	private Integer femaleGenitaliaCount;
 	private Integer maleCount;

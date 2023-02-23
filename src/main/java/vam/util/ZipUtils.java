@@ -107,8 +107,7 @@ public class ZipUtils {
 
 	static List<String> skipResourceExtension = Arrays.asList("sln", "vmb", "vab", "vaj", "vap", "vac", "dsf", "duf",
 			"vam", "cs", "cslist", "txt", "scene", "assetbundle", "manifest", "gif", "jpeg", "jpg", "png", "tif", "tga",
-			"psd", "dll", "mp3", "wav", "ogg", "jsondb", "voicebundle", "mtl", "obj", "fav", "colliders", "hide",
-			"vapb");
+			"psd", "dll", "jsondb", "voicebundle", "mtl", "obj", "fav", "colliders", "hide", "vapb");
 
 	static List<String> skipSaveExtension = Arrays.asList("embodyprofile", "vmi", "hide");
 
@@ -128,6 +127,13 @@ public class ZipUtils {
 					return VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_MALE;
 				if (StringUtils.startsWith(atomPath, "custom/atom/person/morphs/male_genitalia/"))
 					return VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_MALE_GENITALIA;
+			} else if ("mp3".equals(atomExtension) || "ogg".equals(atomExtension) || "wav".equals(atomExtension)) {
+				if (StringUtils.startsWith(atomPath, "custom/sound"))
+					return VarFieldType.CUSTOM_SOUND;
+				else if (StringUtils.startsWith(atomPath, "custom/script"))
+					return VarFieldType.CUSTOM_SOUND;
+				log.error("Strange sound path:{}", atomPath);
+				return VarFieldType.CUSTOM_ATOM_PERSON_MORPHS_MALE_GENITALIA;
 			} else if (StringUtils.startsWith(atomPath, "custom/scripts/")) {
 				log.debug("Scripts.var...");
 			} else if ("json".equals(atomExtension) && StringUtils.startsWith(atomPath, "custom/scripts/")) {
@@ -267,6 +273,14 @@ public class ZipUtils {
 			} catch (JsonParseException ex) {
 				System.out.println(ex.getMessage());
 				ex.printStackTrace();
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+				ex.printStackTrace();
+			}
+		} else if (VarFieldType.CUSTOM_SOUND == varFieldType) {
+			try {
+				log.warn("\n{} have sound:{}", varFileDTO.getVarFileName(), zipEntry);
+				varFileDTO.getSoundList().add(zipEntry.getName());
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
 				ex.printStackTrace();

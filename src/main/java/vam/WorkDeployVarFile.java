@@ -84,7 +84,7 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		log.warn("+++ deploy:{} fav:{} hide:{} --- lack depenencies:{} ", sourceDirectory, favList.size(),
 				hideList.size(), mLack.size());
 
-		return mLack;
+		return mVar;
 	}
 
 	protected Map<String, VarFileDTO> processSomeGirl(String sourceDirectory, int num, String targetDirectory) {
@@ -97,10 +97,10 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 		log.warn("+++ deploy:{} fav:{} hide:{} --- lack depenencies:{} ", sourceDirectory, favList.size(),
 				hideList.size(), mLack.size());
 
-		return mLack;
+		return mVar;
 	}
 
-	protected Map<String, VarFileDTO> giveMeGirl(Map<String, VarFileDTO> mVar, String author, int num,
+	private Map<String, VarFileDTO> giveMeGirl(Map<String, VarFileDTO> mVar, String author, int num,
 			String targetDirectory) {
 		List<VarFileDTO> varFileDTOList = new ArrayList<>();
 		List<VarFileDTO> varFileDTOList3 = new ArrayList<>();
@@ -119,6 +119,27 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 			log.warn("+++ deploy girl:{}/{} {}", i, num, varFileDTO.getVarFileName());
 		}
 		Set<String> varFileRefSet = varFileDTOList.stream().map(VarFileDTO::getVarFileName).collect(Collectors.toSet());
+		return processPri(mVar, varFileRefSet, targetDirectory);
+	}
+
+	protected Map<String, VarFileDTO> processSingle(String varFileName, String targetDirectory) {
+		Map<String, VarFileDTO> mVar = new HashMap<>();
+		Map<String, VarFileDTO> mLack = giveMe(mVar, new VarFileDTO(null, varFileName), targetDirectory);
+		List<VarFileDTO> favList = mVar.values().stream()
+				.filter(v -> v.getBFavorite() == null ? false : v.getBFavorite()).collect(Collectors.toList());
+		List<VarFileDTO> hideList = mVar.values().stream().filter(v -> v.getBHide() == null ? false : v.getBHide())
+				.collect(Collectors.toList());
+		log.warn("+++ deploy:{} fav:{} hide:{} --- lack depenencies:{} ", varFileName, favList.size(), hideList.size(),
+				mLack.size());
+
+		return mLack;
+	}
+
+	private Map<String, VarFileDTO> giveMe(Map<String, VarFileDTO> mVar, VarFileDTO varFileDTOQuery,
+			String targetDirectory) {
+		List<VarFileDTO> varFileDTOList2 = varFileService.findByName(varFileDTOQuery);
+		Set<String> varFileRefSet = varFileDTOList2.stream().map(VarFileDTO::getVarFileName)
+				.collect(Collectors.toSet());
 		return processPri(mVar, varFileRefSet, targetDirectory);
 	}
 

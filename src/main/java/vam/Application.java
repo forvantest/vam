@@ -7,8 +7,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import vam.dto.enumration.BestScene;
-
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan
@@ -30,9 +28,9 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	private static void mession(Work work) {
-//		work.clearUseLessDB();
-//		work.loadVarFileIntoDB("AllPackages/");
-//		work.moveReference(null);
+		work.clearUseLessDB();
+		work.loadVarFileIntoDB("AllPackages/");
+		work.moveReference(null);
 //		work.moveReference(BestScene.Ispinox.getDescription());
 //		work.deploy("AA_ALL/");
 //		work.deployBestGirl(BestGirl.Archer);
@@ -57,8 +55,11 @@ public class Application extends SpringBootServletInitializer {
 //		work.deployBestSceneGirl(BestScene.Universens, BestGirl.CMA, "AA2_Universens_CMA\\");
 //		work.deployBestSceneGirl(BestScene.xinxiu, BestGirl.yesmola, "AA2_xinxiu_yesmola\\");
 //		work.deployBestSceneGirl(BestScene.UJVAM, BestGirl.mai, "AA2_UJVAM_mai\\");
+//		work.deployBestSceneGirl(BestScene.SlamT, null, 10, "AA2_SlamT_10girls\\");
+//		work.deployBestSceneGirl(BestScene.xinxiu, null, 10, "AA2_xinxiu_10girls\\");
 
-		work.deployBestSceneGirl(BestScene.SlamT, null, 1, "AA2_SlamT_10girls\\");
+//		work.deployOneSceneOneGirl("SlamT.TinyVam-TheCastingCouch.latest", "realclone.ELSA.latest",
+//				"AA2_SlamTCouch_realcloneElsa\\");
 
 //		work.deployBestSceneGirl(BestScene.Nial, BestGirl.Thorn, "AA2_Nial_Thorn\\");
 		// work.deployBestSceneGirl(BestScene.FeiSama, BestGirl.FRK,
