@@ -28,9 +28,9 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	private static void mession(Work work) {
-		work.clearUseLessDB();
-		work.loadVarFileIntoDB("AllPackages/");
-		work.moveReference(null);
+//		work.clearUseLessDB();
+//		work.loadVarFileIntoDB("AllPackages/");
+//		work.moveReference(null);
 //		work.moveReference(BestScene.Ispinox.getDescription());
 //		work.deploy("AA_ALL/");
 //		work.deployBestGirl(BestGirl.Archer);
@@ -56,6 +56,15 @@ public class Application extends SpringBootServletInitializer {
 //		work.deployBestSceneGirl(BestScene.xinxiu, BestGirl.yesmola, "AA2_xinxiu_yesmola\\");
 //		work.deployBestSceneGirl(BestScene.UJVAM, BestGirl.mai, "AA2_UJVAM_mai\\");
 //		work.deployBestSceneGirl(BestScene.SlamT, null, 10, "AA2_SlamT_10girls\\");
+
+//		work.deployBestSceneGirl_GK("SlamT.Spooged-A_Tiny_Vam_Xmas-FULL.1.var", null, 3, "AAX_VAN_3girls\\",
+//				"Zam55555.ZamS001SE_BusinessReception.latest");
+
+		work.deployBestSceneGirl_GK("SlamT.Spooged-A_Tiny_Vam_Xmas-FULL.1.var", null, 3, "AAX_VAN_3girls\\",
+				"jacky.sound.latest");
+
+//		work.makeVarPack();
+
 //		work.deployBestSceneGirl(BestScene.xinxiu, null, 10, "AA2_xinxiu_10girls\\");
 
 //		work.deployOneSceneOneGirl("SlamT.TinyVam-TheCastingCouch.latest", "realclone.ELSA.latest",

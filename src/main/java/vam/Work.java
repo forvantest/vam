@@ -1,7 +1,9 @@
 package vam;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,14 +13,18 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.extern.slf4j.Slf4j;
+import vam.dto.MetaJson;
 import vam.dto.VarFileDTO;
 import vam.dto.enumration.BestGirl;
 import vam.dto.enumration.BestScene;
+import vam.dto.meta.Dependence;
 import vam.util.FileUtil;
 
 @Slf4j
@@ -192,18 +198,18 @@ public class Work extends WorkDeployVarFile {
 
 	}
 
-	private void additional(Map<String, VarFileDTO> varAll, String author) {
+	private void additional(Map<String, VarFileDTO> varAll, String groupName) {
 		additionalVarList.forEach(varFileName -> {
 			VarFileDTO varFileDTO = findSuitableVarFile(new VarFileDTO("", varFileName));
 			if (!varAll.containsKey(varFileDTO.getVarFileName())) {
-				additional(varFileDTO, author);
+				additional(varFileDTO, groupName);
 				varAll.put(varFileName, varFileDTO);
 			}
 		});
 	}
 
-	private void additional(VarFileDTO varFileDTO, String author) {
-		String linkFileName = VAM_ADDON_PATH + author + "\\___VarsLink___\\" + varFileDTO.getVarFileName();
+	private void additional(VarFileDTO varFileDTO, String groupName) {
+		String linkFileName = VAM_ADDON_PATH + groupName + "\\___VarsLink___\\" + varFileDTO.getVarFileName();
 		String targetFileName = varFileDTO.getFullPath() + varFileDTO.getVarFileName();
 		File targetFile = new File(targetFileName);
 		FileUtil.createLinkFile2(targetFile, linkFileName, false);
@@ -236,6 +242,106 @@ public class Work extends WorkDeployVarFile {
 				log.warn("\n---delete db: " + varFileDTO.getVarFileName());
 			}
 		});
+	}
+
+	public void deployBestSceneGirl_GK(String bestSceneVarName, BestGirl bestGirl, int num, String groupName,
+			String chineseVarName) {
+		VarFileDTO mergedVarFileDTO = new VarFileDTO(null, "jacky.merged.1.var");
+
+//		Map<String, VarFileDTO> var1 = processSingle(bestSceneVarName, groupName);
+//		Map<String, VarFileDTO> var2 = processSingle(chineseVarName, groupName);
+//		Map<String, VarFileDTO> var3 = processSomeGirl(Objects.nonNull(bestGirl) ? bestGirl.getDescription() : null,
+//				num, groupName);
+		Map<String, VarFileDTO> varAll = new HashMap<>();
+//		varAll.putAll(var1);
+//		varAll.putAll(var2);
+//		varAll.putAll(var3);
+		switchAuthor(varAll, groupName);
+
+		List<VarFileDTO> varFileDTOChineseList = new ArrayList<>();
+		List<String> chineseVarList = Arrays.asList("jacky.sound.latest",
+				"Zam55555.ZamS001SE_BusinessReception.latest");
+		for (int i = 0; i < chineseVarList.size(); i++) {
+			String chineseVar = chineseVarList.get(i);
+			VarFileDTO varFileDTOuery1 = new VarFileDTO(null, chineseVar);
+			VarFileDTO varFileDTODBChinese = findSuitableVarFile(varFileDTOuery1);
+			varFileDTOChineseList.add(varFileDTODBChinese);
+		}
+
+		VarFileDTO varFileDTOuery2 = new VarFileDTO(null, bestSceneVarName);
+		VarFileDTO varFileDTODBEnglish = findSuitableVarFile(varFileDTOuery2);
+		VarFileDTO varFileDTOEnglish = readVarFile(varFileDTODBEnglish);
+
+//		List<String> chineseSoundList2 = varFileDTOChinese.getSoundList();
+//		List<String> chineseSoundList = chineseSoundList2;
+//				.stream().filter(s -> StringUtils.indexOf(s, "moan") >= 0)
+//				.collect(Collectors.toList());
+
+//		varFileDTOChinese.setSoundList(chineseSoundList);
+
+		String modifiedMetaJson = null;
+		try {
+			// modifiedMetaJson = modifiedMetaJson(mergedVarFileDTO, varFileDTOChinese,
+			// varFileDTOEnglish.getMetaJson());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+//		zipUtils.translateChinese(mergedVarFileDTO, varFileDTOChinese, varFileDTOEnglish, modifiedMetaJson,
+//				VAM_FILE_ADDONPACKAGES);
+
+		String unZipfileName = varFileDTOEnglish.getFullPath() + varFileDTOEnglish.getVarFileName();
+		String outDir = VAM_FILE_ADDONPACKAGES + mergedVarFileDTO.makeKey() + "/";
+		zipUtils.unZip(unZipfileName, outDir);
+		List<String> uselessSoundList = translateUtils.translateChinese2(outDir, mergedVarFileDTO,
+				varFileDTOChineseList, varFileDTOEnglish);
+		zipUtils.removeUseLessSound(unZipfileName, uselessSoundList);
+		zipUtils.doZip(unZipfileName);
+	}
+
+	private String modifiedMetaJson(VarFileDTO mergedVarFileDTO, VarFileDTO varFileDTOChinese, MetaJson metaJson)
+			throws JsonProcessingException {
+		List<String> contentList = metaJson.getContentList().stream().filter(s -> !isSound(s))
+				.collect(Collectors.toList());
+//		List<String> chineseSoundList=varFileDTOChinese.getSoundList();
+		// contentList.addAll(chineseSoundList);
+
+		metaJson.setCreatorName(mergedVarFileDTO.getCreatorName());
+		metaJson.setPackageName(mergedVarFileDTO.getPackageName());
+		metaJson.setContentList(contentList);
+		metaJson.getDependencies().put(varFileDTOChinese.makeKey(), new Dependence());
+		return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(metaJson);
+	}
+
+	static List<String> skipSoundExtension = Arrays.asList("wav", "mp3");
+
+	private boolean isSound(String content) {
+		String atom = content.toLowerCase();
+		String atomExtension = zipUtils.getExtension(atom);
+		if (skipSoundExtension.contains(atomExtension)) {
+			return true;
+		} else
+			return false;
+	}
+
+	public void makeVarPack() {
+		String targetVarName = "jacky.sound.1";
+		String sourcePath = "C:\\VAM-resource\\中文語音可替換素材包\\";
+		String targetPath = VAM_FILE_ADDONPACKAGES + targetVarName + "\\Custom\\Sounds\\";
+
+		VarFileDTO mergedVarFileDTO = new VarFileDTO(null, targetVarName + ".var");
+		String unZipfileName = VAM_FILE_ADDONPACKAGES + mergedVarFileDTO.makeKey() + "\\";
+		List<String> soundList = new ArrayList<>();
+		try {
+			soundList = zipUtils.copyDirectory(StringUtils.length(unZipfileName), sourcePath, targetPath).stream()
+					.collect(Collectors.toList());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		mergedVarFileDTO.setSoundList(soundList);
+		zipUtils.makeMetaJson(unZipfileName, mergedVarFileDTO);
+
+		zipUtils.doZip(VAM_FILE_ADDONPACKAGES + mergedVarFileDTO.getVarFileName());
 	}
 
 }

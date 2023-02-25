@@ -27,6 +27,7 @@ import vam.dto.VarFileDTO;
 import vam.repository.VarFileService;
 import vam.util.FileUtil;
 import vam.util.OsUtils;
+import vam.util.TranslateUtils;
 import vam.util.ZipUtils;
 
 @Slf4j
@@ -52,6 +53,9 @@ public abstract class WorkVarFile {
 
 	@Autowired
 	public ZipUtils zipUtils;
+
+	@Autowired
+	public TranslateUtils translateUtils;
 
 	@Autowired
 	public VarFileService varFileService;

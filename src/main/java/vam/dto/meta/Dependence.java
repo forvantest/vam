@@ -1,5 +1,6 @@
 package vam.dto.meta;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,8 +13,8 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Dependence {
-	String licenseType;
+	String licenseType = "CC BY";
 	String missing;
-	Map<String, Dependence> dependencies;
+	Map<String, Dependence> dependencies = new HashMap<>();
 
 }

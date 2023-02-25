@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.Data;
 
-@JsonInclude(Include.NON_NULL) 
+@JsonInclude(Include.NON_NULL)
 @Data
 public class CustomOption {
-	Boolean preloadMorphs;
-	
+	Boolean preloadMorphs = false;
+
 }

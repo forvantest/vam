@@ -102,7 +102,7 @@ public class VarFileDTO implements Comparable {
 
 	// Custom
 
-//	private MetaJson metaJson;
+	private MetaJson metaJson;
 	private Exception exception;
 	private Integer favorite;
 	private String referencesJson;
