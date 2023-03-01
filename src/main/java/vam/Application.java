@@ -60,11 +60,10 @@ public class Application extends SpringBootServletInitializer {
 //		work.deployBestSceneGirl_GK("SlamT.Spooged-A_Tiny_Vam_Xmas-FULL.1.var", null, 3, "AAX_VAN_3girls\\",
 //				"Zam55555.ZamS001SE_BusinessReception.latest");
 
-		work.deployBestSceneGirl_GK("SlamT.Spooged-A_Tiny_Vam_Xmas-FULL.1.var", null, 3, "AAX_VAN_3girls\\",
-				"jacky.sound.latest");
+		work.deployBestSceneGirl_GK("SlamT.Spooged-A_Tiny_Vam_Xmas-FULL.1.var", null, 3, "AAX_VAN_3girls\\");
 
 //		work.makeVarPack();
-
+//		work.deployBestSceneGirl(BestScene.sxs4, null, 10, "AA2_sxs4_10girls\\");
 //		work.deployBestSceneGirl(BestScene.xinxiu, null, 10, "AA2_xinxiu_10girls\\");
 
 //		work.deployOneSceneOneGirl("SlamT.TinyVam-TheCastingCouch.latest", "realclone.ELSA.latest",

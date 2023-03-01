@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import vam.dto.MetaJson;
 import vam.dto.SceneJson;
 import vam.dto.VarFileDTO;
 import vam.entity.VarFile;
@@ -44,6 +45,7 @@ public class MapperUtils {
 				e.printStackTrace();
 			}
 		}
+
 		varFile.setFemaleCount(varFileDTO.getFemaleCount());
 		varFile.setFemaleGenitaliaCount(varFileDTO.getFemaleGenitaliaCount());
 		varFile.setMaleCount(varFileDTO.getMaleCount());
@@ -52,6 +54,9 @@ public class MapperUtils {
 		varFile.setFavorite(varFileDTO.getFavorite());
 		varFile.setReferencesJson(varFileDTO.getReferencesJson());
 		try {
+			if (Objects.nonNull(varFileDTO.getMetaJson())) {
+				varFile.setMetaJson(objectMapper.writeValueAsString(varFileDTO.getMetaJson()));
+			}
 			List<SceneJson> easyList = new ArrayList<>();
 			varFileDTO.getSceneJsonList().forEach(s -> easyList.add(new SceneJson(s)));
 			String scenesJson = objectMapper.writeValueAsString(easyList);
@@ -78,11 +83,12 @@ public class MapperUtils {
 		varFileDTO.setFavorite(varFile.getFavorite());
 		varFileDTO.setReferencesJson(varFile.getReferencesJson());
 		try {
-//			String str = varFile.getMetaDependencies();
-//			if (Objects.nonNull(str)) {
-//				this.setMetaJson(new MetaJson());
-//				this.getMetaJson().setDependencies(objectMapper.readTree(str).deepCopy());
-//			}
+			String str7 = varFile.getMetaJson();
+			if (Objects.nonNull(str7)) {
+				MetaJson myObjects = objectMapper.readValue(str7, new TypeReference<MetaJson>() {
+				});
+				varFileDTO.setMetaJson(myObjects);
+			}
 			String str1 = varFile.getScenesJson();
 			if (Objects.nonNull(str1)) {
 				List<SceneJson> myObjects = objectMapper.readValue(str1, new TypeReference<List<SceneJson>>() {

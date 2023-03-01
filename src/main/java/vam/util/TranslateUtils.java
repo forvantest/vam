@@ -5,7 +5,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.apache.commons.io.IOUtils;
@@ -58,10 +62,49 @@ public class TranslateUtils {
 		return uselesssSoundList;
 	}
 
+	Map<String, String> specialSoundMap = new HashMap<>();
+
+	private void fillSpecialSoundList() {
+		try {
+			String rootPath = "C:\\VAM-resource\\中文語音可替換素材包\\";
+			List<String> soundTypeList = Arrays.asList("-ACT-", "-BCUM-", "-CUM-", "PORN_WORDS_SPANK");
+
+			for (int i = 0; i < soundTypeList.size(); i++) {
+				String soundType = soundTypeList.get(i);
+				String childPath = rootPath + soundType;
+				File sfile = new File(childPath);
+				for (File cFile : sfile.listFiles()) {
+					String key = StringUtils.replace(cFile.getAbsolutePath(), rootPath, "");
+					key = StringUtils.replace(key, "\\", "/");
+//					int index = StringUtils.indexOf(key, "\\");
+//					String value = StringUtils.substring(key, index);
+					specialSoundMap.put(key, cFile.getName());
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private String specialSound(String content) {
+		String jsonText = content;
+		for (Entry<String, String> entrySet : specialSoundMap.entrySet()) {
+			if (!StringUtils.contains(jsonText, entrySet.getKey())
+					&& StringUtils.contains(jsonText, entrySet.getValue())) {
+				jsonText = StringUtils.replace(jsonText, "jacky.sound.1:/Custom/Sounds/淫語/" + entrySet.getValue(),
+						"jacky.sound.1:/Custom/Sounds/" + entrySet.getKey());
+				log.error("replace special sound:{} ---> {}", entrySet.getValue(), entrySet.getKey());
+			}
+		}
+		return jsonText;
+	}
+
 	private String translate(String content, List<String> englishSoundList, TranslateDTO translateDTO,
 			List<String> uselesssSoundList) {
 		String jsonText = content;
 		try {
+			fillSpecialSoundList();
+			jsonText = specialSound(content);
 			for (int i = 0; i < englishSoundList.size(); i++) {
 				String englishSound = englishSoundList.get(i);
 				SoundType soundType = identifyEnglishSoundType1(englishSound);
@@ -73,6 +116,8 @@ public class TranslateUtils {
 					} else {
 						log.error("no match sound:{}", englishSound);
 					}
+				} else {
+					log.warn("question sound:{} ", englishSound);
 				}
 			}
 		} catch (Exception ex) {
@@ -85,34 +130,64 @@ public class TranslateUtils {
 		String upperCase = englishSound.toUpperCase();
 		if (StringUtils.contains(upperCase, "BGO-CM-"))
 			return SoundType.FAKE_REJECT;
-		if (StringUtils.contains(upperCase, "DG-ACT-"))
+		if (StringUtils.contains(upperCase, "-ACT-"))
 			return SoundType.PORN_WORDS_ACT;
-		if (StringUtils.contains(upperCase, "DG-AFT-"))
+		if (StringUtils.contains(upperCase, "-AFT-"))
 			return SoundType.PORN_WORDS;
-		if (StringUtils.contains(upperCase, "DG-AT-"))
+		if (StringUtils.contains(upperCase, "-AT-"))
 			return SoundType.PORN_WORDS_ACT;
-		if (StringUtils.contains(upperCase, "DG-CM-"))
+		if (StringUtils.contains(upperCase, "-CM-"))
 			return SoundType.PORN_WORDS_CUM;
-		if (StringUtils.contains(upperCase, "DG-CS-"))
+		if (StringUtils.contains(upperCase, "-CS-"))
 			return SoundType.PORN_WORDS_CUM;
-		if (StringUtils.contains(upperCase, "DG-FS-"))
-			return SoundType.BREATH;
-		if (StringUtils.contains(upperCase, "DG-FT-"))
+		if (StringUtils.contains(upperCase, "-FS-"))
+			return SoundType.MOAN;
+		if (StringUtils.contains(upperCase, "-FT-"))
 			return SoundType.PORN_WORDS_ACT;
-		if (StringUtils.contains(upperCase, "DG-GFT-"))
+		if (StringUtils.contains(upperCase, "-GFT-"))
 			return SoundType.PORN_WORDS;
-		if (StringUtils.contains(upperCase, "DG-O-"))
+		if (StringUtils.contains(upperCase, "-PT-"))
+			return SoundType.PORN_WORDS_ACT;
+		if (StringUtils.contains(upperCase, "-RT-"))
+			return SoundType.PORN_WORDS_SPANK;
+		if (StringUtils.contains(upperCase, "-SPK-"))
+			return SoundType.SPANK;
+		if (StringUtils.contains(upperCase, "-SS-"))
+			return SoundType.BLOW;
+		if (StringUtils.contains(upperCase, "-SSD-"))
+			return SoundType.BLOW;
+		if (StringUtils.contains(upperCase, "-ST-"))
+			return SoundType.PORN_WORDS;
+		if (StringUtils.contains(upperCase, "-TFT-"))
+			return SoundType.PORN_WORDS_ACT;
+		if (StringUtils.contains(upperCase, "TIT-"))
+			return SoundType.PORN_WORDS_ACT;
+		if (StringUtils.contains(upperCase, "-TT-"))
+			return SoundType.PORN_WORDS_ACT;
+		if (StringUtils.contains(upperCase, "-O-"))
+			return SoundType.CUM;
+		if (StringUtils.contains(upperCase, "-T-"))
+			return SoundType.MOAN;
+		if (StringUtils.contains(upperCase, "-CMF-"))
 			return SoundType.PORN_WORDS_CUM;
-		if (StringUtils.contains(upperCase, "DG-PT-"))
-			return SoundType.PORN_WORDS_ACT;
-		if (StringUtils.contains(upperCase, "DG-RT-"))
-			return SoundType.PORN_WORDS_ACT;
-		if (StringUtils.contains(upperCase, "DG-SPK-"))
+		if (StringUtils.contains(upperCase, "KS-"))
+			return SoundType.KISS;
+		if (StringUtils.contains(upperCase, "-SSB-"))
+			return SoundType.BLOW;
+		if (StringUtils.contains(upperCase, "_CMF-"))
+			return SoundType.PORN_WORDS_CUM;
+		if (StringUtils.contains(upperCase, "SEXSLAP"))
 			return SoundType.BREATH;
-		if (StringUtils.contains(upperCase, "DG-SS-"))
-			return SoundType.BREATH;
-		if (StringUtils.contains(upperCase, "DG-SS-"))
-			return SoundType.BREATH;
+		if (StringUtils.contains(upperCase, "SSD-"))
+			return SoundType.BLOW;
+		if (StringUtils.contains(upperCase, "WET"))
+			return SoundType.WET;
+		if (StringUtils.contains(upperCase, "-NFT-"))
+			return SoundType.PORN_WORDS;
+		if (StringUtils.contains(upperCase, "-CUM-"))
+			return SoundType.CUM;
+
+		log.error("no match sound:{} ", upperCase);
 		return null;
 	}
 

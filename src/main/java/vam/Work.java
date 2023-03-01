@@ -1,6 +1,9 @@
 package vam;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +16,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -244,23 +248,25 @@ public class Work extends WorkDeployVarFile {
 		});
 	}
 
-	public void deployBestSceneGirl_GK(String bestSceneVarName, BestGirl bestGirl, int num, String groupName,
-			String chineseVarName) {
+	public void deployBestSceneGirl_GK(String bestSceneVarName, BestGirl bestGirl, int num, String groupName) {
 		VarFileDTO mergedVarFileDTO = new VarFileDTO(null, "jacky.merged.1.var");
+		List<String> chineseVarList = Arrays.asList("jacky.sound.latest",
+				"Zam55555.ZamS001SE_BusinessReception.latest");
 
-//		Map<String, VarFileDTO> var1 = processSingle(bestSceneVarName, groupName);
-//		Map<String, VarFileDTO> var2 = processSingle(chineseVarName, groupName);
-//		Map<String, VarFileDTO> var3 = processSomeGirl(Objects.nonNull(bestGirl) ? bestGirl.getDescription() : null,
-//				num, groupName);
+		Map<String, VarFileDTO> var1 = processSingle(bestSceneVarName, groupName);
+		Map<String, VarFileDTO> var3 = processSomeGirl(Objects.nonNull(bestGirl) ? bestGirl.getDescription() : null,
+				num, groupName);
 		Map<String, VarFileDTO> varAll = new HashMap<>();
-//		varAll.putAll(var1);
-//		varAll.putAll(var2);
-//		varAll.putAll(var3);
+		varAll.putAll(var1);
+		for (String chineseVarName : chineseVarList) {
+			Map<String, VarFileDTO> var2 = processSingle(chineseVarName, groupName);
+			varAll.putAll(var2);
+		}
+		varAll.putAll(var3);
 		switchAuthor(varAll, groupName);
 
 		List<VarFileDTO> varFileDTOChineseList = new ArrayList<>();
-		List<String> chineseVarList = Arrays.asList("jacky.sound.latest",
-				"Zam55555.ZamS001SE_BusinessReception.latest");
+
 		for (int i = 0; i < chineseVarList.size(); i++) {
 			String chineseVar = chineseVarList.get(i);
 			VarFileDTO varFileDTOuery1 = new VarFileDTO(null, chineseVar);
@@ -279,14 +285,6 @@ public class Work extends WorkDeployVarFile {
 
 //		varFileDTOChinese.setSoundList(chineseSoundList);
 
-		String modifiedMetaJson = null;
-		try {
-			// modifiedMetaJson = modifiedMetaJson(mergedVarFileDTO, varFileDTOChinese,
-			// varFileDTOEnglish.getMetaJson());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 //		zipUtils.translateChinese(mergedVarFileDTO, varFileDTOChinese, varFileDTOEnglish, modifiedMetaJson,
 //				VAM_FILE_ADDONPACKAGES);
 
@@ -295,13 +293,46 @@ public class Work extends WorkDeployVarFile {
 		zipUtils.unZip(unZipfileName, outDir);
 		List<String> uselessSoundList = translateUtils.translateChinese2(outDir, mergedVarFileDTO,
 				varFileDTOChineseList, varFileDTOEnglish);
-		zipUtils.removeUseLessSound(unZipfileName, uselessSoundList);
-		zipUtils.doZip(unZipfileName);
+		zipUtils.removeUseLessSound(outDir, uselessSoundList);
+
+		try {
+
+			String modifiedMetaJson = modifiedMetaJson(mergedVarFileDTO, varFileDTOChineseList, uselessSoundList,
+					varFileDTOEnglish.getMetaJson());
+			overwriteMetaJson(outDir, modifiedMetaJson);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		zipUtils.doZip(outDir, VAM_FILE_ADDONPACKAGES + mergedVarFileDTO.getVarFileName());
 	}
 
-	private String modifiedMetaJson(VarFileDTO mergedVarFileDTO, VarFileDTO varFileDTOChinese, MetaJson metaJson)
-			throws JsonProcessingException {
-		List<String> contentList = metaJson.getContentList().stream().filter(s -> !isSound(s))
+	private void overwriteMetaJson(String outDir, String modifiedMetaJson) {
+		try {
+			String path = outDir + "meta.json";
+
+			FileInputStream fis = new FileInputStream(path);
+			String content = IOUtils.toString(fis, "UTF-8");
+			fis.close();
+
+			File file = new File(path);
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+
+			// Write in file
+			bw.write(modifiedMetaJson);
+
+			// Close connection
+			bw.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+	}
+
+	private String modifiedMetaJson(VarFileDTO mergedVarFileDTO, List<VarFileDTO> varFileDTOChineseList,
+			List<String> uselessSoundList, MetaJson metaJson) throws JsonProcessingException {
+		List<String> contentList = metaJson.getContentList().stream().filter(s -> !uselessSoundList.contains(s))
 				.collect(Collectors.toList());
 //		List<String> chineseSoundList=varFileDTOChinese.getSoundList();
 		// contentList.addAll(chineseSoundList);
@@ -309,7 +340,9 @@ public class Work extends WorkDeployVarFile {
 		metaJson.setCreatorName(mergedVarFileDTO.getCreatorName());
 		metaJson.setPackageName(mergedVarFileDTO.getPackageName());
 		metaJson.setContentList(contentList);
-		metaJson.getDependencies().put(varFileDTOChinese.makeKey(), new Dependence());
+		for (VarFileDTO varFileDTOChinese : varFileDTOChineseList) {
+			metaJson.getDependencies().put(varFileDTOChinese.makeKey(), new Dependence());
+		}
 		return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(metaJson);
 	}
 
@@ -341,7 +374,7 @@ public class Work extends WorkDeployVarFile {
 		mergedVarFileDTO.setSoundList(soundList);
 		zipUtils.makeMetaJson(unZipfileName, mergedVarFileDTO);
 
-		zipUtils.doZip(VAM_FILE_ADDONPACKAGES + mergedVarFileDTO.getVarFileName());
+		zipUtils.doZip(unZipfileName, VAM_FILE_ADDONPACKAGES + mergedVarFileDTO.getVarFileName());
 	}
 
 }

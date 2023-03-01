@@ -45,7 +45,7 @@ public class VarFile implements Serializable, Comparable {
 
 	private String version;
 
-//	private String metaDependencies;
+	private String metaJson;
 
 	private String dependencies;
 

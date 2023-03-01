@@ -483,12 +483,11 @@ public class ZipUtils {
 	}
 
 	// 压缩文件夹内的文件
-	public void doZip(String zipFileName) {// zipDirectoryPath:需要压缩的文件夹名
-		String inDir = getFolder(zipFileName);
-		File zipDir = new File(inDir);
+	public void doZip(String outDir, String zipFileName) {// zipDirectoryPath:需要压缩的文件夹名
+		File zipDir = new File(outDir);
 		try {
 			ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFileName)));
-			handleDir(StringUtils.length(inDir), zipDir, zipOut);
+			handleDir(StringUtils.length(outDir), zipDir, zipOut);
 			zipOut.close();
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
@@ -576,11 +575,11 @@ public class ZipUtils {
 	}
 
 	public void removeUseLessSound(String unZipfileName, List<String> soundList) {
-		String tempDir = getFolder(unZipfileName);
 		for (String filename : soundList) {
-			File tempfile = new File(tempDir + filename);
+			File tempfile = new File(unZipfileName + filename);
 			if (tempfile.exists()) {
 				tempfile.delete();
+				log.warn("--- remove useless sound: {}", tempfile.getAbsolutePath());
 			}
 		}
 	}

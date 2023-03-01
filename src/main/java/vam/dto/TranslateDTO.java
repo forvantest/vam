@@ -63,9 +63,11 @@ public class TranslateDTO {
 			return SoundType.FAKE_REJECT;
 		if (StringUtils.contains(upperCase, "呻吟聲"))
 			return SoundType.MOAN;
-		if (StringUtils.contains(upperCase, "淫語"))
-			return SoundType.PORN_WORDS;
+		if (StringUtils.contains(upperCase, "MOAN"))
+			return SoundType.MOAN;
 		if (StringUtils.contains(upperCase, "BLOW"))
+			return SoundType.BLOW;
+		if (StringUtils.contains(upperCase, "DEEPTHROAT"))
 			return SoundType.BLOW;
 		if (StringUtils.contains(upperCase, "KISS"))
 			return SoundType.KISS;
@@ -75,9 +77,22 @@ public class TranslateDTO {
 			return SoundType.PHONERING;
 		if (StringUtils.contains(upperCase, "PAPACUM"))
 			return SoundType.PAPACUM;
-
+		if (StringUtils.contains(upperCase, "-BCUM-"))
+			return SoundType.PORN_WORDS_CUM;
+		if (StringUtils.contains(upperCase, "-ACT-"))
+			return SoundType.PORN_WORDS_ACT;
+		if (StringUtils.contains(upperCase, "-CUM-"))
+			return SoundType.CUM;
+		if (StringUtils.contains(upperCase, "FLUID"))
+			return SoundType.WET;
+		if (StringUtils.contains(upperCase, "SLAP"))
+			return SoundType.SPANK;
 		if (StringUtils.contains(upperCase, "BUSINESS"))
 			return SoundType.NORMAL;
+		if (StringUtils.contains(upperCase, "PORN_WORDS_SPANK"))
+			return SoundType.PORN_WORDS_SPANK;
+		if (StringUtils.contains(upperCase, "淫語"))
+			return SoundType.PORN_WORDS;
 		return SoundType.NORMAL;
 	}
 
