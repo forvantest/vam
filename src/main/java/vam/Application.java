@@ -7,6 +7,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import vam.dto.enumration.BestScene;
+
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan
@@ -50,21 +52,27 @@ public class Application extends SpringBootServletInitializer {
 //		work.deployBestSceneGirl(BestScene.AlpacaLaps, BestGirl.VKStyle, "AA2_AlpacaLaps_VKStyle\\");
 //		work.deployBestSceneGirl(BestScene.ZenMocap, BestGirl.VAM_GS, "AA2_ZenMocap_VAM_GS\\");
 //		work.deployBestSceneGirl(BestScene.Tiseb, BestGirl.sortof, "AA2_Tiseb_sortof\\");
-//		work.deployBestSceneGirl(BestScene.flyroxy, BestGirl.MRdong, "AA2_flyroxy_MRdong\\");
+//		work.deployBestSceneGirl(BestScene.FlyRoxy, null, 6, "AA2_FlyRoxy_6girls\\");
 //		work.deployBestSceneGirl(BestScene.Vihper, BestGirl.ReAcg, "AA2_Vihper_ReAcg\\");
-//		work.deployBestSceneGirl(BestScene.Universens, BestGirl.CMA, "AA2_Universens_CMA\\");
+		work.deployBestSceneGirl(BestScene.Universens, null, 0, "AA2_Universens_8girls\\");
 //		work.deployBestSceneGirl(BestScene.xinxiu, BestGirl.yesmola, "AA2_xinxiu_yesmola\\");
-//		work.deployBestSceneGirl(BestScene.UJVAM, BestGirl.mai, "AA2_UJVAM_mai\\");
-//		work.deployBestSceneGirl(BestScene.SlamT, null, 10, "AA2_SlamT_10girls\\");
+////		work.deployBestSceneGirl(BestScene.UJVAM, BestGirl.mai, "AA2_UJVAM_mai\\");
+//		work.deployBestSceneGirl(BestScene.FeiSama, BestGirl.mai, "AA2_FeiSama_mai\\");
+//		work.deployBestSceneGirl(BestScene.Nial, BestGirl.mai, "AA2_Nial_mai\\");
+//		work.deployBestSceneGirl(BestScene.IAmAFox, BestGirl.mai, "AA2_IAmAFox_mai\\");
+//		work.deployBestSceneGirl(BestScene.NisVamX, BestGirl.mai, "AA2_NisVamX_mai\\");
+//		work.deployBestSceneGirl(BestScene.MK_47, BestGirl.mai, "AA2_MK_47_mai\\");
+//		work.deployBestSceneGirl(BestScene.Ispinox, BestGirl.mai, "AA2_Ispinox_mai\\");
+//		work.deployBestSceneGirl(BestScene.Vr_Addict, null, 10, "AA2_Vr_Addict_10girls\\");
+//		work.deployBestSceneGirl(BestScene.HiphopJin, null, 10, "AA2_HiphopJin_10girls\\");
+//		work.deployBestSceneGirl(BestScene.AndiFang, null, 10, "AA2_AndiFang_10girls\\");
+//		work.deployBestSceneGirl(BestScene.Romolas, null, 10, "AA2_Romolas_10girls\\");
+//		work.deployBestSceneGirl(BestScene.sxs4, null, 6, "AA2_sxs4_6girls\\");
+//		work.deployBestSceneGirl(BestScene.wunderwise, null, 10, "AA2_wunderwise_10girls\\");
 
-//		work.deployBestSceneGirl_GK("SlamT.Spooged-A_Tiny_Vam_Xmas-FULL.1.var", null, 3, "AAX_VAN_3girls\\",
-//				"Zam55555.ZamS001SE_BusinessReception.latest");
-
-		work.deployBestSceneGirl_GK("SlamT.Spooged-A_Tiny_Vam_Xmas-FULL.1.var", null, 3, "AAX_VAN_3girls\\");
+//		work.deployBestSceneGirl_GK("SlamT.Spooged-A_Tiny_Vam_Xmas-FULL.1.var", null, 3, "AAX_VAN_3girls\\");
 
 //		work.makeVarPack();
-//		work.deployBestSceneGirl(BestScene.sxs4, null, 10, "AA2_sxs4_10girls\\");
-//		work.deployBestSceneGirl(BestScene.xinxiu, null, 10, "AA2_xinxiu_10girls\\");
 
 //		work.deployOneSceneOneGirl("SlamT.TinyVam-TheCastingCouch.latest", "realclone.ELSA.latest",
 //				"AA2_SlamTCouch_realcloneElsa\\");
@@ -79,27 +87,6 @@ public class Application extends SpringBootServletInitializer {
 
 		// work.deployBestSceneGirl(BestScene.Ispinox, BestGirl.Thorn,
 		// "AA2_Ispinox_Thorn\\");
-
-//		BIGDOG("BIGDOG"),
-//		Thorn("Thorn"),
-//		mio("mio"),
-//		HT("HT"),
-//		Anom("Anom"),
-//		VAMDoll("VAMDoll"),
-//		KDollMASTA("KDollMASTA"),
-//		Bamair1984("Bamair1984"),
-//		qingfeng("qingfeng"),
-//		Qing("Qing"),
-//		rose1("rose1"),	
-//		rose11("rose11"),
-//		Xspada("Xspada"),
-//		ADADE("ADADE"),
-//		Wolverine("Wolverine"),
-//		Neiro("Neiro"),
-//		QWERTY("QWERTY"),
-//		MK47("MK47"),
-//		Keiaono("Keiaono"),
-//		hero774("hero774"),
 
 		// work.deployBestSceneGirl(BestScene.LDR, BestGirl.callimohu,
 		// "AA_LDRcallimohu\\");
