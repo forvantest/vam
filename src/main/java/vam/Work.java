@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -377,4 +378,61 @@ public class Work extends WorkDeployVarFile {
 		zipUtils.doZip(unZipfileName, VAM_FILE_ADDONPACKAGES + mergedVarFileDTO.getVarFileName());
 	}
 
+	public void superDependence() {
+		Set<String> allVarSet = new HashSet<>();
+
+		Map<String, Integer> sumMap = new HashMap<>();
+		for (VarFileDTO varFileDTO : varFileService.findAll()) {
+			if(StringUtils.contains(varFileDTO.getFullPath(), "\\base") || StringUtils.contains(varFileDTO.getFullPath(), "\\best_"))
+				System.out.println("target:" + varFileDTO.getFullPath());
+			else
+				continue;
+			
+			allVarSet.add(varFileDTO.makeKey());
+			Set<String> dependSet = varFileDTO.getDependencies();
+			for (String key : dependSet) {
+				Integer count = sumMap.get(key);
+				if (Objects.isNull(count)) {
+					count = new Integer(0);
+				}
+				count++;
+				sumMap.put(key, count);
+			}
+		}
+		Map<String, Integer> sortedSumMap = sumMap.entrySet().stream()
+				.sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
+
+		Map<String, Integer> lackMap = sortedSumMap.entrySet().stream().filter(x -> !validateVarExist(x.getKey(),allVarSet))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
+
+		Map<String, Map<String, Integer>> creatorMap = new HashMap<>();
+		for (Map.Entry<String, Integer> me : lackMap.entrySet()) {
+			// System.out.println("depend count:" + me.getKey() + " " + me.getValue());
+			String[] au = StringUtils.split(me.getKey(), ".");
+			String creator = au[0];
+			Map<String, Integer> cmap = creatorMap.get(creator);
+			if (Objects.isNull(cmap)) {
+				cmap = new HashMap<>();
+				creatorMap.put(creator, cmap);
+			}
+			cmap.put(me.getKey(), me.getValue());
+		}
+		Map<String, Map<String, Integer>> sortedCreatorMap = creatorMap.entrySet().stream()
+				.sorted(Collections
+						.reverseOrder(Map.Entry.comparingByValue((o1, o2) -> Integer.compare(o1.size(), o2.size()))))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
+
+		for (Map.Entry<String, Map<String, Integer>> me : sortedCreatorMap.entrySet()) {
+			for (Map.Entry<String, Integer> me1 : me.getValue().entrySet()) {
+				System.out.println("depend creator:" + me.getKey() + "    " + me1.getKey() + "    " + me1.getValue());
+			}
+		}
+	}
+
+	private boolean validateVarExist(String varName,Set<String> allVarSet ) {
+		if(StringUtils.endsWith(varName, "latest"))
+			varName=StringUtils.replace(varName, "latest", "1");
+		return allVarSet.contains(varName);
+	}
 }

@@ -54,7 +54,7 @@ public class Application extends SpringBootServletInitializer {
 //		work.deployBestSceneGirl(BestScene.Tiseb, BestGirl.sortof, "AA2_Tiseb_sortof\\");
 //		work.deployBestSceneGirl(BestScene.FlyRoxy, null, 6, "AA2_FlyRoxy_6girls\\");
 //		work.deployBestSceneGirl(BestScene.Vihper, BestGirl.ReAcg, "AA2_Vihper_ReAcg\\");
-		work.deployBestSceneGirl(BestScene.Universens, null, 0, "AA2_Universens_8girls\\");
+		//work.deployBestSceneGirl(BestScene.Universens, null, 0, "AA2_Universens_8girls\\");
 //		work.deployBestSceneGirl(BestScene.xinxiu, BestGirl.yesmola, "AA2_xinxiu_yesmola\\");
 ////		work.deployBestSceneGirl(BestScene.UJVAM, BestGirl.mai, "AA2_UJVAM_mai\\");
 //		work.deployBestSceneGirl(BestScene.FeiSama, BestGirl.mai, "AA2_FeiSama_mai\\");
@@ -74,6 +74,8 @@ public class Application extends SpringBootServletInitializer {
 
 //		work.makeVarPack();
 
+		work.superDependence();
+		
 //		work.deployOneSceneOneGirl("SlamT.TinyVam-TheCastingCouch.latest", "realclone.ELSA.latest",
 //				"AA2_SlamTCouch_realcloneElsa\\");
 
