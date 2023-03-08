@@ -7,7 +7,8 @@ public enum BestScene {
 	FlyRoxy("FlyRoxy"), Vihper("Vihper"), Universens("Universens"), xinxiu("xinxiu"), UJVAM("UJVAM"),
 	FeiSama("FeiSama"), Nial("Nial"), IAmAFox("IAmAFox"), NisVamX("NisVamX"), MK_47("MK_47"), Ispinox("Ispinox"),
 	Vr_Addict("Vr_Addict"), HiphopJin("HiphopJin"), AndiFang("AndiFang"), Romolas("Romolas"), sxs4("sxs4"),
-	wunderwise("wunderwise");
+	wunderwise("wunderwise"), Errors69("Errors69"), XRWizard("XRWizard"), Giovni("Giovni"), uMKAxc62SI("uMKAxc62SI"),
+	VamTimbo("VamTimbo");
 
 	private String description;
 
