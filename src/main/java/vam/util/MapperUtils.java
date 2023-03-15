@@ -78,6 +78,7 @@ public class MapperUtils {
 		varFileDTO.setCreatorName(varFile.getCreatorName());
 		varFileDTO.setPackageName(varFile.getPackageName());
 		varFileDTO.setVersion(varFile.getVersion());
+		varFileDTO.setFemaleCount(varFile.getFemaleCount());
 		varFileDTO.setFullPath(varFile.getFullPath());
 		varFileDTO.setVarFileName(varFile.getVarFileName());
 		varFileDTO.setFavorite(varFile.getFavorite());

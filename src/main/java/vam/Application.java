@@ -74,7 +74,8 @@ public class Application extends SpringBootServletInitializer {
 
 //		work.makeVarPack();
 
-		work.superDependence();
+//		work.superDependence();
+		work.girlAnalysis();
 		
 //		work.deployOneSceneOneGirl("SlamT.TinyVam-TheCastingCouch.latest", "realclone.ELSA.latest",
 //				"AA2_SlamTCouch_realcloneElsa\\");
