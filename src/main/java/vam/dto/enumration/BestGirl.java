@@ -44,7 +44,7 @@ public enum BestGirl {
 	hero774("hero774"),
 	ILoveDolls("ILoveDolls"),
 	starlu("starlu"),
-	VR_Addict("VR_Addict"),
+	VR_Addict("VR_Addict"),Vr_Addict("Vr_Addict"),
 	;
 
 	private String description;

@@ -181,7 +181,7 @@ public abstract class WorkDeployVarFile extends WorkVarFile {
 					Map<String, VarFileDTO> mapDiff = cuteMap(mAll, m2);
 					mAll.putAll(mapDiff);
 					if (!CollectionUtils.isEmpty(mapDiff) && level < 2) {
-						log.info("+++ new depends size: " + mapDiff.size() + " total: " + mAll.size());
+						log.debug("+++ new depends size: " + mapDiff.size() + " total: " + mAll.size());
 						mapDiff.forEach((k2, v2) -> processDependencies(mVar, mAll, mLack, k2, v2.getVarFileName(),
 								groupName, level + 1));
 					}

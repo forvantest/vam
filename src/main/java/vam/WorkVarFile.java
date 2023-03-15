@@ -34,7 +34,8 @@ import vam.util.ZipUtils;
 public abstract class WorkVarFile {
 	protected String VAM_ROOT_PATH = "C:\\VAM\\";
 
-	protected String VAM_APP_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9-1\\";
+//	protected String VAM_APP_PATH = VAM_ROOT_PATH + "virt-a-mate 1.20.77.9-1\\";
+	protected String VAM_APP_PATH = VAM_ROOT_PATH + "virt-a-mate 1.22.0.1\\";
 
 	protected String VAM_FILE_ADDONPACKAGES = VAM_APP_PATH + "AddonPackages\\";
 	protected String VAM_FILE_ADDONPACKAGESFILEPREFS = VAM_APP_PATH + "AddonPackagesFilePrefs\\";
