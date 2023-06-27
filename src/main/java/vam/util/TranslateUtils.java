@@ -28,7 +28,7 @@ import vam.dto.enumration.SoundType;
 public class TranslateUtils {
 
 	public List<String> translateChinese2(String unZipfileName, VarFileDTO mergedVarFileDTO,
-			List<VarFileDTO> varFileDTOChineseList, VarFileDTO varFileDTOEnglish) {
+			List<VarFileDTO> varFileDTOChineseList, VarFileDTO varFileDTOEnglish, String CHINESE_SOUND_SOURCE) {
 		List<String> uselesssSoundList = new ArrayList<>();
 		try {
 			TranslateDTO translateDTO = new TranslateDTO(varFileDTOChineseList);
@@ -45,7 +45,8 @@ public class TranslateUtils {
 //			if (!file.exists()) {
 //				file.createNewFile();
 //			}
-			String content2 = translate(content, varFileDTOEnglish.getSoundList(), translateDTO, uselesssSoundList);
+			String content2 = translate(content, varFileDTOEnglish.getSoundList(), translateDTO, uselesssSoundList,
+					CHINESE_SOUND_SOURCE);
 
 			File file = new File(path);
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
@@ -64,9 +65,9 @@ public class TranslateUtils {
 
 	Map<String, String> specialSoundMap = new HashMap<>();
 
-	private void fillSpecialSoundList() {
+	private void fillSpecialSoundList(String CHINESE_SOUND_SOURCE) {
 		try {
-			String rootPath = "C:\\VAM-resource\\中文語音可替換素材包\\";
+			String rootPath = CHINESE_SOUND_SOURCE;
 			List<String> soundTypeList = Arrays.asList("-ACT-", "-BCUM-", "-CUM-", "PORN_WORDS_SPANK");
 
 			for (int i = 0; i < soundTypeList.size(); i++) {
@@ -93,17 +94,17 @@ public class TranslateUtils {
 					&& StringUtils.contains(jsonText, entrySet.getValue())) {
 				jsonText = StringUtils.replace(jsonText, "jacky.sound.1:/Custom/Sounds/淫語/" + entrySet.getValue(),
 						"jacky.sound.1:/Custom/Sounds/" + entrySet.getKey());
-				log.error("replace special sound:{} ---> {}", entrySet.getValue(), entrySet.getKey());
+				log.warn("replace special sound:{} ---> {}", entrySet.getValue(), entrySet.getKey());
 			}
 		}
 		return jsonText;
 	}
 
 	private String translate(String content, List<String> englishSoundList, TranslateDTO translateDTO,
-			List<String> uselesssSoundList) {
+			List<String> uselesssSoundList, String CHINESE_SOUND_SOURCE) {
 		String jsonText = content;
 		try {
-			fillSpecialSoundList();
+			fillSpecialSoundList(CHINESE_SOUND_SOURCE);
 			jsonText = specialSound(content);
 			for (int i = 0; i < englishSoundList.size(); i++) {
 				String englishSound = englishSoundList.get(i);

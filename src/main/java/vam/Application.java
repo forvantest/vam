@@ -30,7 +30,7 @@ public class Application extends SpringBootServletInitializer {
 	private static void mession(Work work) {
 		work.clearUseLessDB();
 		work.loadVarFileIntoDB("AllPackages/");
-		work.moveReference(null);
+//		work.moveReference(null);
 //		work.moveReference(BestScene.Ispinox.getDescription());
 //		work.deploy("AA_ALL/");
 //		work.deployBestGirl(BestGirl.Archer);
@@ -48,7 +48,7 @@ public class Application extends SpringBootServletInitializer {
 //		work.deployBestSceneGirl(BestScene.Zam55555, BestGirl.zzzat16h, "AA2_Zam55555_zzzat16h\\");
 //		work.deployBestSceneGirl(BestScene.Zam55555, BestGirl.ADADE, "AA2_Zam55555_ADADE\\");
 //		work.deployBestSceneGirl(BestScene.AlpacaLaps, BestGirl.VKStyle, "AA2_AlpacaLaps_VKStyle\\");
-//		work.deployBestSceneGirl(BestScene.ZenMocap, BestGirl.VAM_GS, "AA2_ZenMocap_VAM_GS\\");
+
 //		work.deployBestSceneGirl(BestScene.Tiseb, BestGirl.sortof, "AA2_Tiseb_sortof\\");
 //		work.deployBestSceneGirl(BestScene.FlyRoxy, null, 6, "AA2_FlyRoxy_6girls\\");
 //		work.deployBestSceneGirl(BestScene.Vihper, BestGirl.ReAcg, "AA2_Vihper_ReAcg\\");
@@ -66,10 +66,14 @@ public class Application extends SpringBootServletInitializer {
 //		work.deployBestSceneGirl(BestScene.HiphopJin, null, 10, "AA2_HiphopJin_10girls\\");
 //		work.deployBestSceneGirl(BestScene.AndiFang, null, 10, "AA2_AndiFang_10girls\\");
 //		work.deployBestSceneGirl(BestScene.Romolas, null, 10, "AA2_Romolas_10girls\\");
-//		work.deployBestSceneGirl(BestScene.sxs4, null, 6, "AA2_sxs4_6girls\\");
+		// work.deployBestSceneGirl(BestScene.sxs4, null, 12, "AA2_sxs4_12girls\\");
 //		work.deployBestSceneGirl(BestScene.wunderwise, null, 10, "AA2_wunderwise_10girls\\");
-
-//		work.deployBestSceneGirl_GK("SlamT.Spooged-A_Tiny_Vam_Xmas-FULL.1.var", null, 3, "AAX_VAN_3girls\\");
+//		work.deployBestSceneGirl(BestScene.ZenMocap, null, 1, "AA2_ZenMocap_10girls\\");
+//		work.deployBestSceneGirl(BestScene.Universens, null, 10, "AA2_Universens_10girls\\");
+//		work.deployBestSceneGirl(BestScene.XRWizard, null, 10, "AA2_XRWizard_10girls\\");
+//		work.deployBestSceneGirl(BestScene.Chill_PopRun, null, 10, "AA2_Chill_PopRun_10girls\\");
+//		work.deployBestSceneGirl(BestScene.SlamT, null, 10, "AA2_SlamT_10girls\\");
+//		work.deployBestSceneGirl_GK("SlamT.Spooged-A_Tiny_Vam_Xmas-FULL.1.var", null, 1, "AAX_VAN_1girls\\");
 
 //		work.makeVarPack();
 

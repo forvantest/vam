@@ -43,15 +43,18 @@ public abstract class WorkVarFile {
 	protected String VAM_ALLFAVORITE_PATH = VAM_APP_PATH + "___addonPackagesFilePrefsswitch ___\\";
 	protected String VAM_ADDON_PATH = VAM_APP_PATH + "___addonpacksswitch ___\\";
 
-	protected String VAM_ALLPACKAGES_PATH = VAM_ROOT_PATH + "AllPackages\\___VarTidied___\\";
+	protected String VAM_RESOURCE_PATH = "D:\\VAM\\";
+
+	protected String VAM_ALLPACKAGES_PATH = VAM_RESOURCE_PATH + "AllPackages\\___VarTidied___\\";
 	protected String VAM_BASE_PATH = VAM_ALLPACKAGES_PATH + "base\\";
 	protected String VAM_BEST_GIRL_PATH = VAM_ALLPACKAGES_PATH + "best_girl\\";
 	protected String VAM_BEST_SCENE_PATH = VAM_ALLPACKAGES_PATH + "best_scene\\";
-	private String VAM_BROKEN_PATH = VAM_ROOT_PATH + "Broken\\";
-	private String VAM_DUPLICATE_PATH = VAM_ROOT_PATH + "Duplicate\\";
+	private String VAM_BROKEN_PATH = VAM_RESOURCE_PATH + "Broken\\";
+	private String VAM_DUPLICATE_PATH = VAM_RESOURCE_PATH + "Duplicate\\";
 	protected String VAR_EXTENSION = ".var";
 	protected String DEPEND_TXT_EXTENSION = ".depend.txt";
 
+	protected String CHINESE_SOUND_SOURCE = "D:\\VAM-resource\\中文語音可替換素材包\\";
 	@Autowired
 	public ZipUtils zipUtils;
 

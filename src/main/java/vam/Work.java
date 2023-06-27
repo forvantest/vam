@@ -196,6 +196,8 @@ public class Work extends WorkDeployVarFile {
 
 		additionalVarList.add("AcidBubbles.BlendShapes.latest");
 		additionalVarList.add("OrangeGumi.Pp_Danmenz_A_v004.1.latest");
+		additionalVarList.add("SPQR.SPQRAlive.latest");
+
 //		additionalVarList.add("cotyounoyume.ExpressionBlushingAndTearsFullVer.latest");
 //		additionalVarList.add("Saking55.AutoBulger.latest");
 //		additionalVarList.add("JayJayWon.SexAssist.latest");
@@ -293,7 +295,7 @@ public class Work extends WorkDeployVarFile {
 		String outDir = VAM_FILE_ADDONPACKAGES + mergedVarFileDTO.makeKey() + "/";
 		zipUtils.unZip(unZipfileName, outDir);
 		List<String> uselessSoundList = translateUtils.translateChinese2(outDir, mergedVarFileDTO,
-				varFileDTOChineseList, varFileDTOEnglish);
+				varFileDTOChineseList, varFileDTOEnglish, CHINESE_SOUND_SOURCE);
 		zipUtils.removeUseLessSound(outDir, uselessSoundList);
 
 		try {
@@ -383,11 +385,12 @@ public class Work extends WorkDeployVarFile {
 
 		Map<String, Integer> sumMap = new HashMap<>();
 		for (VarFileDTO varFileDTO : varFileService.findAll()) {
-			if(StringUtils.contains(varFileDTO.getFullPath(), "\\base") || StringUtils.contains(varFileDTO.getFullPath(), "\\best_"))
+			if (StringUtils.contains(varFileDTO.getFullPath(), "\\base")
+					|| StringUtils.contains(varFileDTO.getFullPath(), "\\best_"))
 				log.debug("target:" + varFileDTO.getFullPath());
 			else
 				continue;
-			
+
 			allVarSet.add(varFileDTO.makeKey());
 			Set<String> dependSet = varFileDTO.getDependencies();
 			for (String key : dependSet) {
@@ -403,7 +406,8 @@ public class Work extends WorkDeployVarFile {
 				.sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
 
-		Map<String, Integer> lackMap = sortedSumMap.entrySet().stream().filter(x -> !validateVarExist(x.getKey(),allVarSet))
+		Map<String, Integer> lackMap = sortedSumMap.entrySet().stream()
+				.filter(x -> !validateVarExist(x.getKey(), allVarSet))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
 
 		Map<String, Map<String, Integer>> creatorMap = new HashMap<>();
@@ -430,60 +434,60 @@ public class Work extends WorkDeployVarFile {
 		}
 	}
 
-	private boolean validateVarExist(String varName,Set<String> allVarSet ) {
-		if(StringUtils.endsWith(varName, "latest"))
-			varName=StringUtils.replace(varName, "latest", "1");
+	private boolean validateVarExist(String varName, Set<String> allVarSet) {
+		if (StringUtils.endsWith(varName, "latest"))
+			varName = StringUtils.replace(varName, "latest", "1");
 		return allVarSet.contains(varName);
 	}
-	
+
 	public void girlAnalysis() {
 //		Set<String> allVarSet = new HashSet<>();
 		Map<String, Set<String>> authorMap = new HashMap<>();
 		for (VarFileDTO varFileDTO : varFileService.findAll()) {
-			if(StringUtils.contains(varFileDTO.getFullPath(), "\\best_girl"))
-				log.debug("+++target:" , varFileDTO.getFullPath());
+			if (StringUtils.contains(varFileDTO.getFullPath(), "\\best_girl"))
+				log.debug("+++target:", varFileDTO.getFullPath());
 //			else
 //				continue;
-			
-			if(Objects.isNull(varFileDTO.getFemaleCount()) || varFileDTO.getFemaleCount()==0) {
-				log.info("---no girl:" , varFileDTO.getVarFileName());
+
+			if (Objects.isNull(varFileDTO.getFemaleCount()) || varFileDTO.getFemaleCount() == 0) {
+				log.info("---no girl:", varFileDTO.getVarFileName());
 				continue;
 			}
-			
+
 //			if(varFileDTO.getFemaleCount()>1) {
 //				log.info("---many girl:{} {}",varFileDTO.getFemaleCount(), varFileDTO.getVarFileName());
 //				continue;
 //			}
 
-			if(Objects.isNull(varFileDTO.getSceneJsonList()) || varFileDTO.getSceneJsonList().size()==0) {
-				log.info("---no scene:" , varFileDTO.getVarFileName());
+			if (Objects.isNull(varFileDTO.getSceneJsonList()) || varFileDTO.getSceneJsonList().size() == 0) {
+				log.info("---no scene:", varFileDTO.getVarFileName());
 				continue;
 			}
 
-			if(varFileDTO.getSceneJsonList().size()>1) {
-				log.info("---many scene:{} {}",varFileDTO.getSceneJsonList().size(), varFileDTO.getVarFileName());
+			if (varFileDTO.getSceneJsonList().size() > 1) {
+				log.info("---many scene:{} {}", varFileDTO.getSceneJsonList().size(), varFileDTO.getVarFileName());
 				continue;
 			}
-			
-			String creatorName=varFileDTO.getCreatorName();
+
+			String creatorName = varFileDTO.getCreatorName();
 //			allVarSet.add(varFileDTO.makeKey());
 //			Set<String> dependSet = varFileDTO.getDependencies();
-			Set<String> authorSet=authorMap.get(creatorName);
-			if(authorSet==null) {
-				authorSet=new HashSet<>();
+			Set<String> authorSet = authorMap.get(creatorName);
+			if (authorSet == null) {
+				authorSet = new HashSet<>();
 				authorMap.put(creatorName, authorSet);
 			}
 			authorSet.add(varFileDTO.makeKey());
 		}
-		
+
 		Map<String, Set<String>> sortedSumMap = authorMap.entrySet().stream()
-				.sorted(Map.Entry.comparingByValue((o1, o2) -> Integer.compare(o1.size(), o2.size()) ))
-						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+				.sorted(Map.Entry.comparingByValue((o1, o2) -> Integer.compare(o1.size(), o2.size())))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 		for (String author : sortedSumMap.keySet()) {
-			System.out.println("creator:"+author+"  girlCount:"+sortedSumMap.get(author).size());	
+			System.out.println("creator:" + author + "  girlCount:" + sortedSumMap.get(author).size());
 		}
-		
+
 //		Map<String, Integer> lackMap = sortedSumMap.entrySet().stream().filter(x -> !validateVarExist(x.getKey(),allVarSet))
 //				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
 //
