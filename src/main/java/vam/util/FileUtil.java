@@ -137,7 +137,7 @@ public class FileUtil {
 							log.warn("\n---failed create link: " + file);
 					}
 				} else
-					log.debug("---SymbolicLink exist1, skip: " + linkFileName);
+					log.info("---SymbolicLink exist1, skip: " + linkFileName);
 			} else {
 				if (linkFile.delete()) {
 					boolean b = createLinkFile(file, linkFile);

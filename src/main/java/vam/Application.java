@@ -19,7 +19,7 @@ public class Application extends SpringBootServletInitializer {
 		long time1, time2;
 
 		time1 = System.currentTimeMillis();
-		mession(context.getBean(Work.class));
+		mission(context.getBean(Work.class));
 		time2 = System.currentTimeMillis();
 		System.out.println("mission 花了：" + (time2 - time1) / 1000 + "秒");
 
@@ -27,9 +27,9 @@ public class Application extends SpringBootServletInitializer {
 		System.exit(0);
 	}
 
-	private static void mession(Work work) {
-		work.clearUseLessDB();
-		work.loadVarFileIntoDB("AllPackages/");
+	private static void mission(Work work) {
+//		work.clearUseLessDB();
+//		work.loadVarFileIntoDB("AllPackages/");
 //		work.moveReference(null);
 //		work.moveReference(BestScene.Ispinox.getDescription());
 //		work.deploy("AA_ALL/");
@@ -80,8 +80,7 @@ public class Application extends SpringBootServletInitializer {
 //		work.superDependence();
 //		work.girlAnalysis();
 
-//		work.deployOneSceneOneGirl("SlamT.TinyVam-TheCastingCouch.latest", "realclone.ELSA.latest",
-//				"AA2_SlamTCouch_realcloneElsa\\");
+		work.deployOneSceneOneGirl("SlamT.TinyVam-TheCastingCouch.latest", "realclone.ELSA.latest", "default\\");
 
 //		work.deployBestSceneGirl(BestScene.Nial, BestGirl.Thorn, "AA2_Nial_Thorn\\");
 		// work.deployBestSceneGirl(BestScene.FeiSama, BestGirl.FRK,

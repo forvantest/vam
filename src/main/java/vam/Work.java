@@ -112,25 +112,25 @@ public class Work extends WorkDeployVarFile {
 		for (int i = 0; i < es.length; i++) {
 			deployBestScene(es[i], groupName);
 		}
-		switchAuthor(null, groupName);
+		switchAuthor(new HashMap(), groupName);
 	}
 
 	public void deployBestGirl(BestGirl bestGirl, String groupName) {
 		process(bestGirl.getDescription() + "/", groupName);
 		if (StringUtils.isEmpty(groupName))
-			switchAuthor(null, bestGirl.getDescription());
+			switchAuthor(new HashMap(), bestGirl.getDescription());
 	}
 
 	public void deployBestScene(BestScene bestScene, String groupName) {
 		process(bestScene.getDescription() + "/", groupName);
 		if (StringUtils.isEmpty(groupName))
-			switchAuthor(null, bestScene.getDescription());
+			switchAuthor(new HashMap(), bestScene.getDescription());
 	}
 
 	public void deployBestSceneGirl(BestScene bestScene, BestGirl bestGirl, String groupName) {
 		process(bestScene.getDescription(), groupName);
 		process(bestGirl.getDescription(), groupName);
-		switchAuthor(null, groupName);
+		switchAuthor(new HashMap(), groupName);
 	}
 
 	public void deployBestSceneGirl(BestScene bestScene, BestGirl bestGirl, int num, String groupName) {
@@ -147,7 +147,7 @@ public class Work extends WorkDeployVarFile {
 		processSingle(bestSceneVarName, groupName);
 		processSingle("Ispinox.Red3Some_Part2_1_2.latest", groupName);
 		processSingle(bestGirlVarName, groupName);
-		switchAuthor(null, groupName);
+		switchAuthor(new HashMap(), groupName);
 	}
 
 	private void switchAuthor(Map<String, VarFileDTO> varAll, String author) {
@@ -196,13 +196,22 @@ public class Work extends WorkDeployVarFile {
 
 		additionalVarList.add("AcidBubbles.BlendShapes.latest");
 		additionalVarList.add("OrangeGumi.Pp_Danmenz_A_v004.1.latest");
-		additionalVarList.add("SPQR.SPQRAlive.latest");
+		additionalVarList.add("SPQR.SPQRAlive.48");
 
 //		additionalVarList.add("cotyounoyume.ExpressionBlushingAndTearsFullVer.latest");
-//		additionalVarList.add("Saking55.AutoBulger.latest");
+		additionalVarList.add("Saking55.AutoBellyBulger.latest");
+		additionalVarList.add("Saking55.AutoThroatBulger.latest");
+		additionalVarList.add("hazmhox.fluids101.latest");
+		additionalVarList.add("ClockwiseSilver.SilverExpressionTool.latest");
+		additionalVarList.add("SupaRioAmateur.Geoshell_For_Wet_Texture.8.var");
+
+		additionalVarList.add("noone77521.MMDShow.12.var");
+
 //		additionalVarList.add("JayJayWon.SexAssist.latest");
 //		additionalVarList.add("Vinput.AutoThruster.latest");
 
+		Set<String> issuVarList = new HashSet<>();
+		issuVarList.add("Folkghost.humancage.1.var");
 	}
 
 	private void additional(Map<String, VarFileDTO> varAll, String groupName) {
