@@ -80,7 +80,7 @@ public class Application extends SpringBootServletInitializer {
 //		work.superDependence();
 //		work.girlAnalysis();
 
-		work.deployOneSceneOneGirl("SlamT.TinyVam-TheCastingCouch.latest", "realclone.ELSA.latest", "default\\");
+//		work.deployOneSceneOneGirl("SlamT.TinyVam-TheCastingCouch.latest", "realclone.ELSA.latest", "default\\");
 
 //		work.deployBestSceneGirl(BestScene.Nial, BestGirl.Thorn, "AA2_Nial_Thorn\\");
 		// work.deployBestSceneGirl(BestScene.FeiSama, BestGirl.FRK,
