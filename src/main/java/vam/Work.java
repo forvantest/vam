@@ -145,7 +145,7 @@ public class Work extends WorkDeployVarFile {
 
 	public void deployOneSceneOneGirl(String bestSceneVarName, String bestGirlVarName, String groupName) {
 		processSingle(bestSceneVarName, groupName);
-		processSingle("Ispinox.Red3Some_Part2_1_2.latest", groupName);
+//		processSingle("Ispinox.Red3Some_Part2_1_2.latest", groupName);
 		processSingle(bestGirlVarName, groupName);
 		switchAuthor(new HashMap(), groupName);
 	}

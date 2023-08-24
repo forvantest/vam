@@ -1,11 +1,21 @@
 package vam;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
+
+import vam.dto.MyList;
+import vam.dto.enumration.BestGirl;
+import vam.dto.enumration.BestScene;
 
 @Configuration
 @EnableAutoConfiguration
@@ -28,6 +38,47 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	private static void mission(Work work) {
+		List<String> nameSet = new MyList();
+		String kemonoTxt = ".\\Kemono.txt";
+		String line = "";
+		try (BufferedReader reader = new BufferedReader(new FileReader(kemonoTxt));) {
+			line = reader.readLine();
+			while (line != null) {
+				// System.out.println(line);
+				// read next line
+				line = reader.readLine();
+				if (line == null)
+					continue;
+				if (StringUtils.isEmpty(line))
+					continue;
+				line = line.trim();
+				String[] ss = line.split(",");
+				if (ss == null) {
+					System.out.println("error ：" + line);
+					continue;
+				}
+				if (StringUtils.isEmpty(ss[0]))
+					continue;
+
+				nameSet.add(ss[0]);
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Kemono:" + nameSet.size());
+
+		List<String> neverSet = new MyList();
+		for (String kemono : nameSet) {
+			if (BestScene.contains(kemono)) {
+
+			} else if (BestGirl.contains(kemono)) {
+
+			} else {
+				neverSet.add(kemono);
+			}
+		}
+		System.out.println("unknown:" + neverSet.size());
 //		work.clearUseLessDB();
 //		work.loadVarFileIntoDB("AllPackages/");
 //		work.moveReference(null);
@@ -82,6 +133,8 @@ public class Application extends SpringBootServletInitializer {
 
 //		work.deployOneSceneOneGirl("SlamT.TinyVam-TheCastingCouch.latest", "realclone.ELSA.latest", "default\\");
 
+		work.deployOneSceneOneGirl("XRWizard.XRW-PoleLounge-Full-V1.2", "Hcg.1_0.1", "default\\");
+
 //		work.deployBestSceneGirl(BestScene.Nial, BestGirl.Thorn, "AA2_Nial_Thorn\\");
 		// work.deployBestSceneGirl(BestScene.FeiSama, BestGirl.FRK,
 		// "AA2_FeiSama_FRK\\");
@@ -128,7 +181,7 @@ public class Application extends SpringBootServletInitializer {
 
 //		 work.unDeploy("zzzat16h");
 
-//		work.deploy("");
+		work.deploy("");
 //		work.deploy("Archer");
 //		work.deploy("Dnaddr");
 //		work.deploy("VAMDoll");

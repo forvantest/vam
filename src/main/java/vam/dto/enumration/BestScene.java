@@ -1,13 +1,47 @@
 package vam.dto.enumration;
 
 public enum BestScene {
-	HotChicksVR("HotChicksVR"), Androinz("Androinz"), abcTits("abc tits"), Chill_PopRun("Chill_PopRun"), TGC("TGC"),
-	noheadnoleg("noheadnoleg"), KittyMocap("KittyMocap"), LDR("LDR"), jyy("jyy"), SlamT("SlamT"),
-	ReignMocap("ReignMocap"), Zam55555("Zam55555"), AlpacaLaps("AlpacaLaps"), ZenMocap("ZenMocap"), Tiseb("Tiseb"),
-	FlyRoxy("FlyRoxy"), Vihper("Vihper"), Universens("Universens"), xinxiu("xinxiu"), UJVAM("UJVAM"),
-	FeiSama("FeiSama"), Nial("Nial"), IAmAFox("IAmAFox"), NisVamX("NisVamX"), MK_47("MK_47"), Ispinox("Ispinox"),
-	HiphopJin("HiphopJin"), AndiFang("AndiFang"), Romolas("Romolas"), sxs4("sxs4"), wunderwise("wunderwise"),
-	Errors69("Errors69"), XRWizard("XRWizard"), Giovni("Giovni"), uMKAxc62SI("uMKAxc62SI"), VamTimbo("VamTimbo");
+	// @formatter:off
+	HotChicksVR("HotChicksVR"), 
+	Androinz("androinz"), 
+	abcTits("abc tits"), 
+	Chill_PopRun("ChilliPopRun"), 
+	TGC("TGC"),
+	noheadnoleg("noheadnoleg"), 
+	KittyMocap("KittyMocap"), 
+	LDR("LDR"), 
+	jyy("Jyy"), 
+	SlamT("SlamT"),
+	ReignMocap("ReignMocap"), 
+	Zam55555("Zam55555"), 
+	AlpacaLaps("AlpacaLaps"), 
+	ZenMocap("猛 禅"), 
+	Tiseb("Tiseb"),
+	FlyRoxy("Flyroxy"), 
+	Vihper("Vihper"), 
+	Universens("universens"), 
+	xinxiu("xinxiu"), 
+	UJVAM("UJVAM"),
+	FeiSama("FeiSama"), 
+	Nial("xNial"), 
+	IAmAFox("IAmAFox"), 
+	NisVamX("NisVamX"), 
+	MK_47("MK_47"), 
+	Ispinox("Ispinox"),
+	HiphopJin("Hiphopjin"), 
+	AndiFang("AndiFang"), 
+	Romolas("Romolas"), 
+	sxs4("sxs4"), 
+	wunderwise("wunderwise"),
+	Errors69("Errors69"), 
+	XRWizard("xrwizard"), 
+	Giovni("Giovni"), 
+	uMKAxc62SI("uMKAxc62SI"), 
+	VamTimbo("VamTimbo"),
+	Zeeko("Zeeko834"),
+	EyeCreated("Eye Created");
+
+// @formatter:on
 
 	private String description;
 
